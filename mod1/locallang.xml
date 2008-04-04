@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+    <meta type="array">
+        <description>Labels for mod1 backend module</description>
+        <type>module</type>
+        <csh_table></csh_table>
+        <labelContext type="array">
+        </labelContext>
+    </meta>
+    <data type="array">
+        <languageKey index="default" type="array">
+            <label index="title">Developer Log</label>
+            <label index="showlog">Show Log</label>
+            <label index="log_entries">Log entries</label>
+            <label index="entries">Entries</label>
+            <label index="setup">Setup</label>
+            <label index="latest_run">latest log run</label>
+            <label index="latest_25">latest 25 entries</label>
+            <label index="latest_50">latest 50 entries</label>
+            <label index="latest_100">latest 100 entries</label>
+            <label index="all_entries">all entries</label>
+            <label index="auto_refresh">Auto refresh</label>
+            <label index="log_time">Log time</label>
+            <label index="log_period">Log period</label>
+            <label index="refresh">Refresh</label>
+            <label index="uid">UID</label>
+            <label index="crdate">Date</label>
+            <label index="severity">Severity</label>
+            <label index="extkey">Extension</label>
+            <label index="message">Message</label>
+            <label index="page">Page</label>
+            <label index="cruser">User</label>
+            <label index="extra_data">Extra data</label>
+            <label index="clearlog">Clear Log</label>
+            <label index="cleared_log">All log entries were deleted.</label>
+            <label index="clearlog_desc">This will delete all log entries.</label>
+            <label index="open_view">Open new window</label>
+            <label index="extra_data_error">Error reading extra data</label>
+            <label index="show_extra_data">Show extra data</label>
+            <label index="hide_extra_data">Hide extra data</label>
+            <label index="severity_ok">OK</label>
+            <label index="severity_info">Info</label>
+            <label index="severity_notice">Notice</label>
+            <label index="severity_warning">Warning</label>
+            <label index="severity_error">Error</label>
+        </languageKey>
+    </data>
+</T3locallang>

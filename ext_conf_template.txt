@@ -1,0 +1,2 @@
+# cat=basic//; type=string; label=Path to Prototype: If you are using TYPO3 4.0 or less, download the Prototype JavaScript library, put it somewhere if fileadmin or inside some extension and indicate the path here
+prototypePath = 
