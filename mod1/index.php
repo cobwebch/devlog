@@ -110,7 +110,6 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		parent::menuConfig();
 	}
 
-		// If you chose 'web' as main module, you will need to consider the $this->id parameter which will contain the uid-number of the page clicked in the page tree
 	/**
 	 * Main function of the module. Write the content to $this->content
 	 */
@@ -133,7 +132,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			}
 			elseif (isset($this->extConf['prototypePath'])) {
 				$testPath = t3lib_div::getFileAbsFileName($this->extConf['prototypePath']);
-				if (file_exists($testPath)) $pathToPrototype = $testPath;
+				if (file_exists($testPath)) $pathToPrototype = $BACK_PATH.'../'.$this->extConf['prototypePath'];
 			}
 			if (!empty($pathToPrototype)) $this->doc->JScode .= '<script type="text/javascript" src="'.$pathToPrototype.'"></script>'."\n";
 
