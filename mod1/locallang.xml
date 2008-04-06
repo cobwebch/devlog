@@ -13,6 +13,7 @@
             <label index="showlog">Show Log</label>
             <label index="log_entries">Log entries</label>
             <label index="entries">Entries</label>
+            <label index="cleanup">Clean up</label>
             <label index="setup">Setup</label>
             <label index="latest_run">latest log run</label>
             <label index="latest_25">latest 25 entries</label>

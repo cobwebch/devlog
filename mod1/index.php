@@ -90,7 +90,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$this->MOD_MENU = array(
 			'function' => array(
 				'showlog' => $GLOBALS['LANG']->getLL('showlog'),
-				'setup' => $GLOBALS['LANG']->getLL('setup'),
+				'cleanup' => $GLOBALS['LANG']->getLL('cleanup'),
+//				'setup' => $GLOBALS['LANG']->getLL('setup'),
 			),
 			'logrun' => array(
 				'1000' => $GLOBALS['LANG']->getLL('latest_run'),
@@ -268,18 +269,18 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			case 'showlog':
 				if(count($this->logRuns)) {					
 					$content = $this->getLogTable();
-					$this->content.=$this->doc->section($GLOBALS['LANG']->getLL('log_entries').':',$content,0,1);
+					$this->content .= $this->doc->section($GLOBALS['LANG']->getLL('log_entries').':',$content,0,1);
 				}
 			break;
-			case 'setup':
+			case 'cleanup':
 				if (t3lib_div::_GP('clearlog')) {
 					$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', '');
 					$content = '<div>'.$GLOBALS['LANG']->getLL('cleared_log').'</div>';
 				} else {
 					$content = '<div>'.$GLOBALS['LANG']->getLL('clearlog_desc').'</div>';
-					$content.= '<input type="submit" name="clearlog" value="'.$GLOBALS['LANG']->getLL('clearlog').'">';
+					$content .= '<input type="submit" name="clearlog" value="'.$GLOBALS['LANG']->getLL('clearlog').'">';
 				}
-				$this->content.=$this->doc->section($GLOBALS['LANG']->getLL('clearlog').':',$content,0,1);
+				$this->content .= $this->doc->section($GLOBALS['LANG']->getLL('clearlog').':',$content,0,1);
 			break;
 		} 
 	}
@@ -306,8 +307,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			)
 		);
 
-		$table=array();
-		$tr=0;
+		$table = array();
+		$tr = 0;
 		
 			// add header row
 		$table[$tr][] = $GLOBALS['LANG']->getLL('uid');
