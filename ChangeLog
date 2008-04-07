@@ -1,0 +1,13 @@
+2008-04-07 Francois Suter <support@cobweb.ch>
+
+	* Increased size of database field for extra data
+	* Added the possibility of viewing the deserialised extra data
+	* Added the possibility of viewing all entries and paginating through them
+	* Added filters on status and extension keys
+	* Added display of the crdate column (thanks to Stefano Cecere)
+	* Cleaned up part of the code
+	* Totally revamped manual
+
+2005-01-02
+
+	* Last version of cc_devlog by Rene Fritz
