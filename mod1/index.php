@@ -51,32 +51,32 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 	var $logRuns = array(); // List of recent log runs
 	var $selectedLog; // Flag for the number of logs to display
-	var $maxLogRuns = 15; // Maximum number of log runs to get from the database for the log run list
-		// TODO: make max logs per page configurable
-	var $maxLogsPerPage = 25; // When displaying all log runs, limit of items per page
 	var $totalLogEntries; // Total number of log entries in the database
 	var $filters = array(); // List of possible values for the log filters
 	var $extConf = array(); // Extension configuration
 
 	/**
 	 * Initialise the plugin
+	 *
+	 * @return	void
 	 */
 	function init()	{
-//		global $BE_USER,$LANG,$BACK_PATH,$TCA_DESCR,$TCA,$CLIENT,$TYPO3_CONF_VARS;
 		global $MCONF;
+
+			// Get extension configuration
+		$this->extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$MCONF['extKey']]);
 
 			// get log run list
 		$this->getLogRuns();
 		
-			// GC
-		$this->logGC();
+			// Clean up excess logs (if activated)
+		if ($this->extConf['autoCleanup']) $this->logGC();
 		
 		parent::init();
 //t3lib_div::debug($this->MOD_SETTINGS);
 
 		$this->selectLog();
 
-		$this->extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$MCONF['extKey']]);
 	}
 
 	/**
@@ -104,9 +104,11 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			'page' => 0,
 			'filter_extkey' => $this->filters['extkey'],
 			'filter_severity' => $this->filters['severity'],
+			'expandAllExtraData' => 0,
 		);
-		$this->MOD_MENU['logrun'] = t3lib_div::array_merge($this->logRuns,$this->MOD_MENU['logrun']);
-		
+		$this->MOD_MENU['logrun'] = t3lib_div::array_merge($this->logRuns, $this->MOD_MENU['logrun']);
+//t3lib_div::debug($this->logRuns);
+
 		parent::menuConfig();
 	}
 
@@ -198,32 +200,36 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$headerSection ='';
 			if ($this->MOD_SETTINGS['function'] == 'showlog') {
 				$optMenu = array ();
-				$optMenu['sellogrun'] = t3lib_BEfunc::getFuncMenu($this->id,'SET[logrun]',$this->MOD_SETTINGS['logrun'],$this->MOD_MENU['logrun']);
+				$optMenu['sellogrun'] = t3lib_BEfunc::getFuncMenu($this->id, 'SET[logrun]', $this->MOD_SETTINGS['logrun'], $this->MOD_MENU['logrun']);
 				if ($this->MOD_SETTINGS['logrun'] <= 1000) {
 					$optMenu['autorefresh'] = '<input type="hidden" name="SET[autorefresh]" value="0">';
 					$onClick = 'toggleReload(this.checked);';
 					$optMenu['autorefresh'] .= '<input type="checkbox" name="SET[autorefresh]" id="autorefresh" value="1"'.($this->MOD_SETTINGS['autorefresh']?' checked':'').' onclick="'.htmlspecialchars($onClick).'"> <label for="autorefresh">'.$GLOBALS['LANG']->getLL('auto_refresh').'</label>';
 				}
 				$optMenu['refresh'] = '<input type="submit" name="refresh" value="'.$GLOBALS['LANG']->getLL('refresh').'">';
-			
+				$optMenu['expandAllExtraData'] = '<input type="hidden" name="SET[expandAllExtraData]" value="0">';
+				$onClick = 'document.options.submit();';
+				$optMenu['expandAllExtraData'] .= '<input type="checkbox" name="SET[expandAllExtraData]" id="expandAllExtraData" value="1"'.($this->MOD_SETTINGS['expandAllExtraData']?' checked="checked"':'').' onclick="'.htmlspecialchars($onClick).'"> <label for="expandAllExtraData">'.$GLOBALS['LANG']->getLL('expand_all_extra_data').'</label>';
+
 				$headerSection = $this->doc->menuTable(
 					array(
-						array('Select Log:',$optMenu['sellogrun']),
-						array('',$optMenu['refresh'])
+						array($GLOBALS['LANG']->getLL('selectlog'), $optMenu['sellogrun']),
+						array('', $optMenu['refresh'])
 					),
 					array(
-						array('',$optMenu['autorefresh']),
-						array('','')
+						array('', $optMenu['autorefresh']),
+						array('',$optMenu['expandAllExtraData'])
+//						array('', '')
 					)
 				);			
 			}
 			
 			
-			$this->content.=$this->doc->startPage($GLOBALS['LANG']->getLL('title'));
-			$this->content.=$this->doc->header($GLOBALS['LANG']->getLL('title'));
-			$this->content.=$this->doc->spacer(5);
-			$this->content.=$this->doc->section('',$this->doc->funcMenu($headerSection,t3lib_BEfunc::getFuncMenu($this->id,'SET[function]',$this->MOD_SETTINGS['function'],$this->MOD_MENU['function']).'&nbsp;&nbsp;&nbsp;'.$this->openNewView()));
-			$this->content.=$this->doc->divider(5);
+			$this->content .= $this->doc->startPage($GLOBALS['LANG']->getLL('title'));
+			$this->content .= $this->doc->header($GLOBALS['LANG']->getLL('title'));
+			$this->content .= $this->doc->spacer(5);
+			$this->content .= $this->doc->section('', $this->doc->funcMenu($headerSection, t3lib_BEfunc::getFuncMenu($this->id,'SET[function]',$this->MOD_SETTINGS['function'], $this->MOD_MENU['function']).'&nbsp;&nbsp;&nbsp;'.$this->openNewView()));
+			$this->content .= $this->doc->divider(5);
 
 
 			// Render content:
@@ -357,9 +363,9 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			}
 				// Calculate start page
 				// If start is larger than entries count, revert to first page (0)
-			$start = $page * $this->maxLogsPerPage;
+			$start = $page * $this->extConf['entriesPerPage'];
 			if ($start > $this->totalLogEntries) $start = 0;
-			$limit = $start.','.$this->maxLogsPerPage;
+			$limit = $start.','.$this->extConf['entriesPerPage'];
 			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*','tx_devlog', $whereClause, $groupBy='', $orderBy='uid DESC', $limit);
 		}
 			// Select the latest log entries up to the selected limit
@@ -413,11 +419,20 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		 			$dataVar = $GLOBALS['LANG']->getLL('extra_data_error');
  				}
  				else {
-		 			$dataVar = '<a href="javascript:toggleExtraData(\''.$row['uid'].'\')" id="debug-link-'.$row['uid'].'" title="'.$GLOBALS['LANG']->getLL('show_extra_data').'">';
-			        $dataVar .= '<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/plusbullet_list.gif','width="18" height="12"').' alt="+" />';
-		 			$dataVar .= '</a>';
-		 			$dataVar .= '<div id="debug-row-'.$row['uid'].'" style="display: none;">'.t3lib_div::view_array($fullData).'</div>';
- 				}
+		 			if ($this->MOD_SETTINGS['expandAllExtraData']) {
+						$style = '';
+		 				$label = $GLOBALS['LANG']->getLL('hide_extra_data');
+		 				$icon = '<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/minusbullet_list.gif','width="18" height="12"').' alt="-" />';
+		 			} else {
+						$style = ' style="display: none;"';
+		 				$label = $GLOBALS['LANG']->getLL('show_extra_data');
+		 				$icon = '<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/plusbullet_list.gif','width="18" height="12"').' alt="+" />';
+		 			}
+		 			$dataVar = '<a href="javascript:toggleExtraData(\''.$row['uid'].'\')" id="debug-link-'.$row['uid'].'" title="'.$label.'">';
+			        $dataVar .= $icon;
+ 		 			$dataVar .= '</a>';
+		 			$dataVar .= '<div id="debug-row-'.$row['uid'].'"'.$style.'>'.t3lib_div::view_array($fullData).'</div>';
+				}
  			}
  			$table[$tr][] = $dataVar;
 		}
@@ -425,6 +440,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			// Assemble pagination links, if required
 		$pagination = '';
 		if ($this->selectedLog == -1) $pagination = $this->renderPaginationLinks();
+			// Assemble log run browser, if required
+		if ($this->selectedLog == 0 || $this->selectedLog > 1000) $pagination = $this->renderBrowseLinks();
 
 			// return rendered table and pagination
 		if ($startDate == $endDate) {
@@ -441,15 +458,15 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	}
 
 	/** 
-	 * This method assemble links to navigate between pages of log entries
+	 * This method assembles links to navigate between pages of log entries
 	 *
 	 * @return	string	list of pages with links
 	 */
 	function renderPaginationLinks() {
 		$navigation = '';
-		$numPages = ceil($this->totalLogEntries / $this->maxLogsPerPage);
+		$numPages = ceil($this->totalLogEntries / $this->extConf['entriesPerPage']);
 		for ($i = 0; $i < $numPages; $i++) {
-			$text = ($i * $this->maxLogsPerPage).'-'.(($i + 1) * $this->maxLogsPerPage);
+			$text = ($i * $this->extConf['entriesPerPage']).'-'.(($i + 1) * $this->extConf['entriesPerPage']);
 			if ($i == $this->MOD_SETTINGS['page']) {
 				$item = '<strong>'.$text.'</strong>';
 			}
@@ -459,6 +476,59 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$navigation .= $item.' ';
 		}
 		return '<p>'.$GLOBALS['LANG']->getLL('entries').': '.$navigation.'</p>';
+	}
+
+	/** 
+	 * This method assemble links to navigate between previous and next log runs
+	 *
+	 * @return	string	list of pages with links
+	 */
+	function renderBrowseLinks() {
+//t3lib_div::debug($this->selectedLog);
+		$logTimestamps = array_keys($this->logRuns);
+
+			// Extract first and last run
+		$latestRun = $logTimestamps[0];
+		$oldestRun = $logTimestamps[count($logTimestamps) - 1];
+
+			// Look for current run and keep previous and next
+		$previousRun = 0;
+		$nextRun = 0;
+		foreach ($logTimestamps as $index => $timestamp) {
+			if ($timestamp == $this->selectedLog) {
+				if (isset($logTimestamps[$index - 1])) $nextRun = $logTimestamps[$index - 1];
+				if (isset($logTimestamps[$index + 1])) $previousRun = $logTimestamps[$index + 1];
+				break;
+			}
+		}
+
+			// Unset some unnecessary links
+		if ($this->selectedLog == $oldestRun) {
+			$oldestRun = 0;
+			$previousRun = 0;
+		}
+		elseif ($this->selectedLog == $latestRun) {
+			$latestRun = 0;
+			$nextRun = 0;
+		}
+
+			// Assemble browse links: oldest, previous, next, latest (if relevant)
+		$browser = '';
+		if ($oldestRun > 0) $browser .= $this->linkLogRun($GLOBALS['LANG']->getLL('oldest'), $oldestRun);
+		if ($previousRun > 0) {
+			if (!empty($browser)) $browser .= '&nbsp;&nbsp;';
+			$browser .= $this->linkLogRun($GLOBALS['LANG']->getLL('previous'), $previousRun);
+		}
+		if (!empty($browser)) $browser .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		if ($nextRun > 0) {
+			if (!empty($browser)) $browser .= '&nbsp;&nbsp;';
+			$browser .= $this->linkLogRun($GLOBALS['LANG']->getLL('next'), $nextRun);
+		}
+		if ($latestRun > 0) {
+			if (!empty($browser)) $browser .= '&nbsp;&nbsp;';
+			$browser .= $this->linkLogRun($GLOBALS['LANG']->getLL('latest'), $latestRun);
+		}
+		return $browser;
 	}
 
 	/**
@@ -505,7 +575,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 */
 	function getLogRuns() {
 		$this->logRuns = array();
-		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT crmsec,crdate', 'tx_devlog', $where_clause='', $groupBy='', $orderBy='crmsec DESC', $limit=$this->maxLogRuns);
+		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT crmsec,crdate', 'tx_devlog', $where_clause='', $groupBy='', $orderBy='crmsec DESC', $limit=$this->extConf['maxLogRuns']);
 			// Assemble those runs in an associative array with run timestamp as a key
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
 			$this->logRuns[$row['crmsec']] = t3lib_befunc::dateTimeAge($row['crdate']);
@@ -574,16 +644,14 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	}
 
 	/**
-	 * Apparently this method is designed to automatically clean up the database if there are more than maxLogRuns runs in it
-	 * But since the logRuns array is itself limited by maxLogRuns (see getLogRuns() method) the clean up will never happen
-	 * Unless I misunderstood something...
+	 * This method cleans up any log runs in excess of maxLogRuns
 	 *
 	 * @return	void
 	 */
 	function logGC() {
-		if (count($this->logRuns) >= $this->maxLogRuns) {
+		if (count($this->logRuns) >= $this->extConf['maxLogRuns']) {
 			$keys = array_keys($this->logRuns);
-			$logRun = $keys[$this->maxLogRuns-1];
+			$logRun = $keys[$this->extConf['maxLogRuns'] - 1];
 			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', 'crmsec < '.$logRun);
 		}
 	}	

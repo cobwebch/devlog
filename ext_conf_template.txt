@@ -1,2 +1,11 @@
+# cat=basic//; type=integer; label=Maximum number of log runs: Set the maximum number of log runs you want to display in the menu of log runs
+maxLogRuns = 15
+
+# cat=basic//; type=integer; label=Number of entries per page: Set the number of log entries to display per page, when viewing all log entries
+entriesPerPage = 25
+
+# cat=basic//; type=boolean; label=Automatic clean up: Check this box if you want to automatically clean up log runs in excess of maxLogRuns
+autoCleanup = 0
+
 # cat=basic//; type=string; label=Path to Prototype: If you are using TYPO3 4.0 or less, download the Prototype JavaScript library, put it somewhere if fileadmin or inside some extension and indicate the path here
 prototypePath = 

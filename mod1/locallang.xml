@@ -11,6 +11,7 @@
         <languageKey index="default" type="array">
             <label index="title">Developer Log</label>
             <label index="showlog">Show Log</label>
+            <label index="selectlog">Select Log:</label>
             <label index="log_entries">Log entries</label>
             <label index="entries">Entries</label>
             <label index="cleanup">Clean up</label>
@@ -44,6 +45,11 @@
             <label index="severity_notice">Notice</label>
             <label index="severity_warning">Warning</label>
             <label index="severity_error">Error</label>
+            <label index="latest">latest &gt;&gt;</label>
+            <label index="next">next &gt;</label>
+            <label index="previous">&lt; previous</label>
+            <label index="oldest">&lt;&lt; oldest</label>
+			<label index="expand_all_extra_data">Expand all extra data</label>
         </languageKey>
     </data>
 </T3locallang>
