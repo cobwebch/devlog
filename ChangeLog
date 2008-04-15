@@ -1,3 +1,9 @@
+2008-04-15 Francois Suter <support@cobweb.ch>
+
+	* Added a log run browser in single log run view (thanks to Rupert Germann)
+	* Added a checkbox to automatically expand all extra data (thanks to Rupert Germann)
+	* Added extension configuration options
+
 2008-04-07 Francois Suter <support@cobweb.ch>
 
 	* Increased size of database field for extra data

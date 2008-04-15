@@ -575,7 +575,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 */
 	function getLogRuns() {
 		$this->logRuns = array();
-		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT crmsec,crdate', 'tx_devlog', $where_clause='', $groupBy='', $orderBy='crmsec DESC', $limit=$this->extConf['maxLogRuns']);
+		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT crmsec,crdate', 'tx_devlog', $where_clause='', $groupBy='', $orderBy='crmsec DESC', empty($this->extConf['maxLogRuns']) ? '' : $this->extConf['maxLogRuns']);
 			// Assemble those runs in an associative array with run timestamp as a key
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
 			$this->logRuns[$row['crmsec']] = t3lib_befunc::dateTimeAge($row['crdate']);
@@ -649,7 +649,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 * @return	void
 	 */
 	function logGC() {
-		if (count($this->logRuns) >= $this->extConf['maxLogRuns']) {
+		if (!empty($this->extConf['maxLogRuns']) && count($this->logRuns) >= $this->extConf['maxLogRuns']) {
 			$keys = array_keys($this->logRuns);
 			$logRun = $keys[$this->extConf['maxLogRuns'] - 1];
 			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', 'crmsec < '.$logRun);

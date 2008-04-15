@@ -3,7 +3,7 @@
 ########################################################################
 # Extension Manager/Repository config file for ext: "devlog"
 #
-# Auto generated 07-04-2008 20:25
+# Auto generated 15-04-2008 14:36
 #
 # Manual updates:
 # Only the data in the array - anything else is removed by next write.
@@ -31,7 +31,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'author_company' => '',
 	'CGLcompliance' => '',
 	'CGLcompliance_note' => '',
-	'version' => '2.0.0',
+	'version' => '2.1.0',
 	'constraints' => array(
 		'depends' => array(
 			'typo3' => '3.5.0-0.0.0',
@@ -43,7 +43,7 @@ $EM_CONF[$_EXTKEY] = array(
 		'suggests' => array(
 		),
 	),
-	'_md5_values_when_last_written' => 'a:17:{s:9:"ChangeLog";s:4:"b2a8";s:19:"class.tx_devlog.php";s:4:"3dce";s:21:"ext_conf_template.txt";s:4:"6a22";s:12:"ext_icon.gif";s:4:"cd8e";s:17:"ext_localconf.php";s:4:"3d1f";s:14:"ext_tables.php";s:4:"0222";s:14:"ext_tables.sql";s:4:"d6d8";s:18:"icon_tx_devlog.gif";s:4:"cd8e";s:16:"locallang_db.xml";s:4:"5ae0";s:7:"tca.php";s:4:"45c5";s:14:"doc/manual.sxw";s:4:"d85a";s:14:"mod1/clear.gif";s:4:"cc11";s:13:"mod1/conf.php";s:4:"4129";s:14:"mod1/index.php";s:4:"c190";s:18:"mod1/locallang.xml";s:4:"e653";s:22:"mod1/locallang_mod.xml";s:4:"5454";s:19:"mod1/moduleicon.gif";s:4:"cd8e";}',
+	'_md5_values_when_last_written' => 'a:17:{s:9:"ChangeLog";s:4:"1ce2";s:19:"class.tx_devlog.php";s:4:"3dce";s:21:"ext_conf_template.txt";s:4:"a64d";s:12:"ext_icon.gif";s:4:"cd8e";s:17:"ext_localconf.php";s:4:"3d1f";s:14:"ext_tables.php";s:4:"0222";s:14:"ext_tables.sql";s:4:"d6d8";s:18:"icon_tx_devlog.gif";s:4:"cd8e";s:16:"locallang_db.xml";s:4:"5ae0";s:7:"tca.php";s:4:"45c5";s:14:"doc/manual.sxw";s:4:"d03c";s:14:"mod1/clear.gif";s:4:"cc11";s:13:"mod1/conf.php";s:4:"4129";s:14:"mod1/index.php";s:4:"6d97";s:18:"mod1/locallang.xml";s:4:"0bf6";s:22:"mod1/locallang_mod.xml";s:4:"5454";s:19:"mod1/moduleicon.gif";s:4:"cd8e";}',
 	'suggests' => array(
 	),
 );
