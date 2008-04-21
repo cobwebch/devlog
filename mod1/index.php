@@ -55,6 +55,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	var $filters = array(); // List of possible values for the log filters
 	var $extConf = array(); // Extension configuration
 
+	var $cleanupPeriods = array('1hour' => '-1 hour', '1week' => '-1 week', '1month' => '-1 month', '3months' => '-3 months', '6months' => '-6 months', '1year' => '-1 year'); // List of possible periods for cleaning up log entries
+
 	/**
 	 * Initialise the plugin
 	 *
@@ -81,6 +83,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 	/**
 	 * Adds items to the ->MOD_MENU array. Used for the function menu selector.
+	 *
+	 * @return	void
 	 */
 	function menuConfig()	{
 
@@ -114,6 +118,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 	/**
 	 * Main function of the module. Write the content to $this->content
+	 *
+	 * @return	void
 	 */
 	function main()	{
 		global $BE_USER, $BACK_PATH, $TYPO3_CONF_VARS;
@@ -238,21 +244,21 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			
 			// ShortCut
 			if ($BE_USER->mayMakeShortcut())	{
-				$this->content.=$this->doc->spacer(20).$this->doc->section('',$this->doc->makeShortcutIcon('id',implode(',',array_keys($this->MOD_MENU)),$this->MCONF['name']));
+				$this->content .= $this->doc->spacer(20).$this->doc->section('',$this->doc->makeShortcutIcon('id',implode(',',array_keys($this->MOD_MENU)),$this->MCONF['name']));
 			}
 		
-			$this->content.=$this->doc->spacer(10);
+			$this->content .= $this->doc->spacer(10);
 		}
 		else {
-				// If no access or if ID == zero
+				// If no access
 		
 			$this->doc = t3lib_div::makeInstance('mediumDoc');
 			$this->doc->backPath = $BACK_PATH;
 		
-			$this->content.=$this->doc->startPage($GLOBALS['LANG']->getLL('title'));
-			$this->content.=$this->doc->header($GLOBALS['LANG']->getLL('title'));
-			$this->content.=$this->doc->spacer(5);
-			$this->content.=$this->doc->spacer(10);
+			$this->content .= $this->doc->startPage($GLOBALS['LANG']->getLL('title'));
+			$this->content .= $this->doc->header($GLOBALS['LANG']->getLL('title'));
+			$this->content .= $this->doc->spacer(5);
+			$this->content .= $this->doc->spacer(10);
 		}
 	}
 
@@ -274,18 +280,12 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			case 'showlog':
 				if(count($this->logRuns)) {					
 					$content = $this->getLogTable();
-					$this->content .= $this->doc->section($GLOBALS['LANG']->getLL('log_entries').':',$content,0,1);
+					$this->content .= $this->doc->section($GLOBALS['LANG']->getLL('log_entries').':', $content, 0, 1);
 				}
 			break;
 			case 'cleanup':
-				if (t3lib_div::_GP('clearlog')) {
-					$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', '');
-					$content = '<div>'.$GLOBALS['LANG']->getLL('cleared_log').'</div>';
-				} else {
-					$content = '<div>'.$GLOBALS['LANG']->getLL('clearlog_desc').'</div>';
-					$content .= '<input type="submit" name="clearlog" value="'.$GLOBALS['LANG']->getLL('clearlog').'">';
-				}
-				$this->content .= $this->doc->section($GLOBALS['LANG']->getLL('clearlog').':',$content,0,1);
+				$content = $this->cleanupScreen();
+				$this->content .= $this->doc->section($GLOBALS['LANG']->getLL('clearlog').':', $content, 0, 1);
 			break;
 		} 
 	}
@@ -409,7 +409,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
  			$table[$tr][] = $severity;
  			$table[$tr][] = date('d-m-y G:i',$row['crdate']);
  			$table[$tr][] = $row['extkey'];
- 			$table[$tr][] = htmlspecialchars($row['msg']);
+ 			$table[$tr][] = $row['msg'];
  			$table[$tr][] = $this->getItemFromRecord('pages', array('uid' => $row['pid']));
  			$table[$tr][] = $row['cruser'];
  			$dataVar = '';
@@ -560,6 +560,77 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		else {
 			return '';
 		}
+	}
+
+	/**
+	 * This method displays the clean up screen and performs any clean up action requested
+	 *
+	 * @return	string	the HTML code to display
+	 */
+	function cleanupScreen() {
+		$content = '<p>'.$GLOBALS['LANG']->getLL('clearlog_intro').'</p>';
+		$content .= $this->doc->spacer(20);
+
+			// Act on clear commands
+		if ($clearParameters = t3lib_div::_GP('clear')) {
+			$where = '';
+			if (isset($clearParameters['extension'])) {
+				$where = "extkey = '".$clearParameters['extension']."'";
+			}
+			elseif (isset($clearParameters['period'])) {
+				$where = "crdate <= '".$clearParameters['period']."'";
+			}
+			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', $where);
+			$affectedRows = $GLOBALS['TYPO3_DB']->sql_affected_rows();
+			$content .= '<p style="padding: 4px; background-color: #0f0;">'.sprintf($GLOBALS['LANG']->getLL('cleared_log'), $affectedRows).'</p>';
+			$content .= $this->doc->spacer(10);
+		}
+			// Display delete forms
+
+			// Get total number of log entries
+		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('COUNT(uid) AS total', 'tx_devlog', $where_clause='');
+		$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres);
+		if ($row['total'] == 0) { // No entries, display a simple message
+			$content .= '<p>'.$GLOBALS['LANG']->getLL('no_entries').'</p>';
+		}
+		else { // Display delete forms only if there's at least one log entry
+			$content .= '<p>'.sprintf($GLOBALS['LANG']->getLL('xx_entries'), $row['total']).'</p>';
+			$content .= $this->doc->spacer(10);
+
+				// Get list of existing extension keys in the log table
+			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT extkey', 'tx_devlog', $where_clause='', $groupBy='', $orderBy='extkey ASC');
+				// Display form for deleting log entries per extension
+			$content .= '<p>'.$GLOBALS['LANG']->getLL('cleanup_for_extension').'</p>';
+			$content .= '<form name="cleanExt'.$filterKey.'" action="" method="POST">';
+			$content .= '<p><select name="clear[extension]">';
+			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
+				$content .= '<option value="'.$row['extkey'].'">'.$row['extkey'].'</option>';
+			}
+			$content .= '</select"></p>';
+			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearlog').'"></p>';
+			$content .= '</form>';
+			$content .= $this->doc->spacer(10);
+
+				// Display form for deleting log entries per period
+			$content .= '<p>'.$GLOBALS['LANG']->getLL('cleanup_for_period').'</p>';
+			$content .= '<form name="cleanPeriod'.$filterKey.'" action="" method="POST">';
+			$content .= '<p><select name="clear[period]">';
+			foreach ($this->cleanupPeriods as $key => $period) {
+				$date = strtotime($period);
+				$content .= '<option value="'.$date.'">'.$GLOBALS['LANG']->getLL($key).'</option>';
+			}
+			$content .= '</select"></p>';
+			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearlog').'"></p>';
+			$content .= '</form>';
+			$content .= $this->doc->spacer(10);
+
+				// Display form for deleting all log entries
+			$content .= '<p><strong>'.$GLOBALS['LANG']->getLL('cleanup_all').'</strong></p>';
+			$content .= '<form name="cleanPeriod'.$filterKey.'" action="" method="POST">';
+			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearalllog').'"></p>';
+			$content .= '</form>';
+		}
+		return $content;
 	}
 
 	/*******************************************

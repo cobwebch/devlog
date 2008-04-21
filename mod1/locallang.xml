@@ -33,9 +33,6 @@
             <label index="page">Page</label>
             <label index="cruser">User</label>
             <label index="extra_data">Extra data</label>
-            <label index="clearlog">Clear Log</label>
-            <label index="cleared_log">All log entries were deleted.</label>
-            <label index="clearlog_desc">This will delete all log entries.</label>
             <label index="open_view">Open new window</label>
             <label index="extra_data_error">Error reading extra data</label>
             <label index="show_extra_data">Show extra data</label>
@@ -50,6 +47,21 @@
             <label index="previous">&lt; previous</label>
             <label index="oldest">&lt;&lt; oldest</label>
 			<label index="expand_all_extra_data">Expand all extra data</label>
+            <label index="clearlog">Clear Log</label>
+            <label index="clearlog_intro">Use any of the clean up options below to clear your developer log.</label>
+            <label index="clearalllog">Clear All Entries!</label>
+            <label index="cleared_log">%d log entries were deleted.</label>
+			<label index="cleanup_for_period">Delete all log entries that are older than:</label>
+			<label index="cleanup_for_extension">Delete all log entries for extension:</label>
+            <label index="cleanup_all">Pressing the button below will actually delete ALL log entries. Make sure that this is really what you want to do!</label>
+			<label index="1hour">1 hour</label>
+			<label index="1week">1 week</label>
+			<label index="1month">1 month</label>
+			<label index="3months">3 months</label>
+			<label index="6months">6 months</label>
+			<label index="1year">1 year</label>
+			<label index="no_entries">There are currently no log entries in the Developer Log.</label>
+			<label index="xx_entries">There are currently %d log entries in the Developer Log.</label>
         </languageKey>
     </data>
 </T3locallang>
