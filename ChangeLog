@@ -1,3 +1,8 @@
+2008-04-23 Francois Suter <support@cobweb.ch>
+
+	* Added various selection options for cleaning up log entries
+	* Removed htmlspecialchars() call on log message (suggested by Ingo Renner)
+
 2008-04-15 Francois Suter <support@cobweb.ch>
 
 	* Added a log run browser in single log run view (thanks to Rupert Germann)
