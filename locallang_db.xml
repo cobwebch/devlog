@@ -18,6 +18,8 @@
             <label index="tx_devlog.severity">Severity:</label>
             <label index="tx_devlog.extkey">Extension:</label>
             <label index="tx_devlog.msg">Message:</label>
+            <label index="tx_devlog.location">Called from:</label>
+            <label index="tx_devlog.line">Calling line:</label>
             <label index="tx_devlog.data_var">Additional data:</label>
             <label index="tx_devlog.run">run</label>
         </languageKey>

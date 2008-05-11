@@ -1,5 +1,9 @@
 2008-04-23 Francois Suter <support@cobweb.ch>
 
+	* Automatically retrieve and store devLog call location (thanks to Kasper Ligaard)
+
+2008-04-23 Francois Suter <support@cobweb.ch>
+
 	* Added various selection options for cleaning up log entries
 	* Removed htmlspecialchars() call on log message (suggested by Ingo Renner)
 

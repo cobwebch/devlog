@@ -329,6 +329,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		}
 		$table[$tr][] = $header;
 		$table[$tr][] = $GLOBALS['LANG']->getLL('message');
+		$table[$tr][] = $GLOBALS['LANG']->getLL('location');
 		$table[$tr][] = $GLOBALS['LANG']->getLL('page');
 		$table[$tr][] = $GLOBALS['LANG']->getLL('cruser');
 		$table[$tr][] = $GLOBALS['LANG']->getLL('extra_data');
@@ -410,6 +411,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
  			$table[$tr][] = date('d-m-y G:i',$row['crdate']);
  			$table[$tr][] = $row['extkey'];
  			$table[$tr][] = $row['msg'];
+ 			$table[$tr][] = (empty($row['location']) || empty($row['line'])) ? '' : sprintf($GLOBALS['LANG']->getLL('line_call'), $row['location'], $row['line']);
  			$table[$tr][] = $this->getItemFromRecord('pages', array('uid' => $row['pid']));
  			$table[$tr][] = $row['cruser'];
  			$dataVar = '';

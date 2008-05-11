@@ -20,7 +20,7 @@ $TCA['tx_devlog'] = Array (
 		'iconfile' => t3lib_extMgm::extRelPath($_EXTKEY).'icon_tx_devlog.gif',
 	),
 	'feInterface' => Array (
-		'fe_admin_fieldList' => 'severity, extkey, msg, data_var',
+		'fe_admin_fieldList' => 'severity, extkey, msg, location, line, data_var',
 	)
 );
 

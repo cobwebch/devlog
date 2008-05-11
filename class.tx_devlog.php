@@ -21,15 +21,14 @@
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+
+
 /** 
  * devlog function for the 'devlog' extension.
  *
  * @author	René Fritz <r.fritz@colorcube.de>
+ * @author	Francois Suter <support@cobweb.ch>
  */
-
-
-
-
 class tx_devlog {
 	var $extKey = 'devlog';	// The extension key.
 	
@@ -42,8 +41,8 @@ class tx_devlog {
 	 * 'severity'	integer		Severity: 0 is info, 1 is notice, 2 is warning, 3 is fatal error, -1 is "OK" message
 	 * 'dataVar'	array		Additional data you want to pass to the logger.
 	 * 
-	 * @param	array		log data array
-	 * @return void	 
+	 * @param	array		$logArr: log data array
+	 * @return	void	 
 	 */
 	function devLog($logArr)	{
 		global $TYPO3_CONF_VARS;
@@ -58,15 +57,41 @@ class tx_devlog {
 		$insertFields['crdate'] = $TYPO3_CONF_VARS['EXTCONF'][$this->extKey]['tstamp'];
 		$insertFields['crmsec'] = $TYPO3_CONF_VARS['EXTCONF'][$this->extKey]['mstamp'];
 		$insertFields['cruser_id'] = intval($GLOBALS['BE_USER']->user['uid']);
-		
 		$insertFields['msg'] = $logArr['msg'];
 		$insertFields['extkey'] = $logArr['extKey'];
 		$insertFields['severity'] = $logArr['severity'];
+
+			// Try to get information about the place where this method was called from
+		if (function_exists('debug_backtrace')) {
+			$callPlaceInfo = $this->getCallPlaceInfo(debug_backtrace());
+			$insertFields['location'] = $callPlaceInfo['basename'];
+			$insertFields['line'] = $callPlaceInfo['line'];
+		}
+
 		if (!empty($logArr['dataVar'])) {
 			$insertFields['data_var'] = '"'.$GLOBALS['TYPO3_DB']->quoteStr(serialize($logArr['dataVar']).'"', 'tx_devlog');
 		}
 
 		$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_devlog', $insertFields);
+	}
+	
+	/**
+	 * Given a backtrace, this method tries to find the place where a "devLog" function was called
+	 * and return info about the place
+	 *
+	 * @param	array	$backTrace: function call backtrace, as provided by debug_backtrace()
+	 *
+	 * @return	array	information about the call place
+	 */
+	function getCallPlaceInfo($backTrace) {
+		foreach ($backTrace as $entry) {
+			if ($entry['class'] !== 'tx_devlog' && $entry['function'] === 'devLog') {
+				$pathInfo = pathinfo($entry['file']);
+				$pathInfo['line'] = $entry['line'];
+				return $pathInfo;
+			}
+		}
+		return null;
 	}
 }
 

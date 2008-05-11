@@ -4,7 +4,7 @@ if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 $TCA['tx_devlog'] = Array (
 	'ctrl' => $TCA['tx_devlog']['ctrl'],
 	'interface' => Array (
-		'showRecordFieldList' => 'severity,extkey,msg,data_var'
+		'showRecordFieldList' => 'severity,extkey,msg,location,data_var'
 	),
 	'feInterface' => $TCA['tx_devlog']['feInterface'],
 	'columns' => Array (
@@ -43,6 +43,26 @@ $TCA['tx_devlog'] = Array (
 				'rows' => '3',
 			)
 		),
+		'location' => Array (		
+			'exclude' => 0,		
+			'label' => 'LLL:EXT:devlog/locallang_db.xml:tx_devlog.location',		
+			'config' => Array (
+				'type' => 'input',	
+				'size' => '30',	
+				'max' => '255',	
+				'eval' => 'trim',
+			)
+		),
+		'line' => Array (		
+			'exclude' => 0,		
+			'label' => 'LLL:EXT:devlog/locallang_db.xml:tx_devlog.line',		
+			'config' => Array (
+				'type' => 'input',	
+				'size' => '10',	
+				'max' => '20',	
+				'eval' => 'int',
+			)
+		),
 		'data_var' => Array (		
 			'exclude' => 0,		
 			'label' => 'LLL:EXT:devlog/locallang_db.xml:tx_devlog.data_var',		
@@ -54,7 +74,7 @@ $TCA['tx_devlog'] = Array (
 		)
 	),
 	'types' => Array (
-		'0' => Array('showitem' => 'severity;;;;1-1-1, extkey, msg, data_var')
+		'0' => Array('showitem' => 'severity;;;;1-1-1, extkey, msg, location, data_var')
 	),
 	'palettes' => Array (
 		'1' => Array('showitem' => '')

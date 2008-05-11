@@ -10,6 +10,8 @@ CREATE TABLE tx_devlog (
 	severity int(11) DEFAULT '0' NOT NULL,
 	extkey varchar(40) DEFAULT '' NOT NULL,
 	msg text NOT NULL,
+	location varchar(255) DEFAULT '' NOT NULL,
+	line int(11) DEFAULT '0' NOT NULL,
 	data_var mediumtext NOT NULL,
 	
 	PRIMARY KEY (uid),

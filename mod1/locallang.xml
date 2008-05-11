@@ -30,10 +30,12 @@
             <label index="severity">Severity</label>
             <label index="extkey">Extension</label>
             <label index="message">Message</label>
+            <label index="location">Called from</label>
             <label index="page">Page</label>
             <label index="cruser">User</label>
             <label index="extra_data">Extra data</label>
             <label index="open_view">Open new window</label>
+            <label index="line_call">%s, line %d</label>
             <label index="extra_data_error">Error reading extra data</label>
             <label index="show_extra_data">Show extra data</label>
             <label index="hide_extra_data">Hide extra data</label>
