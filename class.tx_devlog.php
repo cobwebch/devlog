@@ -27,7 +27,7 @@
  * devlog function for the 'devlog' extension.
  *
  * @author	René Fritz <r.fritz@colorcube.de>
- * @author	Francois Suter <support@cobweb.ch>
+ * @author	Francois Suter <typo3@cobweb.ch>
  */
 class tx_devlog {
 	var $extKey = 'devlog';	// The extension key.

@@ -3,7 +3,7 @@
 ########################################################################
 # Extension Manager/Repository config file for ext: "devlog"
 #
-# Auto generated 11-05-2008 19:39
+# Auto generated 22-07-2008 14:24
 #
 # Manual updates:
 # Only the data in the array - anything else is removed by next write.
@@ -27,11 +27,11 @@ $EM_CONF[$_EXTKEY] = array(
 	'clearCacheOnLoad' => 1,
 	'lockType' => '',
 	'author' => 'Rene Fritz, Francois Suter',
-	'author_email' => 'support@cobweb.ch',
+	'author_email' => 'typo3@cobweb.ch',
 	'author_company' => '',
 	'CGLcompliance' => '',
 	'CGLcompliance_note' => '',
-	'version' => '2.3.0',
+	'version' => '2.3.1',
 	'constraints' => array(
 		'depends' => array(
 			'typo3' => '3.5.0-0.0.0',
@@ -43,7 +43,7 @@ $EM_CONF[$_EXTKEY] = array(
 		'suggests' => array(
 		),
 	),
-	'_md5_values_when_last_written' => 'a:17:{s:9:"ChangeLog";s:4:"c2bc";s:19:"class.tx_devlog.php";s:4:"bf8d";s:21:"ext_conf_template.txt";s:4:"81fd";s:12:"ext_icon.gif";s:4:"cd8e";s:17:"ext_localconf.php";s:4:"3d1f";s:14:"ext_tables.php";s:4:"b24e";s:14:"ext_tables.sql";s:4:"e1b1";s:18:"icon_tx_devlog.gif";s:4:"cd8e";s:16:"locallang_db.xml";s:4:"a89f";s:7:"tca.php";s:4:"fcb3";s:14:"doc/manual.sxw";s:4:"99d6";s:14:"mod1/clear.gif";s:4:"cc11";s:13:"mod1/conf.php";s:4:"4129";s:14:"mod1/index.php";s:4:"a8bc";s:18:"mod1/locallang.xml";s:4:"1acd";s:22:"mod1/locallang_mod.xml";s:4:"5454";s:19:"mod1/moduleicon.gif";s:4:"cd8e";}',
+	'_md5_values_when_last_written' => 'a:17:{s:9:"ChangeLog";s:4:"84c7";s:19:"class.tx_devlog.php";s:4:"9617";s:21:"ext_conf_template.txt";s:4:"81fd";s:12:"ext_icon.gif";s:4:"cd8e";s:17:"ext_localconf.php";s:4:"3d1f";s:14:"ext_tables.php";s:4:"b24e";s:14:"ext_tables.sql";s:4:"e1b1";s:18:"icon_tx_devlog.gif";s:4:"cd8e";s:16:"locallang_db.xml";s:4:"a89f";s:7:"tca.php";s:4:"fcb3";s:14:"doc/manual.sxw";s:4:"d66b";s:14:"mod1/clear.gif";s:4:"cc11";s:13:"mod1/conf.php";s:4:"4129";s:14:"mod1/index.php";s:4:"7aea";s:18:"mod1/locallang.xml";s:4:"1acd";s:22:"mod1/locallang_mod.xml";s:4:"5454";s:19:"mod1/moduleicon.gif";s:4:"cd8e";}',
 	'suggests' => array(
 	),
 );

@@ -3,7 +3,7 @@
 *  Copyright notice
 *  
 *  (c) 2004 René Fritz (r.fritz@colorcube.de)
-*  (c) 2008 Francois Suter (support@cobweb.ch)
+*  (c) 2008 Francois Suter (typo3@cobweb.ch)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is 
@@ -27,7 +27,7 @@
  * Module 'DevLog' for the 'devlog' extension.
  *
  * @author	René Fritz <r.fritz@colorcube.de>
- * @author	Francois Suter <support@cobweb.ch>
+ * @author	Francois Suter <typo3@cobweb.ch>
  */
 
 	// this is a hack to prevent logging while initialization inside of this module
@@ -128,9 +128,9 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		if ($BE_USER->user['admin'])	{
 	
 				// Draw the header.
-			$this->doc = t3lib_div::makeInstance('bigDoc');
+			$this->doc = t3lib_div::makeInstance('template');
 			$this->doc->backPath = $BACK_PATH;
-			$this->doc->form='<form name="options" action="" method="POST">';
+//			$this->doc->form='<form name="options" action="" method="POST">';
 
 				// JavaScript
 				// Load Prototype library (check if it exists in the TYPO3 source, otherwise get it from extension configuration)
@@ -234,7 +234,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$this->content .= $this->doc->startPage($GLOBALS['LANG']->getLL('title'));
 			$this->content .= $this->doc->header($GLOBALS['LANG']->getLL('title'));
 			$this->content .= $this->doc->spacer(5);
-			$this->content .= $this->doc->section('', $this->doc->funcMenu($headerSection, t3lib_BEfunc::getFuncMenu($this->id,'SET[function]',$this->MOD_SETTINGS['function'], $this->MOD_MENU['function']).'&nbsp;&nbsp;&nbsp;'.$this->openNewView()));
+			$this->content .= '<form name="options" action="" method="POST">'.$this->doc->section('', $this->doc->funcMenu($headerSection, t3lib_BEfunc::getFuncMenu($this->id,'SET[function]',$this->MOD_SETTINGS['function'], $this->MOD_MENU['function']).'&nbsp;&nbsp;&nbsp;'.$this->openNewView())).'</form>';
 			$this->content .= $this->doc->divider(5);
 
 
@@ -603,32 +603,32 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT extkey', 'tx_devlog', $where_clause='', $groupBy='', $orderBy='extkey ASC');
 				// Display form for deleting log entries per extension
 			$content .= '<p>'.$GLOBALS['LANG']->getLL('cleanup_for_extension').'</p>';
-			$content .= '<form name="cleanExt'.$filterKey.'" action="" method="POST">';
+			$content .= '<form name="cleanExt" action="" method="POST">';
 			$content .= '<p><select name="clear[extension]">';
 			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
 				$content .= '<option value="'.$row['extkey'].'">'.$row['extkey'].'</option>';
 			}
-			$content .= '</select"></p>';
+			$content .= '</select></p>';
 			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearlog').'"></p>';
 			$content .= '</form>';
 			$content .= $this->doc->spacer(10);
 
 				// Display form for deleting log entries per period
 			$content .= '<p>'.$GLOBALS['LANG']->getLL('cleanup_for_period').'</p>';
-			$content .= '<form name="cleanPeriod'.$filterKey.'" action="" method="POST">';
+			$content .= '<form name="cleanPeriod" action="" method="POST">';
 			$content .= '<p><select name="clear[period]">';
 			foreach ($this->cleanupPeriods as $key => $period) {
 				$date = strtotime($period);
 				$content .= '<option value="'.$date.'">'.$GLOBALS['LANG']->getLL($key).'</option>';
 			}
-			$content .= '</select"></p>';
+			$content .= '</select></p>';
 			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearlog').'"></p>';
 			$content .= '</form>';
 			$content .= $this->doc->spacer(10);
 
 				// Display form for deleting all log entries
 			$content .= '<p><strong>'.$GLOBALS['LANG']->getLL('cleanup_all').'</strong></p>';
-			$content .= '<form name="cleanPeriod'.$filterKey.'" action="" method="POST">';
+			$content .= '<form name="cleanAll" action="" method="POST">';
 			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearalllog').'"></p>';
 			$content .= '</form>';
 		}
