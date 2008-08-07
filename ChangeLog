@@ -1,3 +1,7 @@
+2008-08-07 Francois Suter <typo3@cobweb.ch>
+
+	* Caught error when extension is not configured
+
 2008-07-22 Francois Suter <typo3@cobweb.ch>
 
 	* Corrected HTML markup error in BE module

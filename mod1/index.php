@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *  
-*  (c) 2004 René Fritz (r.fritz@colorcube.de)
+*  (c) 2004 Rene Fritz (r.fritz@colorcube.de)
 *  (c) 2008 Francois Suter (typo3@cobweb.ch)
 *  All rights reserved
 *
@@ -26,7 +26,7 @@
 /** 
  * Module 'DevLog' for the 'devlog' extension.
  *
- * @author	René Fritz <r.fritz@colorcube.de>
+ * @author	Rene Fritz <r.fritz@colorcube.de>
  * @author	Francois Suter <typo3@cobweb.ch>
  */
 
@@ -54,6 +54,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	var $totalLogEntries; // Total number of log entries in the database
 	var $filters = array(); // List of possible values for the log filters
 	var $extConf = array(); // Extension configuration
+	var $defaultEntriesPerPage = 25; // Default value for number of entries per page configuration parameter
 
 	var $cleanupPeriods = array('1hour' => '-1 hour', '1week' => '-1 week', '1month' => '-1 month', '3months' => '-3 months', '6months' => '-6 months', '1year' => '-1 year'); // List of possible periods for cleaning up log entries
 
@@ -67,6 +68,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 			// Get extension configuration
 		$this->extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$MCONF['extKey']]);
+		if (empty($this->extConf['entriesPerPage'])) $this->extConf['entriesPerPage'] = $this->defaultEntriesPerPage;
 
 			// get log run list
 		$this->getLogRuns();
