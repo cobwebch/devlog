@@ -1,3 +1,7 @@
+2008-08-13 Francois Suter <typo3@cobweb.ch>
+
+	* Simplified handling of extra data
+
 2008-08-07 Francois Suter <typo3@cobweb.ch>
 
 	* Caught error when extension is not configured

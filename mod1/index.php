@@ -418,7 +418,12 @@ class tx_devlog_module1 extends t3lib_SCbase {
  			$table[$tr][] = $row['cruser'];
  			$dataVar = '';
  			if (!empty($row['data_var'])) {
- 				$fullData = unserialize(stripslashes(substr($row['data_var'],1,strlen($row['data_var'])-1)));
+ 				if (strpos($row['data_var'], '"') === 0) {
+	 				$fullData = unserialize(stripslashes(substr($row['data_var'],1,strlen($row['data_var'])-1)));
+ 				}
+ 				else {
+	 				$fullData = unserialize($row['data_var']);
+ 				}
  				if ($fullData === false) {
 		 			$dataVar = $GLOBALS['LANG']->getLL('extra_data_error');
  				}

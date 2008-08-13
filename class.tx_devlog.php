@@ -69,7 +69,7 @@ class tx_devlog {
 		}
 
 		if (!empty($logArr['dataVar'])) {
-			$insertFields['data_var'] = '"'.$GLOBALS['TYPO3_DB']->quoteStr(serialize($logArr['dataVar']).'"', 'tx_devlog');
+			$insertFields['data_var'] = serialize($logArr['dataVar']);
 		}
 
 		$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_devlog', $insertFields);
