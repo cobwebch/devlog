@@ -451,16 +451,9 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		}
 			// Render the table
 		$logTable = $this->doc->table($table, $tableLayout);
-			// If there was a search, parse the log table's HTML and highlight the search words
-		if (!empty($this->MOD_SETTINGS['sword'])) {
-			$word = $this->MOD_SETTINGS['sword'];
-			$replace = '<span style="padding: 2px; background-color: #fc3; border: 1px solid #666">'.$this->MOD_SETTINGS['sword'].'</span>';
-			if (function_exists('str_ireplace')) { // If case insensitive replace exists, use it
-				$logTable = str_ireplace($word, $replace, $logTable);
-			}
-			else {
-				$logTable = str_replace($word, $replace, $logTable);
-			}
+			// If we are viewing all entries and there was a search, parse the log table's HTML and highlight the search words
+		if ($this->selectedLog == -1 && !empty($this->MOD_SETTINGS['sword'])) {
+			$logTable = $this->highlightString($logTable, $this->MOD_SETTINGS['sword']);
 		}
 
 			// Assemble pagination links, if required
@@ -489,8 +482,10 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	}
 
 	/**
-     * This method displays a simple search form
-     */
+	 * This method displays a simple search form
+	 *
+	 * @return	string	HTML of the search form
+	 */
 	function renderSearchForm() {
 		$content = '<p>'.$GLOBALS['LANG']->getLL('search_data').': ';
 		$content .= '<input type="text" id="sword" name="SET[sword]" value="'.$this->MOD_SETTINGS['sword'].'" /> ';
@@ -498,7 +493,27 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$content .= '<input type="button" name="clear_search" value="'.$GLOBALS['LANG']->getLL('clear_search').'" onclick="this.form.sword.value=\'\';this.form.submit();" />';
 		$content .= '</p>';
 		return $content;
-    }
+	}
+
+	/**
+	 * This method takes some string and highlights some other string within it
+	 *
+	 * @param	string	$content: the string to parse
+	 * @param	string	$word: the string to highlight
+	 *
+	 * @return	string	The original string with the highlighted word
+	 */
+	function highlightString($content, $word) {
+		$replace = '<span style="padding: 2px; background-color: #fc3; border: 1px solid #666">'.$word.'</span>';
+		if (function_exists('str_ireplace')) { // If case insensitive replace exists (PHP 5+), use it
+			$highlightedContent = str_ireplace($word, $replace, $content);
+		}
+		else {
+			$highlightedContent = str_replace($word, $replace, $content);
+		}
+		return $highlightedContent;
+	}
+	
 	/** 
 	 * This method assembles links to navigate between pages of log entries
 	 *
