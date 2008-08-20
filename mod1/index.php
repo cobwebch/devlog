@@ -80,7 +80,6 @@ class tx_devlog_module1 extends t3lib_SCbase {
 //t3lib_div::debug($this->MOD_SETTINGS);
 
 		$this->selectLog();
-
 	}
 
 	/**
@@ -111,6 +110,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			'filter_extkey' => $this->filters['extkey'],
 			'filter_severity' => $this->filters['severity'],
 			'expandAllExtraData' => 0,
+			'sword' => '',
 		);
 		$this->MOD_MENU['logrun'] = t3lib_div::array_merge($this->logRuns, $this->MOD_MENU['logrun']);
 //t3lib_div::debug($this->logRuns);
@@ -343,7 +343,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			// Select all log entries, but taking pagination into account
 		elseif ($this->selectedLog == -1) {
 
-				// Assemble the SQL condition from filters
+				// Assemble the SQL condition from filters and an eventual search criteria
 			$whereClause = '';
 //t3lib_div::debug($this->MOD_SETTINGS);
 			foreach ($this->MOD_SETTINGS as $key => $value) {
@@ -351,6 +351,10 @@ class tx_devlog_module1 extends t3lib_SCbase {
 					if (!empty($whereClause)) $whereClause .= ' AND ';
 					list($dummy, $filterKey) = explode('_', $key);
 					$whereClause .= $filterKey." = '".$value."'";
+				}
+				elseif ($key == 'sword' && !empty($value)) {
+					if (!empty($whereClause)) $whereClause .= ' AND ';
+					$whereClause .= "(msg LIKE '%".$value."%' OR data_var LIKE '%".$value."%')";
 				}
 			}
 
@@ -419,10 +423,10 @@ class tx_devlog_module1 extends t3lib_SCbase {
  			$dataVar = '';
  			if (!empty($row['data_var'])) {
  				if (strpos($row['data_var'], '"') === 0) {
-	 				$fullData = unserialize(stripslashes(substr($row['data_var'],1,strlen($row['data_var'])-1)));
+	 				$fullData = @unserialize(stripslashes(substr($row['data_var'],1,strlen($row['data_var'])-1)));
  				}
  				else {
-	 				$fullData = unserialize($row['data_var']);
+	 				$fullData = @unserialize($row['data_var']);
  				}
  				if ($fullData === false) {
 		 			$dataVar = $GLOBALS['LANG']->getLL('extra_data_error');
@@ -445,6 +449,19 @@ class tx_devlog_module1 extends t3lib_SCbase {
  			}
  			$table[$tr][] = $dataVar;
 		}
+			// Render the table
+		$logTable = $this->doc->table($table, $tableLayout);
+			// If there was a search, parse the log table's HTML and highlight the search words
+		if (!empty($this->MOD_SETTINGS['sword'])) {
+			$word = $this->MOD_SETTINGS['sword'];
+			$replace = '<span style="padding: 2px; background-color: #fc3; border: 1px solid #666">'.$this->MOD_SETTINGS['sword'].'</span>';
+			if (function_exists('str_ireplace')) { // If case insensitive replace exists, use it
+				$logTable = str_ireplace($word, $replace, $logTable);
+			}
+			else {
+				$logTable = str_replace($word, $replace, $logTable);
+			}
+		}
 
 			// Assemble pagination links, if required
 		$pagination = '';
@@ -460,12 +477,28 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$content = '<p>'.$GLOBALS['LANG']->getLL('log_period').': '.t3lib_befunc::dateTimeAge($startDate).' - '.t3lib_befunc::dateTimeAge($endDate).'</p>';
 		}
 		$content .= $this->doc->divider(5);
+			// Display search form, if required
+		if ($this->selectedLog == -1) {
+			$content .= $this->renderSearchForm();
+			$content .= $this->doc->spacer(3);
+		}
 		$content .= $pagination;
-		$content .= $this->doc->table($table, $tableLayout);
+		$content .= $logTable;
 		$content .= $pagination;
 		return $content;
 	}
 
+	/**
+     * This method displays a simple search form
+     */
+	function renderSearchForm() {
+		$content = '<p>'.$GLOBALS['LANG']->getLL('search_data').': ';
+		$content .= '<input type="text" id="sword" name="SET[sword]" value="'.$this->MOD_SETTINGS['sword'].'" /> ';
+		$content .= '<input type="submit" name="search" value="'.$GLOBALS['LANG']->getLL('search').'" /> ';
+		$content .= '<input type="button" name="clear_search" value="'.$GLOBALS['LANG']->getLL('clear_search').'" onclick="this.form.sword.value=\'\';this.form.submit();" />';
+		$content .= '</p>';
+		return $content;
+    }
 	/** 
 	 * This method assembles links to navigate between pages of log entries
 	 *
