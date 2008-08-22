@@ -338,7 +338,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 			// Select only the logs from the latest run
 		if ($this->selectedLog > 1000) {
-			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*','tx_devlog', 'crmsec = '.$this->selectedLog, $groupBy='', $orderBy='uid', $limit='');
+			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_devlog', 'crmsec = '.$this->selectedLog, $groupBy='', $orderBy='uid', $limit='');
 		}
 			// Select all log entries, but taking pagination into account
 		elseif ($this->selectedLog == -1) {
@@ -354,7 +354,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				}
 				elseif ($key == 'sword' && !empty($value)) {
 					if (!empty($whereClause)) $whereClause .= ' AND ';
-					$whereClause .= "(msg LIKE '%".$value."%' OR data_var LIKE '%".$value."%')";
+					$fullyQuotedString = $GLOBALS['TYPO3_DB']->fullQuoteStr('%'.$value.'%', 'tx_devlog');
+					$whereClause .= '(msg LIKE '.$fullyQuotedString.' OR data_var LIKE '.$fullyQuotedString.')';
 				}
 			}
 
@@ -504,7 +505,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 * @return	string	The original string with the highlighted word
 	 */
 	function highlightString($content, $word) {
-		$replace = '<span style="padding: 2px; background-color: #fc3; border: 1px solid #666">'.$word.'</span>';
+		$replace = '<span style="'.$this->extConf['highlightStyle'].'">'.$word.'</span>';
 		if (function_exists('str_ireplace')) { // If case insensitive replace exists (PHP 5+), use it
 			$highlightedContent = str_ireplace($word, $replace, $content);
 		}
