@@ -785,23 +785,16 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		}
 	}	
 	
-	/*******************************************
-	 *
-	 * 
-	 *
-	 *******************************************/	
-	
 	/**
-	 * 
+	 * This method prepares the link for opening the devlog in a new window
 	 *
-	 * @return	string
+	 * @return	string	Hyperlink with icon and appropriate JavaScript
 	 */
-	function openNewView()	{
+	function openNewView() {
 		global $BACK_PATH;
-		
+
 		$url = t3lib_div::getIndpEnv('TYPO3_REQUEST_SCRIPT');		
 		$onClick = "devlogWin=window.open('".$url."','devlog','width=790,status=0,menubar=1,resizable=1,location=0,scrollbars=1,toolbar=0');devlogWin.focus();return false;";
-		#$content = '<input type="button" name="openview" value="'.$GLOBALS['LANG']->getLL('open_view').'" onclick="'.htmlspecialchars($onClick).'">';
 		$content = '<a id="openview" href="#" onclick="'.htmlspecialchars($onClick).'">'.
 					'<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/open_in_new_window.gif','width="19" height="14"').' title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.openInNewWindow',1).'" class="absmiddle" '.$addAttrib.' alt="" />'.
 					'</a>';
@@ -818,22 +811,16 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		return $content;						
 	}
 
-
-	/*******************************************
-	 *
-	 * see user_setsearch
-	 *
-	 *******************************************/	
-	 
     /**
      * Returns a linked icon with title from a record
+     * NOTE: currently this is only called for the pages table, as table names are not stored in the devlog (but a pid may be)
      *
      * @param   string      Table name (tt_content,...)
      * @param   array       Record array
      * @return  string      Rendered icon
      */
     function getItemFromRecord($table, $row) {
-        global $BACK_PATH, $BE_USER, $TCA;
+        global $BACK_PATH, $BE_USER;
 
 		if (!$row['uid']) return;
 		if (count($row['uid'])==1) $row = t3lib_BEfunc::getRecord($table, $row['uid']);
@@ -842,11 +829,12 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
             // Prepend table description for non-pages tables
         if(!($table=='pages')) {
-            $iconAltText = $GLOBALS['LANG']->sl($TCA[$table]['ctrl']['title']).': '.$iconAltText;
+            $iconAltText = $GLOBALS['LANG']->sl($GLOBALS['TCA'][$table]['ctrl']['title']).': '.$iconAltText;
         }
 
             // Create record title or rootline for pages if option is selected
-        if($table=='pages' AND $this->MOD_SETTINGS['showRootline']) {
+            // NOTE: option doesn't exist
+        if($table == 'pages' && $this->MOD_SETTINGS['showRootline']) {
             $elementTitle = t3lib_BEfunc::getRecordPath($row['uid'], '1=1', 0);
             $elementTitle = t3lib_div::fixed_lgd_pre($elementTitle, $BE_USER->uc['titleLen']);
         } else {
@@ -859,7 +847,6 @@ class tx_devlog_module1 extends t3lib_SCbase {
             // Return item with edit link
         return $this->wrapEditLink($elementIcon.$elementTitle, $table, $row['uid']);
     }
-
 
     /**
      * Wraps an edit link around a string.
