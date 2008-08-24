@@ -873,8 +873,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
     function wrapEditLink($str, $table, $id)    {
         global $BACK_PATH;
 
-        if($table=='pages') {
-            $editOnClick = "top.fsMod.recentIds['web']=".$id.";top.goToModule('web_layout',1);";
+        if ($table == 'pages') {
+            $editOnClick = 'top.loadEditId('.$id.')';
         } else {
             $params = '&edit['.$table.']['.$id.']=edit';
             $editOnClick = t3lib_BEfunc::editOnClick($params, $BACK_PATH);
