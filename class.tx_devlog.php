@@ -44,7 +44,7 @@ class tx_devlog {
 	 * @param	array		$logArr: log data array
 	 * @return	void	 
 	 */
-	function devLog($logArr)	{
+	function devLog($logArr) {
 		global $TYPO3_CONF_VARS;
 	
 		if ($TYPO3_CONF_VARS['EXTCONF'][$this->extKey]['nolog']) return;
@@ -53,10 +53,22 @@ class tx_devlog {
 
 		
 		$insertFields = array();
-		$insertFields['pid'] = intval($GLOBALS['TSFE']->id);
+			// Try to get a pid that makes sense
+			// In the FE context, this is obviously the current page
+		if (isset($GLOBALS['TSFE'])) {
+			$pid = $GLOBALS['TSFE']->id;
+		}
+			// In other contexts, a global variable may be set with a relevant pid
+		elseif (isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['debugData']['pid'])) {
+			$pid = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['debugData']['pid'];
+		}
+		else {
+			$pid = 0;
+		}
+		$insertFields['pid'] = $pid;
 		$insertFields['crdate'] = $TYPO3_CONF_VARS['EXTCONF'][$this->extKey]['tstamp'];
 		$insertFields['crmsec'] = $TYPO3_CONF_VARS['EXTCONF'][$this->extKey]['mstamp'];
-		$insertFields['cruser_id'] = intval($GLOBALS['BE_USER']->user['uid']);
+		$insertFields['cruser_id'] = $GLOBALS['BE_USER']->user['uid'];
 		$insertFields['msg'] = $logArr['msg'];
 		$insertFields['extkey'] = $logArr['extKey'];
 		$insertFields['severity'] = $logArr['severity'];
