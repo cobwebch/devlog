@@ -1,3 +1,14 @@
+2008-10-08 Francois Suter <typo3@cobweb.ch>
+
+	* Added page filter
+	* Added user filter
+	* Added error message when no records are found
+	* Refactored part of the code
+
+2008-10-03 Francois Suter <typo3@cobweb.ch>
+
+	* Added handling of $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['debugData']['pid']
+
 2008-08-24 Francois Suter <typo3@cobweb.ch>
 
 	* Corrected page edit link

@@ -20,13 +20,15 @@
 *  GNU General Public License for more details.
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
+*
+*  $Id$
 ***************************************************************/
 
 
 /** 
  * devlog function for the 'devlog' extension.
  *
- * @author	René Fritz <r.fritz@colorcube.de>
+ * @author	Rene Fritz <r.fritz@colorcube.de>
  * @author	Francois Suter <typo3@cobweb.ch>
  */
 class tx_devlog {
@@ -106,7 +108,4 @@ class tx_devlog {
 		return null;
 	}
 }
-
-
-
 ?>

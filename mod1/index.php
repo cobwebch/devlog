@@ -21,10 +21,12 @@
 *  GNU General Public License for more details.
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
+*
+*  $Id$
 ***************************************************************/
 
 /** 
- * Module 'DevLog' for the 'devlog' extension.
+ * BE module for the 'devlog' extension.
  *
  * @author	Rene Fritz <r.fritz@colorcube.de>
  * @author	Francois Suter <typo3@cobweb.ch>
@@ -53,6 +55,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	var $selectedLog; // Flag for the number of logs to display
 	var $totalLogEntries; // Total number of log entries in the database
 	var $filters = array(); // List of possible values for the log filters
+	var $records = array(); // List of records that are gotten from the database and that may be used several times
+	var $selectedFilters = array(); // Selected filters and their values
 	var $extConf = array(); // Extension configuration
 	var $defaultEntriesPerPage = 25; // Default value for number of entries per page configuration parameter
 
@@ -107,13 +111,20 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			),
 			'autorefresh' => 0,
 			'page' => 0,
-			'filter_extkey' => $this->filters['extkey'],
-			'filter_severity' => $this->filters['severity'],
 			'expandAllExtraData' => 0,
 			'sword' => '',
 		);
 		$this->MOD_MENU['logrun'] = t3lib_div::array_merge($this->logRuns, $this->MOD_MENU['logrun']);
+		$setVar = t3lib_div::_GP('SET');
+		if (isset($setVar['filters'])) {
+			$this->selectedFilters = array_merge($GLOBALS['BE_USER']->getModuleData('selectedFilters'), $setVar['filters']);
+			$GLOBALS['BE_USER']->pushModuleData('selectedFilters', $this->selectedFilters);
+		}
+		else {
+			$this->selectedFilters = $GLOBALS['BE_USER']->getModuleData('selectedFilters');
+		}
 //t3lib_div::debug($this->logRuns);
+//t3lib_div::debug($this->selectedFilters);
 
 		parent::menuConfig();
 	}
@@ -124,10 +135,10 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 * @return	void
 	 */
 	function main()	{
-		global $BE_USER, $BACK_PATH, $TYPO3_CONF_VARS;
+		global $BACK_PATH;
 		
 		// Access check! Allow only admin user to view this content
-		if ($BE_USER->user['admin'])	{
+		if ($GLOBALS['BE_USER']->user['admin'])	{
 	
 				// Draw the header.
 			$this->doc = t3lib_div::makeInstance('template');
@@ -227,7 +238,6 @@ class tx_devlog_module1 extends t3lib_SCbase {
 					array(
 						array('', $optMenu['autorefresh']),
 						array('',$optMenu['expandAllExtraData'])
-//						array('', '')
 					)
 				);			
 			}
@@ -245,7 +255,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 			
 			// ShortCut
-			if ($BE_USER->mayMakeShortcut())	{
+			if ($GLOBALS['BE_USER']->mayMakeShortcut())	{
 				$this->content .= $this->doc->spacer(20).$this->doc->section('',$this->doc->makeShortcutIcon('id',implode(',',array_keys($this->MOD_MENU)),$this->MCONF['name']));
 			}
 		
@@ -266,6 +276,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 	/**
 	 * Prints out the module HTML
+	 *
+	 * @return	void
 	 */
 	function printContent()	{
 		$this->content .= $this->doc->endPage();
@@ -275,8 +287,10 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	
 	/**
 	 * Generates the module content
+	 *
+	 * @return	void
 	 */
-	function moduleContent()	{
+	function moduleContent() {
 
 		switch((string)$this->MOD_SETTINGS['function'])	{
 			case 'showlog':
@@ -299,18 +313,19 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 * @return	string 	rendered HTML table
 	 */	
 	function getLogTable()	{
-		global $BE_USER, $BACK_PATH;
+		global $BACK_PATH;
+		$content = '';
 
 			// init table layout
 		$tableLayout = array (
 			'table' => array ('<table border="0" cellspacing="1" cellpadding="2" style="width:auto;">', '</table>'),
 			'0' => array (
-				'tr' => array('<tr class="bgColor2" valign="top">','</tr>'),
+				'tr' => array('<tr class="bgColor2" valign="top">', '</tr>'),
 			),
 			'defRow' => array (
-				'tr' => array('<tr class="bgColor-20">','</tr>'),
-				'1' => array('<td align="center">','</td>'),
-				'defCol' => array('<td>','</td>'),
+				'tr' => array('<tr class="bgColor-20">', '</tr>'),
+				'1' => array('<td align="center">', '</td>'),
+				'defCol' => array('<td>', '</td>'),
 			)
 		);
 
@@ -318,137 +333,97 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$tr = 0;
 		
 			// add header row
-		$table[$tr][] = $GLOBALS['LANG']->getLL('uid');
-		$header = $GLOBALS['LANG']->getLL('severity');
+		$table[$tr][] = $this->renderHeader('uid');
+		$table[$tr][] = $this->renderHeader('severity', 'severity');
+		$table[$tr][] = $this->renderHeader('crdate');
+		$table[$tr][] = $this->renderHeader('extkey', 'extkey');
+		$table[$tr][] = $this->renderHeader('message');
+		$table[$tr][] = $this->renderHeader('location');
+		$table[$tr][] = $this->renderHeader('page', 'pid');
+		$header = $GLOBALS['LANG']->getLL('cruser');
 		if ($this->selectedLog == -1) {
-			$header .= '<br />'.$this->renderFilterMenu('severity');
+			$header .= '<br />'.$this->renderFilterMenu('cruser_id');
 		}
-		$table[$tr][] = $header;
-		$table[$tr][] = $GLOBALS['LANG']->getLL('crdate');
-		$header = $GLOBALS['LANG']->getLL('extkey');
-		if ($this->selectedLog == -1) {
-			$header .= '<br />'.$this->renderFilterMenu('extkey');
+		$table[$tr][] = $this->renderHeader('cruser', 'cruser_id');
+		$table[$tr][] = $this->renderHeader('extra_data');
+
+			// Get all the relevant log entries
+		$dbres = $this->getLogEntries();
+
+			// If the selection is empty, display a message
+		if ($GLOBALS['TYPO3_DB']->sql_num_rows($dbres) == 0) {
+			$content .= $this->wrapMessage($GLOBALS['LANG']->getLL('no_entries_found'));
 		}
-		$table[$tr][] = $header;
-		$table[$tr][] = $GLOBALS['LANG']->getLL('message');
-		$table[$tr][] = $GLOBALS['LANG']->getLL('location');
-		$table[$tr][] = $GLOBALS['LANG']->getLL('page');
-		$table[$tr][] = $GLOBALS['LANG']->getLL('cruser');
-		$table[$tr][] = $GLOBALS['LANG']->getLL('extra_data');
-
-			// Select only the logs from the latest run
-		if ($this->selectedLog > 1000) {
-			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_devlog', 'crmsec = '.$this->selectedLog, $groupBy='', $orderBy='uid', $limit='');
-		}
-			// Select all log entries, but taking pagination into account
-		elseif ($this->selectedLog == -1) {
-
-				// Assemble the SQL condition from filters and an eventual search criteria
-			$whereClause = '';
-//t3lib_div::debug($this->MOD_SETTINGS);
-			foreach ($this->MOD_SETTINGS as $key => $value) {
-				if (strpos($key, 'filter_') !== false && $value  != '*') {
-					if (!empty($whereClause)) $whereClause .= ' AND ';
-					list($dummy, $filterKey) = explode('_', $key);
-					$whereClause .= $filterKey." = '".$value."'";
-				}
-				elseif ($key == 'sword' && !empty($value)) {
-					if (!empty($whereClause)) $whereClause .= ' AND ';
-					$fullyQuotedString = $GLOBALS['TYPO3_DB']->fullQuoteStr('%'.$value.'%', 'tx_devlog');
-					$whereClause .= '(msg LIKE '.$fullyQuotedString.' OR data_var LIKE '.$fullyQuotedString.')';
-				}
-			}
-
-				// Load the total entries count
-			$this->getLogEntriesCount($whereClause);
-
-				// Make sure the start page number is not an empty string
-			if (empty($this->MOD_SETTINGS['page'])) {
-				$page = 0;
-			}
-			else {
-				$page = $this->MOD_SETTINGS['page'];
-			}
-				// Calculate start page
-				// If start is larger than entries count, revert to first page (0)
-			$start = $page * $this->extConf['entriesPerPage'];
-			if ($start > $this->totalLogEntries) $start = 0;
-			$limit = $start.','.$this->extConf['entriesPerPage'];
-			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*','tx_devlog', $whereClause, $groupBy='', $orderBy='uid DESC', $limit);
-		}
-			// Select the latest log entries up to the selected limit
+			// Otherwise loop on the results and build table for display
 		else {
-			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*','tx_devlog', '', $groupBy='', $orderBy='uid DESC', $limit=$this->selectedLog);
-		}
-
-			// Loop on the results and build table for display
-		$endDate = 0;
-		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
-
-				// Memorise start and end date of selected entries
-			if (empty($endDate)) $endDate = $row['crdate'];
-			$startDate = $row['crdate'];
-			
-				// Severity: 0 is info, 1 is notice, 2 is warning, 3 is fatal error, -1 is "OK" message
-			switch ($row['severity']) {
-			    case 0:
-			        $severity = '<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/info.gif','width="18" height="16"').' alt="" />';
-			        break;
-			    case -1:
-			    case 1:
-			    case 2:
-			    case 3:
-			        $severity = $this->doc->icons($row['severity']);
-			        break;
-			    default:
-			        $severity = $row['severity'];
-			        break;
-			}
-			
-				// add row to table
-			$tr++;
-
-				// if user created log entry use a darker row background
-			if ($row['cruser'] == intval($GLOBALS['BE_USER']->user['uid']))	{
-				$tableLayout[$tr]['tr'] = array('<tr class="bgColor4">','</tr>');
-			}				
-		
- 			$table[$tr][] = $this->linkLogRun($row['uid'], $row['crmsec']);
- 			$table[$tr][] = $severity;
- 			$table[$tr][] = date('d-m-y G:i',$row['crdate']);
- 			$table[$tr][] = $row['extkey'];
- 			$table[$tr][] = $row['msg'];
- 			$table[$tr][] = (empty($row['location']) || empty($row['line'])) ? '' : sprintf($GLOBALS['LANG']->getLL('line_call'), $row['location'], $row['line']);
- 			$table[$tr][] = $this->getItemFromRecord('pages', array('uid' => $row['pid']));
- 			$table[$tr][] = $row['cruser'];
- 			$dataVar = '';
- 			if (!empty($row['data_var'])) {
- 				if (strpos($row['data_var'], '"') === 0) {
-	 				$fullData = @unserialize(stripslashes(substr($row['data_var'],1,strlen($row['data_var'])-1)));
- 				}
- 				else {
-	 				$fullData = @unserialize($row['data_var']);
- 				}
- 				if ($fullData === false) {
-		 			$dataVar = $GLOBALS['LANG']->getLL('extra_data_error');
- 				}
- 				else {
-		 			if ($this->MOD_SETTINGS['expandAllExtraData']) {
-						$style = '';
-		 				$label = $GLOBALS['LANG']->getLL('hide_extra_data');
-		 				$icon = '<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/minusbullet_list.gif','width="18" height="12"').' alt="-" />';
-		 			} else {
-						$style = ' style="display: none;"';
-		 				$label = $GLOBALS['LANG']->getLL('show_extra_data');
-		 				$icon = '<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/plusbullet_list.gif','width="18" height="12"').' alt="+" />';
-		 			}
-		 			$dataVar = '<a href="javascript:toggleExtraData(\''.$row['uid'].'\')" id="debug-link-'.$row['uid'].'" title="'.$label.'">';
-			        $dataVar .= $icon;
- 		 			$dataVar .= '</a>';
-		 			$dataVar .= '<div id="debug-row-'.$row['uid'].'"'.$style.'>'.t3lib_div::view_array($fullData).'</div>';
+			$endDate = 0;
+			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
+	
+					// Memorise start and end date of selected entries
+				if (empty($endDate)) $endDate = $row['crdate'];
+				$startDate = $row['crdate'];
+				
+					// Severity: 0 is info, 1 is notice, 2 is warning, 3 is fatal error, -1 is "OK" message
+				switch ($row['severity']) {
+					case 0:
+						$severity = '<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/info.gif','width="18" height="16"').' alt="" />';
+						break;
+					case -1:
+					case 1:
+					case 2:
+					case 3:
+						$severity = $this->doc->icons($row['severity']);
+						break;
+					default:
+						$severity = $row['severity'];
+						break;
 				}
- 			}
- 			$table[$tr][] = $dataVar;
+				
+					// add row to table
+				$tr++;
+	
+					// if user created log entry use a darker row background
+				if ($row['cruser'] == intval($GLOBALS['BE_USER']->user['uid']))	{
+					$tableLayout[$tr]['tr'] = array('<tr class="bgColor4">','</tr>');
+				}				
+			
+				$table[$tr][] = $this->linkLogRun($row['uid'], $row['crmsec']);
+				$table[$tr][] = $severity;
+				$table[$tr][] = date('d-m-y G:i',$row['crdate']);
+				$table[$tr][] = $row['extkey'];
+				$table[$tr][] = $row['msg'];
+				$table[$tr][] = (empty($row['location']) || empty($row['line'])) ? '' : sprintf($GLOBALS['LANG']->getLL('line_call'), $row['location'], $row['line']);
+				$table[$tr][] = $this->getPageLink($row['pid']);
+				$table[$tr][] = $this->getRecordDetails('be_users', $row['cruser_id']);
+				$dataVar = '';
+				if (!empty($row['data_var'])) {
+					if (strpos($row['data_var'], '"') === 0) {
+						$fullData = @unserialize(stripslashes(substr($row['data_var'],1,strlen($row['data_var'])-1)));
+					}
+					else {
+						$fullData = @unserialize($row['data_var']);
+					}
+					if ($fullData === false) {
+						$dataVar = $GLOBALS['LANG']->getLL('extra_data_error');
+					}
+					else {
+						if ($this->MOD_SETTINGS['expandAllExtraData']) {
+							$style = '';
+							$label = $GLOBALS['LANG']->getLL('hide_extra_data');
+							$icon = '<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/minusbullet_list.gif','width="18" height="12"').' alt="-" />';
+						} else {
+							$style = ' style="display: none;"';
+							$label = $GLOBALS['LANG']->getLL('show_extra_data');
+							$icon = '<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/plusbullet_list.gif','width="18" height="12"').' alt="+" />';
+						}
+						$dataVar = '<a href="javascript:toggleExtraData(\''.$row['uid'].'\')" id="debug-link-'.$row['uid'].'" title="'.$label.'">';
+						$dataVar .= $icon;
+						$dataVar .= '</a>';
+						$dataVar .= '<div id="debug-row-'.$row['uid'].'"'.$style.'>'.t3lib_div::view_array($fullData).'</div>';
+					}
+				}
+				$table[$tr][] = $dataVar;
+			}
 		}
 			// Render the table
 		$logTable = $this->doc->table($table, $tableLayout);
@@ -465,10 +440,10 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 			// return rendered table and pagination
 		if ($startDate == $endDate) {
-			$content = '<p>'.$GLOBALS['LANG']->getLL('log_period').': '.t3lib_befunc::dateTimeAge($startDate).'</p>';
+			$content .= '<p>'.$GLOBALS['LANG']->getLL('log_period').': '.t3lib_befunc::dateTimeAge($startDate).'</p>';
 		}
 		else {
-			$content = '<p>'.$GLOBALS['LANG']->getLL('log_period').': '.t3lib_befunc::dateTimeAge($startDate).' - '.t3lib_befunc::dateTimeAge($endDate).'</p>';
+			$content .= '<p>'.$GLOBALS['LANG']->getLL('log_period').': '.t3lib_befunc::dateTimeAge($startDate).' - '.t3lib_befunc::dateTimeAge($endDate).'</p>';
 		}
 		$content .= $this->doc->divider(5);
 			// Display search form, if required
@@ -514,7 +489,21 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		}
 		return $highlightedContent;
 	}
-	
+
+	/**
+	 * This method renders the headers of the log table
+	 *
+	 * @param	string	$label: label to display in the header
+	 * @param	string	$filter: name of the field to build the filter on, if any
+	 * @return	string	HTML to display
+	 */
+	function renderHeader($label, $filter = '') {
+		$header = $GLOBALS['LANG']->getLL($label);
+		if ($this->selectedLog == -1) {
+			$header .= '<br />'.$this->renderFilterMenu($filter);
+		}
+		return $header;
+	}
 	/** 
 	 * This method assembles links to navigate between pages of log entries
 	 *
@@ -601,9 +590,9 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	function renderFilterMenu($filterKey) {
 		if (isset($this->filters[$filterKey])) {
 			$filter = '<form name="filter'.$filterKey.'" action="" method="GET">';
-			$filter .= '<select name="SET[filter_'.$filterKey.']" onchange="this.form.submit()">';
+			$filter .= '<select name="SET[filters]['.$filterKey.']" onchange="this.form.submit()">';
 			foreach ($this->filters[$filterKey] as $key => $value) {
-				if ((string)$key == (string)$this->MOD_SETTINGS['filter_'.$filterKey]) {
+				if ((string)$key == (string)$this->selectedFilters[$filterKey]) {
 					$selected = ' selected="selected"';
 				}
 				else {
@@ -640,7 +629,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			}
 			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', $where);
 			$affectedRows = $GLOBALS['TYPO3_DB']->sql_affected_rows();
-			$content .= '<p style="padding: 4px; background-color: #0f0;">'.sprintf($GLOBALS['LANG']->getLL('cleared_log'), $affectedRows).'</p>';
+			$content .= $this->wrapMessage(sprintf($GLOBALS['LANG']->getLL('cleared_log'), $affectedRows), 'success');
 			$content .= $this->doc->spacer(10);
 		}
 			// Display delete forms
@@ -691,6 +680,30 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		return $content;
 	}
 
+	/**
+	 * This method wraps a given string with some styling depending on the type of message
+	 * (success, wraning or error)
+	 * This wrapper makes it easier to change the kind of styling (e.g. when it will be easier to load custom CSS in a BE module)
+	 *
+	 * @param	string	$string: the message to wrap
+	 * @param	string	$type: the type of message (success, wraning or error)
+	 * @return	string	The wrapped string
+	 */
+	function wrapMessage($string, $type = 'error') {
+		switch ($type) {
+			case 'success':
+				$result = '<p style="padding: 4px; background-color: #0f0;">'.$string.'</p>';
+				break;
+			case 'warning':
+				$result = '<p style="padding: 4px; background-color: #f90;">'.$string.'</p>';
+				break;
+			default:
+				$result = '<p style="padding: 4px; background-color: #f00; color: #fff">'.$string.'</p>';
+				break;
+		}
+		return $result;
+	}
+
 	/*******************************************
 	 *
 	 * DB stuff
@@ -709,6 +722,59 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
 			$this->logRuns[$row['crmsec']] = t3lib_befunc::dateTimeAge($row['crdate']);
 		}
+	}
+
+	/**
+	 * This method gets all the relevant log entries given the current settings
+	 *
+	 * @return	pointer		Database resource
+	 */
+	function getLogEntries() {
+
+			// Select only the logs from the latest run
+		if ($this->selectedLog > 1000) {
+			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_devlog', 'crmsec = '.$this->selectedLog, $groupBy='', $orderBy='uid', $limit='');
+		}
+			// Select all log entries, but taking pagination into account
+		elseif ($this->selectedLog == -1) {
+
+				// Assemble the SQL condition from filters and an eventual search criteria
+			$whereClause = '';
+//t3lib_div::debug($this->MOD_SETTINGS);
+			foreach ($this->selectedFilters as $key => $value) {
+				if ($value  != '*') {
+					if (!empty($whereClause)) $whereClause .= ' AND ';
+					$whereClause .= $key." = '".$value."'";
+				}
+			}
+			if (!empty($this->MOD_SETTINGS['sword'])) {
+				if (!empty($whereClause)) $whereClause .= ' AND ';
+				$fullyQuotedString = $GLOBALS['TYPO3_DB']->fullQuoteStr('%'.$this->MOD_SETTINGS['sword'].'%', 'tx_devlog');
+				$whereClause .= '(msg LIKE '.$fullyQuotedString.' OR data_var LIKE '.$fullyQuotedString.')';
+			}
+
+				// Load the total entries count
+			$this->getLogEntriesCount($whereClause);
+
+				// Make sure the start page number is not an empty string
+			if (empty($this->MOD_SETTINGS['page'])) {
+				$page = 0;
+			}
+			else {
+				$page = $this->MOD_SETTINGS['page'];
+			}
+				// Calculate start page
+				// If start is larger than entries count, revert to first page (0)
+			$start = $page * $this->extConf['entriesPerPage'];
+			if ($start > $this->totalLogEntries) $start = 0;
+			$limit = $start.','.$this->extConf['entriesPerPage'];
+			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_devlog', $whereClause, $groupBy='', $orderBy='uid DESC', $limit);
+		}
+			// Select the latest log entries up to the selected limit
+		else {
+			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_devlog', '', $groupBy='', $orderBy='uid DESC', $limit=$this->selectedLog);
+		}
+		return $dbres;
 	}
 
 	/**
@@ -739,12 +805,34 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$this->filters['extkey'][$row['extkey']] = $row['extkey'];
 		}
 
-			// Get list of existing pages in the log table
+			// Get list of pages referenced in the log table
 		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT pid', 'tx_devlog', '');
 		$this->filters['pid'] = array('*' => '');
+		$this->records['pages'] = array();
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
-			$this->filters['pid'][$row['pid']] = $row['pid'];
+			if (!empty($row['pid'])) {
+				$page = t3lib_BEfunc::getRecord('pages', $row['pid']);
+				$elementTitle = t3lib_BEfunc::getRecordTitle('pages', $page, 1);
+				$page['t3lib_BEfunc::title'] = $elementTitle;
+				$this->records['pages'][$row['pid']] = $page;
+				$this->filters['pid'][$row['pid']] = $elementTitle;
+			}
 		}
+
+			// Get list of users referenced in the log table
+		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT cruser_id', 'tx_devlog', '');
+		$this->filters['cruser_id'] = array('*' => '');
+		$this->records['be_users'] = array();
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
+			if (!empty($row['cruser_id'])) {
+				$record = t3lib_BEfunc::getRecord('be_users', $row['cruser_id']);
+				$elementTitle = t3lib_BEfunc::getRecordTitle('be_users', $record, 1);
+				$record['t3lib_BEfunc::title'] = $elementTitle;
+				$this->records['be_users'][$row['cruser_id']] = $record;
+				$this->filters['cruser_id'][$row['cruser_id']] = $elementTitle;
+			}
+		}
+
 			// Get list of severities
 		$this->filters['severity']['*'] = '';
 		$this->filters['severity']['-1'] = $GLOBALS['LANG']->getLL('severity_ok');
@@ -819,57 +907,53 @@ class tx_devlog_module1 extends t3lib_SCbase {
      * @param   array       Record array
      * @return  string      Rendered icon
      */
-    function getItemFromRecord($table, $row) {
-        global $BACK_PATH, $BE_USER;
-
-		if (!$row['uid']) return;
-		if (count($row['uid'])==1) $row = t3lib_BEfunc::getRecord($table, $row['uid']);
-		
-        $iconAltText = t3lib_BEfunc::getRecordIconAltText($row, $table);
-
-            // Prepend table description for non-pages tables
-        if(!($table=='pages')) {
-            $iconAltText = $GLOBALS['LANG']->sl($GLOBALS['TCA'][$table]['ctrl']['title']).': '.$iconAltText;
-        }
-
-            // Create record title or rootline for pages if option is selected
-            // NOTE: option doesn't exist
-        if($table == 'pages' && $this->MOD_SETTINGS['showRootline']) {
-            $elementTitle = t3lib_BEfunc::getRecordPath($row['uid'], '1=1', 0);
-            $elementTitle = t3lib_div::fixed_lgd_pre($elementTitle, $BE_USER->uc['titleLen']);
-        } else {
-            $elementTitle = t3lib_BEfunc::getRecordTitle($table, $row, 1);
-        }
-
-            // Create icon for record
-        $elementIcon = t3lib_iconworks::getIconImage($table, $row, $BACK_PATH, 'class="c-recicon" title="'.$iconAltText.'"');
-
-            // Return item with edit link
-        return $this->wrapEditLink($elementIcon.$elementTitle, $table, $row['uid']);
+    function getPageLink($uid) {
+        global $BACK_PATH;
+		if (empty($uid)) {
+			return '';
+		}
+		else {
+				// Retrieve the stored page information
+				// (pages were already fetched in getLogFilters)
+			$row = $this->records['pages'][$uid];
+			$iconAltText = t3lib_BEfunc::getRecordIconAltText($row, 'pages');
+	
+				// Create icon for record
+			$elementIcon = t3lib_iconworks::getIconImage('pages', $row, $BACK_PATH, 'class="c-recicon" title="'.$iconAltText.'"');
+	
+				// Return item with edit link
+			$editOnClick = 'top.loadEditId('.$uid.')';
+			$string = '<a href="#" onclick="'.htmlspecialchars($editOnClick).'">'.$elementIcon.$row['t3lib_BEfunc::title'].'</a>';
+			return $string;
+		}
     }
 
-    /**
-     * Wraps an edit link around a string.
-     * Creates a page module link for pages, edit link for other tables.
-     *
-     * @param   string      The string to be wrapped
-     * @param   string      Table name (tt_content,...)
-     * @param   integer     uid of the record
-     * @return  string      Rendered link
-     */
-    function wrapEditLink($str, $table, $id)    {
+	/**
+	 * This method gets the title and the icon for a given record of a given table
+	 * It returns these as a HTML string
+	 *
+	 * @param	string		$table: name of the table
+	 * @param	integer		$uid: primary key of the record
+	 * @return	string		HTML to display
+	 */
+	function getRecordDetails($table, $uid) {
         global $BACK_PATH;
-
-        if ($table == 'pages') {
-            $editOnClick = 'top.loadEditId('.$id.')';
-        } else {
-            $params = '&edit['.$table.']['.$id.']=edit';
-            $editOnClick = t3lib_BEfunc::editOnClick($params, $BACK_PATH);
-        }
-        return '<a href="#" onclick="'.htmlspecialchars($editOnClick).'">'.$str.'</a>'; ;
-    }	
-	
-	
+		if (empty($table) || empty($uid)) {
+			return '';
+		}
+		else {
+			if (isset($this->records[$table][$uid])) {
+				$row = $this->records[$table][$uid];
+			}
+			else {
+				$row = t3lib_BEfunc::getRecord($table, $uid);
+			}
+	        $iconAltText = t3lib_BEfunc::getRecordIconAltText($row, $table);
+            $elementTitle = t3lib_BEfunc::getRecordTitle($table, $row, 1);
+	        $elementIcon = t3lib_iconworks::getIconImage($table, $row, $BACK_PATH, 'class="c-recicon" title="'.$iconAltText.'"');
+			return $elementIcon.$elementTitle;
+		}
+	}
 }
 
 
