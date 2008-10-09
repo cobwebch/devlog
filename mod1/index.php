@@ -51,7 +51,9 @@ $BE_USER->modAccess($MCONF,1);	// This checks permissions and exits if the users
 class tx_devlog_module1 extends t3lib_SCbase {
 	var $pageinfo;
 
-	var $logRuns = array(); // List of recent log runs
+	var $logRuns = array(); // List of all log runs
+	var $recentRuns = array(); // List of recent log runs
+	var $setVars = array(); // All variables passed when calling the script (GET and POST)
 	var $selectedLog; // Flag for the number of logs to display
 	var $totalLogEntries; // Total number of log entries in the database
 	var $filters = array(); // List of possible values for the log filters
@@ -79,7 +81,10 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		
 			// Clean up excess logs (if activated)
 		if ($this->extConf['autoCleanup']) $this->logGC();
-		
+
+			// Get and store the GET and POST variables		
+		$this->setVars = t3lib_div::_GP('SET');
+
 		parent::init();
 //t3lib_div::debug($this->MOD_SETTINGS);
 
@@ -114,10 +119,9 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			'expandAllExtraData' => 0,
 			'sword' => '',
 		);
-		$this->MOD_MENU['logrun'] = t3lib_div::array_merge($this->logRuns, $this->MOD_MENU['logrun']);
-		$setVar = t3lib_div::_GP('SET');
-		if (isset($setVar['filters'])) {
-			$this->selectedFilters = array_merge($GLOBALS['BE_USER']->getModuleData('selectedFilters'), $setVar['filters']);
+		$this->MOD_MENU['logrun'] = t3lib_div::array_merge($this->recentRuns, $this->MOD_MENU['logrun']);
+		if (isset($this->setVars['filters'])) {
+			$this->selectedFilters = array_merge($GLOBALS['BE_USER']->getModuleData('selectedFilters'), $this->setVars['filters']);
 			$GLOBALS['BE_USER']->pushModuleData('selectedFilters', $this->selectedFilters);
 		}
 		else {
@@ -711,16 +715,25 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 *******************************************/	
 
 	/**
-	 * This method gets the list of the most recent log runs up to a limit defined by maxLogRuns
+	 * This method gets the list of all the log runs
+	 * It also assembles a limited list of the most recent log runs up to a limit defined by maxLogRuns
 	 *
 	 * @return	void
 	 */
 	function getLogRuns() {
 		$this->logRuns = array();
-		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT crmsec,crdate', 'tx_devlog', $where_clause='', $groupBy='', $orderBy='crmsec DESC', empty($this->extConf['maxLogRuns']) ? '' : $this->extConf['maxLogRuns']);
+		$this->recentRuns = array();
+		$runLimit = empty($this->extConf['maxLogRuns']) ? 0 : $this->extConf['maxLogRuns'];
+		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT crmsec,crdate', 'tx_devlog', $where_clause='', $groupBy='', $orderBy='crmsec DESC');
 			// Assemble those runs in an associative array with run timestamp as a key
+		$counter = 0;
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
-			$this->logRuns[$row['crmsec']] = t3lib_befunc::dateTimeAge($row['crdate']);
+			$formattedDate = t3lib_befunc::dateTimeAge($row['crdate']);
+			$this->logRuns[$row['crmsec']] = $formattedDate;
+			if ($runLimit != 0 && $counter < $runLimit) {
+				$this->recentRuns[$row['crmsec']] = $formattedDate;
+			}
+			$counter++;
 		}
 	}
 
@@ -731,7 +744,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 */
 	function getLogEntries() {
 
-			// Select only the logs from the latest run
+			// Select only the logs from a single run
 		if ($this->selectedLog > 1000) {
 			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_devlog', 'crmsec = '.$this->selectedLog, $groupBy='', $orderBy='uid', $limit='');
 		}
@@ -848,15 +861,18 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 * @return	void
 	 */
 	function selectLog() {
+			// If no logrun was explicitly selected, get the one stored in session
+		if (empty($this->setVars['logrun'])) $this->setVars['logrun'] = $this->MOD_SETTINGS['logrun'];
+
 			// If logrun is 1000, we want to display only the latest log run
 			// In this case, we select the timestamp key from the latest run
-		if ($this->MOD_SETTINGS['logrun'] == 1000) {
+		if ($this->setVars['logrun'] == 1000) {
 			reset($this->logRuns);
 			$this->selectedLog = key($this->logRuns);
 		}
 			// Otherwise just take the logrun value as is
 		else {
-			$this->selectedLog = $this->MOD_SETTINGS['logrun'];
+			$this->selectedLog = $this->setVars['logrun'];
 		} 
 	}
 
