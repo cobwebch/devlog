@@ -1,3 +1,8 @@
+2008-10-13 Francois Suter <typo3@cobweb.ch>
+
+	* Updated the manual
+	* Released version 2.5.0
+
 2008-10-09 Francois Suter <typo3@cobweb.ch>
 
 	* Fixed error when linking to log runs beyond the (menu) limit
