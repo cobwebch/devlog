@@ -1,5 +1,9 @@
 2008-10-13 Francois Suter <typo3@cobweb.ch>
 
+	* Caught unitiliazed value in BE module
+
+2008-10-13 Francois Suter <typo3@cobweb.ch>
+
 	* Updated the manual
 	* Released version 2.5.0
 

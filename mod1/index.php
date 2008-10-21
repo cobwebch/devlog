@@ -754,10 +754,12 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				// Assemble the SQL condition from filters and an eventual search criteria
 			$whereClause = '';
 //t3lib_div::debug($this->MOD_SETTINGS);
-			foreach ($this->selectedFilters as $key => $value) {
-				if ($value  != '*') {
-					if (!empty($whereClause)) $whereClause .= ' AND ';
-					$whereClause .= $key." = '".$value."'";
+			if (is_array($this->selectedFilters)) {
+				foreach ($this->selectedFilters as $key => $value) {
+					if ($value  != '*') {
+						if (!empty($whereClause)) $whereClause .= ' AND ';
+						$whereClause .= $key." = '".$value."'";
+					}
 				}
 			}
 			if (!empty($this->MOD_SETTINGS['sword'])) {
