@@ -121,7 +121,13 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		);
 		$this->MOD_MENU['logrun'] = t3lib_div::array_merge($this->recentRuns, $this->MOD_MENU['logrun']);
 		if (isset($this->setVars['filters'])) {
-			$this->selectedFilters = array_merge($GLOBALS['BE_USER']->getModuleData('selectedFilters'), $this->setVars['filters']);
+			$storedData = $GLOBALS['BE_USER']->getModuleData('selectedFilters');
+			if (isset($storedData)) {
+				$this->selectedFilters = array_merge($storedData, $this->setVars['filters']);
+			}
+			else {
+				$this->selectedFilters = $this->setVars['filters'];
+			}
 			$GLOBALS['BE_USER']->pushModuleData('selectedFilters', $this->selectedFilters);
 		}
 		else {
