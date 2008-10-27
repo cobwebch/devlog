@@ -70,6 +70,9 @@ class tx_devlog {
 			// this is a hack to prevent logging while initialization - $TYPO3_CONF_VARS will be reset while init
 		if ($GLOBALS['EXTCONF'][$this->extKey]['nolog']) return;
 
+			// If the severity is below the minimum logging level, don't log the entry
+		if ($logArr['severity'] < $this->extConf['minLogLevel']) return;
+
 			// Check if the maximum number of rows has been exceeded
 		if (!empty($this->extConf['maxRows'])) {
 			$this->checkRowLimit();

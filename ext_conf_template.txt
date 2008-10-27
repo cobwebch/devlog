@@ -4,13 +4,10 @@ maxLogRuns = 15
 # cat=basic//; type=integer; label=Number of entries per page: Set the number of log entries to display per page, when viewing all log entries
 entriesPerPage = 25
 
-# cat=basic//; type=boolean; label=Automatic clean up: Check this box if you want to automatically clean up log runs in excess of maxLogRuns when entering the BE module
-autoCleanup = 0
-
 # cat=basic//; type=integer; label=Maximum number of rows: Maximum number of rows that should be stored in the log table
 maxRows = 1000
 
-# cat=basic//; type=integer; label=Minimum level for logging: Minimum message level required for actually writing to the log table
+# cat=basic//; type=options[-1,0,1,2,3]; label=Minimum level for logging: Minimum message level required for actually writing to the log table
 minLogLevel = -1
 
 # cat=basic//; type=string; label=Highlight style: Style used for highlighting search keywords. Use proper CSS properties as this goes into a style="" attribute
@@ -18,6 +15,9 @@ highlightStyle = padding: 2px; background-color: #fc3; border: 1px solid #666
 
 # cat=basic//; type=string; label=Path to Prototype: If you are using TYPO3 4.0 or less, download the Prototype JavaScript library, put it somewhere in fileadmin or inside some extension and indicate the path here
 prototypePath = 
+
+# cat=basic//; type=boolean; label=Automatic clean up: Check this box if you want to automatically clean up log runs in excess of maxLogRuns when entering the BE module (this setting may be dropped in the future, use maxRows instead)
+autoCleanup = 0
 
 TSConstantEditor.basic {
   description = <span style="background:red; padding:1px 2px; color:#fff; font-weight:bold;">1</span> TYPO3 and its extensions may write a very large number of information in the log table. This may actually overload your database in a worst-case scenario. Using this feature you can limit the number of logs stored in the database. Every time this limit is passed, a number of the oldest records (10% of maxRows) will be deleted.<br />If you don't want this automatic clean up, set maxRows to 0.<br /><br /><span style="background:red; padding:1px 2px; color:#fff; font-weight:bold;">2</span> All messages come with a level. -1 = information, 0 = ok, 1 = notice, 2 = warning, 3 = error. Set this variable to the minimum level of logging that you want. Setting to -1 will log all messages. Setting to 2, for example, will only log warnings and errors, thus reducing the number of records stored in the database.
