@@ -13,6 +13,9 @@ minLogLevel = -1
 # cat=basic//; type=string; label=Highlight style: Style used for highlighting search keywords. Use proper CSS properties as this goes into a style="" attribute
 highlightStyle = padding: 2px; background-color: #fc3; border: 1px solid #666
 
+# cat=basic//; type=integer; label=Autorefresh frequency: Set the number of seconds between each refresh, when using the autorefresh feature
+refreshFrequency = 2
+
 # cat=basic//; type=string; label=Path to Prototype: If you are using TYPO3 4.0 or less, download the Prototype JavaScript library, put it somewhere in fileadmin or inside some extension and indicate the path here
 prototypePath = 
 

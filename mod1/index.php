@@ -202,7 +202,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				  if(window.name=="devlog") {
 					document.getElementById("openview").style.visibility = "hidden";
 				  }
-				  setReloadTime('.($this->MOD_SETTINGS['autorefresh'] ? '2' : '0').'); // Pass a default value of ... seconds.
+				  setReloadTime('.($this->MOD_SETTINGS['autorefresh'] ? $this->extConf['refreshFrequency'] : '0').');
 				}
 				
 				function setReloadTime(secs) {
