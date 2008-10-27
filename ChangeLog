@@ -1,3 +1,10 @@
+2008-10-27 Francois Suter <typo3@cobweb.ch>
+
+	* Added option for limiting the size of the log table
+	* Added option for minimum level of severity for logging
+	* Added option for configuring autorefresh frequency
+	* Optimized hook usage by making it a (pseudo-)singleton
+
 2008-10-13 Francois Suter <typo3@cobweb.ch>
 
 	* Caught unitiliazed value in BE module
