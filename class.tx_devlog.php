@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *  
-*  (c) 2004 René Fritz (r.fritz@colorcube.de)
+*  (c) 2004 Renï¿½ Fritz (r.fritz@colorcube.de)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is 
@@ -32,8 +32,25 @@
  * @author	Francois Suter <typo3@cobweb.ch>
  */
 class tx_devlog {
-	var $extKey = 'devlog';	// The extension key.
-	
+	var $extKey = 'devlog';	// The extension key
+	var $extConf = array(); // The extension configuration
+	var $rowCount; // The number of rows in the devlog table
+
+	/**
+	 * Constructor
+	 * The constructor just reads the extension configuration and stores it in a member variable
+	 */
+	function __construct() {
+		$this->extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]);
+	}
+
+	/**
+	 * PHP 4 wrapper for the constructor method
+	 */
+	function tx_devlog() {
+		$this->__construct();
+	}
+
 	/**
 	 * Developer log
 	 *
@@ -53,7 +70,11 @@ class tx_devlog {
 			// this is a hack to prevent logging while initialization - $TYPO3_CONF_VARS will be reset while init
 		if ($GLOBALS['EXTCONF'][$this->extKey]['nolog']) return;
 
-		
+			// Check if the maximum number of rows has been exceeded
+		if (!empty($this->extConf['maxRows'])) {
+			$this->checkRowLimit();
+		}
+
 		$insertFields = array();
 			// Try to get a pid that makes sense
 			// In the FE context, this is obviously the current page
@@ -87,6 +108,9 @@ class tx_devlog {
 		}
 
 		$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_devlog', $insertFields);
+
+			// Increase the (cached) number of rows
+		$this->numRows++;
 	}
 	
 	/**
@@ -106,6 +130,41 @@ class tx_devlog {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * This method checks whether the number of rows in the devlog table exceeds the limit
+	 * If yes, 10% of that amount is deleted, with older records going first
+	 * 
+	 * @return	void
+	 */
+	function checkRowLimit() {
+			// Get the total number of rows, if not already defined
+		if (!isset($this->numRows)) {
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('COUNT(uid)', 'tx_devlog', '');
+			$result = $GLOBALS['TYPO3_DB']->sql_fetch_row($res);
+			$this->numRows = $result[0];
+			$GLOBALS['TYPO3_DB']->sql_free_result($res);
+		}
+			// Check if number of rows is above the limit and clean up if necessary
+		if ($this->numRows > $this->extConf['maxRows']) {
+				// Select the row from which to start cleaning up
+				// To achieve this, order by creation date (so oldest come first)
+				// then offset by 10% of maxRows and get the next record
+				// This will return a timestamp that is used as a cut-off date
+			$numRowsToRemove = round(0.1 * $this->extConf['maxRows']);
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('crdate', 'tx_devlog', '', '', 'crdate', $numRowsToRemove.',1');
+			$result = $GLOBALS['TYPO3_DB']->sql_fetch_row($res);
+			$crdate = $result[0];
+			$GLOBALS['TYPO3_DB']->sql_free_result($res);
+				// Delete all rows older or same age as previously found timestamp
+				// This will problably delete a bit more than 10% of maxRows, but will at least
+				// delete complete log runs
+			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', "crdate <= '".$crdate."'");
+			$numRemovedRows = $GLOBALS['TYPO3_DB']->sql_affected_rows();
+				// Update (cached) number of rows
+			$this->numRows -= $numRemovedRows;
+		}
 	}
 }
 ?>
