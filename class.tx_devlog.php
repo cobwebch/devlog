@@ -73,6 +73,9 @@ class tx_devlog {
 			// If the severity is below the minimum logging level, don't log the entry
 		if ($logArr['severity'] < $this->extConf['minLogLevel']) return;
 
+			// If the key is in the list of keys to exclude, don't log the entry
+		if (t3lib_div::inList($this->extConf['excludeKeys'], $logArr['extKey'])) return;
+
 			// Check if the maximum number of rows has been exceeded
 		if (!empty($this->extConf['maxRows'])) {
 			$this->checkRowLimit();

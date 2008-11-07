@@ -1,3 +1,7 @@
+2008-11-07 Francois Suter <typo3@cobweb.ch>
+
+	* Added option for filtering out (extension) keys
+
 2008-10-27 Francois Suter <typo3@cobweb.ch>
 
 	* Added option for limiting the size of the log table

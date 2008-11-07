@@ -10,6 +10,9 @@ maxRows = 1000
 # cat=basic//; type=options[-1,0,1,2,3]; label=Minimum level for logging: Minimum message level required for actually writing to the log table
 minLogLevel = -1
 
+# cat=basic//; type=string; label=Exclude keys: Comma-separated list of (extension) keys that should not be logged into the Developer Log
+excludeKeys =
+
 # cat=basic//; type=string; label=Highlight style: Style used for highlighting search keywords. Use proper CSS properties as this goes into a style="" attribute
 highlightStyle = padding: 2px; background-color: #fc3; border: 1px solid #666
 
