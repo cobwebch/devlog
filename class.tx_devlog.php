@@ -2,7 +2,8 @@
 /***************************************************************
 *  Copyright notice
 *  
-*  (c) 2004 Ren� Fritz (r.fritz@colorcube.de)
+*  (c) 2004 Rene Fritz (r.fritz@colorcube.de)
+*  (c) 2008 Francois Suter (typo3@cobweb.ch)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is 
