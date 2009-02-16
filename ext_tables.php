@@ -6,6 +6,8 @@ if (TYPO3_MODE=='BE')	{
 	t3lib_extMgm::addModule('tools','txdevlogM1','',t3lib_extMgm::extPath($_EXTKEY).'mod1/');
 }
 
+// Includes
+require_once(t3lib_extMgm::extPath('devlog', 'class.tx_devlog_tceforms.php'));
 
 t3lib_extMgm::allowTableOnStandardPages('tx_devlog');
 
