@@ -1,3 +1,8 @@
+2009-02-16 Francois Suter <typo3@cobweb.ch>
+
+	* Added better display of records in TCEforms (thanks to Fabien Udriot)
+	* Added visible warning in BE module about filtered keys
+
 2008-11-07 Francois Suter <typo3@cobweb.ch>
 
 	* Added option for filtering out (extension) keys
@@ -12,7 +17,7 @@
 
 2008-10-13 Francois Suter <typo3@cobweb.ch>
 
-	* Caught unitiliazed value in BE module
+	* Caught unitialized value in BE module
 
 2008-10-13 Francois Suter <typo3@cobweb.ch>
 

@@ -53,6 +53,7 @@
             <label index="previous">&lt; previous</label>
             <label index="oldest">&lt;&lt; oldest</label>
 			<label index="expand_all_extra_data">Expand all extra data</label>
+			<label index="info_excluded_key">The following keys are currently not logged</label>
             <label index="clearlog">Clear Log</label>
             <label index="clearlog_intro">Use any of the clean up options below to clear your developer log.</label>
             <label index="clearalllog">Clear All Entries!</label>

@@ -456,6 +456,11 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$content .= '<p>'.$GLOBALS['LANG']->getLL('log_period').': '.t3lib_befunc::dateTimeAge($startDate).' - '.t3lib_befunc::dateTimeAge($endDate).'</p>';
 		}
 		$content .= $this->doc->divider(5);
+			// Add warning about filtered entries if any
+		if (!empty($this->extConf['excludeKeys'])) {
+			$content .= $this->wrapMessage($GLOBALS['LANG']->getLL('info_excluded_key').': '.$this->extConf['excludeKeys'], 'warning');
+			$content .= $this->doc->spacer(5);
+		}
 			// Display search form, if required
 		if ($this->selectedLog == -1) {
 			$content .= $this->renderSearchForm();
