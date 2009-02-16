@@ -435,6 +435,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				$table[$tr][] = $dataVar;
 			}
 		}
+		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
+
 			// Render the table
 		$logTable = $this->doc->table($table, $tableLayout);
 			// If we are viewing all entries and there was a search, parse the log table's HTML and highlight the search words
@@ -652,6 +654,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			// Get total number of log entries
 		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('COUNT(uid) AS total', 'tx_devlog', $where_clause='');
 		$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres);
+		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
 		if ($row['total'] == 0) { // No entries, display a simple message
 			$content .= '<p>'.$GLOBALS['LANG']->getLL('no_entries').'</p>';
 		}
@@ -668,6 +671,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
 				$content .= '<option value="'.$row['extkey'].'">'.$row['extkey'].'</option>';
 			}
+			$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
 			$content .= '</select></p>';
 			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearlog').'"></p>';
 			$content .= '</form>';
@@ -746,6 +750,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			}
 			$counter++;
 		}
+		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
 	}
 
 	/**
@@ -814,6 +819,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('COUNT(uid) AS total', 'tx_devlog', $whereClause);
 		$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres);
 		$this->totalLogEntries = $row['total'];
+		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
 	}
 
 	/**
@@ -830,6 +836,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
 			$this->filters['extkey'][$row['extkey']] = $row['extkey'];
 		}
+		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
 
 			// Get list of pages referenced in the log table
 		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT pid', 'tx_devlog', '');
@@ -844,6 +851,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				$this->filters['pid'][$row['pid']] = $elementTitle;
 			}
 		}
+		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
 
 			// Get list of users referenced in the log table
 		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT cruser_id', 'tx_devlog', '');
@@ -858,6 +866,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				$this->filters['cruser_id'][$row['cruser_id']] = $elementTitle;
 			}
 		}
+		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
 
 			// Get list of severities
 		$this->filters['severity']['*'] = '';
