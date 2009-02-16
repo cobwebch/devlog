@@ -18,6 +18,7 @@
             <label index="setup">Setup</label>
             <label index="search">Search</label>
             <label index="clear_search">Clear search</label>
+            <label index="clear_filters">Clear all filters</label>
             <label index="search_data">Search log data</label>
             <label index="latest_run">latest log run</label>
             <label index="latest_25">latest 25 entries</label>

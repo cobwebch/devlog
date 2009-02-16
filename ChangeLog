@@ -3,6 +3,7 @@
 	* Added better display of records in TCEforms (thanks to Fabien Udriot)
 	* Added visible warning in BE module about filtered keys
 	* Added t3lib_db::sql_free_results() calls wherever relevant
+	* Added a button to clear search and all filters
 
 2008-11-07 Francois Suter <typo3@cobweb.ch>
 

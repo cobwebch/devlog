@@ -86,7 +86,6 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$this->setVars = t3lib_div::_GP('SET');
 
 		parent::init();
-//t3lib_div::debug($this->MOD_SETTINGS);
 
 		$this->selectLog();
 	}
@@ -120,21 +119,29 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			'sword' => '',
 		);
 		$this->MOD_MENU['logrun'] = t3lib_div::array_merge($this->recentRuns, $this->MOD_MENU['logrun']);
-		if (isset($this->setVars['filters'])) {
-			$storedData = $GLOBALS['BE_USER']->getModuleData('selectedFilters');
-			if (isset($storedData)) {
-				$this->selectedFilters = array_merge($storedData, $this->setVars['filters']);
-			}
-			else {
-				$this->selectedFilters = $this->setVars['filters'];
-			}
+
+			// If the clear button has been clicked, empty all filters
+		if (!empty($this->setVars['clear'])) {
+			$this->selectedFilters = array();
 			$GLOBALS['BE_USER']->pushModuleData('selectedFilters', $this->selectedFilters);
 		}
+			// Otherwise if new filters have been selected, merge them with stored selection
 		else {
-			$this->selectedFilters = $GLOBALS['BE_USER']->getModuleData('selectedFilters');
+			if (isset($this->setVars['filters'])) {
+				$storedData = $GLOBALS['BE_USER']->getModuleData('selectedFilters');
+				if (isset($storedData)) {
+					$this->selectedFilters = array_merge($storedData, $this->setVars['filters']);
+				}
+				else {
+					$this->selectedFilters = $this->setVars['filters'];
+				}
+				$GLOBALS['BE_USER']->pushModuleData('selectedFilters', $this->selectedFilters);
+			}
+				// If nothing was defined, retrieve stored selection
+			else {
+				$this->selectedFilters = $GLOBALS['BE_USER']->getModuleData('selectedFilters');
+			}
 		}
-//t3lib_div::debug($this->logRuns);
-//t3lib_div::debug($this->selectedFilters);
 
 		parent::menuConfig();
 	}
@@ -153,7 +160,6 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				// Draw the header.
 			$this->doc = t3lib_div::makeInstance('template');
 			$this->doc->backPath = $BACK_PATH;
-//			$this->doc->form='<form name="options" action="" method="POST">';
 
 				// JavaScript
 				// Load Prototype library (check if it exists in the TYPO3 source, otherwise get it from extension configuration)
@@ -476,6 +482,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 	/**
 	 * This method displays a simple search form
+	 * and buttons to clear the search or all filters
 	 *
 	 * @return	string	HTML of the search form
 	 */
@@ -484,6 +491,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$content .= '<input type="text" id="sword" name="SET[sword]" value="'.$this->MOD_SETTINGS['sword'].'" /> ';
 		$content .= '<input type="submit" name="search" value="'.$GLOBALS['LANG']->getLL('search').'" /> ';
 		$content .= '<input type="button" name="clear_search" value="'.$GLOBALS['LANG']->getLL('clear_search').'" onclick="this.form.sword.value=\'\';this.form.submit();" />';
+		$content .= '<input type="submit" name="SET[clear]" value="'.$GLOBALS['LANG']->getLL('clear_filters').'" onclick="this.form.sword.value=\'\';" style="margin-left: 20px;" />';
 		$content .= '</p>';
 		return $content;
 	}
