@@ -76,7 +76,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$this->extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$MCONF['extKey']]);
 		if (empty($this->extConf['entriesPerPage'])) $this->extConf['entriesPerPage'] = $this->defaultEntriesPerPage;
 
-			// get log run list
+			// Get log run list
 		$this->getLogRuns();
 		
 			// Clean up excess logs (if activated)
@@ -88,6 +88,9 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		parent::init();
 
 		$this->selectLog();
+
+			// Set key for CSH
+		$this->cshKey = '_MOD_'.$MCONF['name'];
 	}
 
 	/**
@@ -350,18 +353,18 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		
 			// add header row
 		$table[$tr][] = $this->renderHeader('uid');
-		$table[$tr][] = $this->renderHeader('severity', 'severity');
+		$table[$tr][] = $this->renderHeader('severity', 'severity', true);
 		$table[$tr][] = $this->renderHeader('crdate');
-		$table[$tr][] = $this->renderHeader('extkey', 'extkey');
+		$table[$tr][] = $this->renderHeader('extkey', 'extkey', true);
 		$table[$tr][] = $this->renderHeader('message');
 		$table[$tr][] = $this->renderHeader('location');
-		$table[$tr][] = $this->renderHeader('page', 'pid');
+		$table[$tr][] = $this->renderHeader('page', 'pid', true);
 		$header = $GLOBALS['LANG']->getLL('cruser');
 		if ($this->selectedLog == -1) {
 			$header .= '<br />'.$this->renderFilterMenu('cruser_id');
 		}
-		$table[$tr][] = $this->renderHeader('cruser', 'cruser_id');
-		$table[$tr][] = $this->renderHeader('extra_data');
+		$table[$tr][] = $this->renderHeader('cruser', 'cruser_id', true);
+		$table[$tr][] = $this->renderHeader('extra_data', '', true);
 
 			// Get all the relevant log entries
 		$dbres = $this->getLogEntries();
@@ -520,15 +523,22 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 *
 	 * @param	string	$label: label to display in the header
 	 * @param	string	$filter: name of the field to build the filter on, if any
+	 * @param	string	$addCSH: set to true to display CSH in the header
 	 * @return	string	HTML to display
 	 */
-	function renderHeader($label, $filter = '') {
+	function renderHeader($label, $filter = '', $addCSH = false) {
 		$header = $GLOBALS['LANG']->getLL($label);
-		if ($this->selectedLog == -1) {
+			// If turned on, add context-sensitive help for header
+		if ($addCSH) {
+			$header .= $this->renderCsh($label);
+		}
+			// If defined and in "all" log view, add filter
+		if ($this->selectedLog == -1 && !empty($filter)) {
 			$header .= '<br />'.$this->renderFilterMenu($filter);
 		}
 		return $header;
 	}
+
 	/** 
 	 * This method assembles links to navigate between pages of log entries
 	 *
@@ -632,6 +642,17 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		else {
 			return '';
 		}
+	}
+
+	/**
+	 * Render the CSH icon/box of a given key and return the HTML code
+	 *
+	 * @param       string	  Locallang key
+	 * @return      string	  HTML output
+	 */
+	function renderCsh($str) {
+		global $BACK_PATH;
+		return t3lib_BEfunc::cshItem($this->cshKey, 'mod_'.$str, $BACK_PATH, '|', false, 'margin-bottom:0px;');
 	}
 
 	/**

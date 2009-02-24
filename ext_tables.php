@@ -26,5 +26,6 @@ $TCA['tx_devlog'] = Array (
 	)
 );
 
-
+// Add context sensitive help (csh) to the backend module
+t3lib_extMgm::addLLrefForTCAdescr('_MOD_tools_txdevlogM1','EXT:devlog/locallang_csh_txdevlog.xml');
 ?>

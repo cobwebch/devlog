@@ -1,3 +1,7 @@
+2009-02-24 Francois Suter <typo3@cobweb.ch>
+
+	* Added CSH to header cells in log table view (thanks to Steffen Muller)
+
 2009-02-16 Francois Suter <typo3@cobweb.ch>
 
 	* Added better display of records in TCEforms (thanks to Fabien Udriot)
