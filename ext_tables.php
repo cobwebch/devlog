@@ -18,7 +18,7 @@ $TCA['tx_devlog'] = array(
 		'label' => 'msg',	
 		'crdate' => 'crdate',
 		'cruser_id' => 'cruser_id',
-		'default_sortby' => 'ORDER BY crdate,uid',	
+		'default_sortby' => 'ORDER BY crdate DESC,uid',
 		'dynamicConfigFile' => t3lib_extMgm::extPath($_EXTKEY) . 'tca.php',
 		'iconfile' => t3lib_extMgm::extRelPath($_EXTKEY) . 'icon_tx_devlog.gif',
 	),
