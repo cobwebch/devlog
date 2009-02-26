@@ -89,8 +89,14 @@ class tx_devlog_tceforms {
 	 * @return	string	The HTML for the form field
 	 */
 	public function displayAdditionalData($PA, $fobj) {
-		$data = unserialize($PA['row']['data_var']);
-		return t3lib_div::view_array($data);
+		if (empty($PA['row']['data_var'])) {
+			$html = $GLOBALS['LANG']->sL('LLL:EXT:devlog/locallang_db.xml:tx_devlog.no_extra_data');
+		}
+		else {
+			$data = unserialize($PA['row']['data_var']);
+			$html = t3lib_div::view_array($data);
+		}
+		return $html;
 	}
 
 

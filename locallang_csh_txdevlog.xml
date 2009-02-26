@@ -21,6 +21,13 @@
 				$severity: Severity: 0 is info, 1 is notice, 2 is warning, 3 is fatal error, -1 is "OK" message (integer)
 				$dataVar: Additional data you want to pass to the logger. (array)
 			</label>
+			<label index="crdate.alttitle">Log run time</label>
+			<label index="crdate.description">This is the date and time at which the log entry was created.</label>
+			<label index="crdate.details">
+				All entries corresponding to the code execution are marked with the same date and time. This makes it possible to view them as a consistent group in the BE module. Such a group is called a "log run"
+			</label>
+			<label index="message.alttitle">Log message</label>
+			<label index="message.description">The main message of the log entry.</label>
 			<label index="severity.alttitle">Severity</label>
 			<label index="severity.description">The severity gives you an impression about how serious the logged event is.</label>
 			<label index="severity.details">
@@ -39,6 +46,8 @@
 				More details about the file or the part which triggered the event can be found in the column "Called from".
 				One hint about excluded keys: There's an option in the extension manager to excluded some keys from being logged. Notice that if there were events before you excluded a key, those events however are still shown here in the list.
 			</label>
+			<label index="location.alttitle">Call location</label>
+			<label index="location.description">The class from which the devLog() call was made, with the line number below.</label>
 			<label index="pid.alttitle">Page</label>
 			<label index="pid.description">The title of the page which has been called when the event happened. It's also the page where the record is stored.</label>
 			<label index="pid.details">Events can also be found as page records in the web->list module.</label>

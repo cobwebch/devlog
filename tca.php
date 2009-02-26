@@ -8,6 +8,15 @@ $TCA['tx_devlog'] = array(
 	),
 	'feInterface' => $TCA['tx_devlog']['feInterface'],
 	'columns' => array(
+		'crdate' => array(
+			'exclude' => 0,
+			'label' => 'LLL:EXT:devlog/locallang_db.xml:tx_devlog.crdate',
+			'config' => array(
+				'type' => 'input',
+				'eval' => 'datetime',
+				'readOnly' => true
+			)
+		),
 		'severity' => array(
 			'exclude' => 0,
 			'label' => 'LLL:EXT:devlog/locallang_db.xml:tx_devlog.severity',
@@ -21,8 +30,7 @@ $TCA['tx_devlog'] = array(
 			'exclude' => 0,
 			'label' => 'LLL:EXT:devlog/locallang_db.xml:tx_devlog.extkey',
 			'config' => array(
-				'type' => 'none',
-				'eval' => 'trim',
+				'type' => 'none'
 			)
 		),
 		'msg' => array(
@@ -37,20 +45,14 @@ $TCA['tx_devlog'] = array(
 			'exclude' => 0,
 			'label' => 'LLL:EXT:devlog/locallang_db.xml:tx_devlog.location',
 			'config' => array(
-				'type' => 'none',
-				'size' => '30',
-				'max' => '255',
-				'eval' => 'trim',
+				'type' => 'none'
 			)
 		),
 		'line' => array(
 			'exclude' => 0,
 			'label' => 'LLL:EXT:devlog/locallang_db.xml:tx_devlog.line',
 			'config' => array(
-				'type' => 'none',
-				'size' => '10',
-				'max' => '20',
-				'eval' => 'int',
+				'type' => 'none'
 			)
 		),
 		'data_var' => array(
@@ -63,10 +65,10 @@ $TCA['tx_devlog'] = array(
 		)
 	),
 	'types' => array(
-		'0' => Array('showitem' => 'severity;;;;1-1-1, extkey, msg, location;;1, data_var')
+		'0' => array('showitem' => 'crdate;;;;1-1-1, severity;;;;1-1-1, extkey, msg, location;;1, data_var;;;;1-1-1')
 	),
 	'palettes' => array(
-		'1' => Array('showitem' => 'line')
+		'1' => array('showitem' => 'line', 'canNotCollapse' => true)
 	)
 );
 ?>

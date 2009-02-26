@@ -10,6 +10,7 @@
     <data type="array">
         <languageKey index="default" type="array">
             <label index="tx_devlog">Developer Log</label>
+            <label index="tx_devlog.crdate">Run date and time:</label>
             <label index="tx_devlog.severity.I.0">Info</label>
             <label index="tx_devlog.severity.I.1">Notice</label>
             <label index="tx_devlog.severity.I.2">Warning</label>
@@ -21,6 +22,7 @@
             <label index="tx_devlog.location">Called from:</label>
             <label index="tx_devlog.line">Calling line:</label>
             <label index="tx_devlog.data_var">Additional data:</label>
+            <label index="tx_devlog.no_extra_data">No additional data provided</label>
             <label index="tx_devlog.run">run</label>
         </languageKey>
     </data>

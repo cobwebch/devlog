@@ -354,7 +354,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			// add header row
 		$table[$tr][] = $this->renderHeader('uid');
 		$table[$tr][] = $this->renderHeader('severity', true, true);
-		$table[$tr][] = $this->renderHeader('crdate');
+		$table[$tr][] = $this->renderHeader('crdate', false, true);
 		$table[$tr][] = $this->renderHeader('extkey', true, true);
 		$table[$tr][] = $this->renderHeader('message');
 		$table[$tr][] = $this->renderHeader('location');
@@ -410,7 +410,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			
 				$table[$tr][] = $this->linkLogRun($row['uid'], $row['crmsec']);
 				$table[$tr][] = $severity;
-				$table[$tr][] = date('d-m-y G:i',$row['crdate']);
+				$table[$tr][] = date('d-m-y G:i:s',$row['crdate']);
 				$table[$tr][] = $row['extkey'];
 				$table[$tr][] = $row['msg'];
 				$table[$tr][] = (empty($row['location']) || empty($row['line'])) ? '' : sprintf($GLOBALS['LANG']->getLL('line_call'), $row['location'], $row['line']);
