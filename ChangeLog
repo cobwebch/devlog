@@ -1,3 +1,11 @@
+2009-02-26 Francois Suter <typo3@cobweb.ch>
+
+	* Completed implementation of CSH for both log table view and TCEform single view
+	* Removed UID column in log table view
+	* Moved date column to first place and placed links to log runs on that column
+	* Changed default order in Web > List view, most recent record on top (thanks to Steffen Muller)
+	* Changed log table styles slightly to better match t3skin
+
 2009-02-24 Francois Suter <typo3@cobweb.ch>
 
 	* Added CSH to header cells in log table view (thanks to Steffen Muller)

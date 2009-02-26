@@ -342,7 +342,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				'tr' => array('<tr class="bgColor2" valign="top">', '</tr>'),
 			),
 			'defRow' => array (
-				'tr' => array('<tr class="bgColor-20">', '</tr>'),
+				'tr' => array('<tr class="bgColor3-20">', '</tr>'),
 				'1' => array('<td align="center">', '</td>'),
 				'defCol' => array('<td>', '</td>'),
 			)
@@ -399,13 +399,6 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				
 					// Add a row to the table
 				$tr++;
-	
-					// If the user who created log entry is the same as the current user,
-					// use a darker row background
-					// TODO: find an appropriate style in t3skin
-				if ($row['cruser_id'] == intval($GLOBALS['BE_USER']->user['uid']))	{
-					$tableLayout[$tr]['tr'] = array('<tr class="bgColor4">','</tr>');
-				}				
 
 				$table[$tr][] = $this->linkLogRun(strftime('%d-%m-%y&nbsp;%H:%M:%S',$row['crdate']), $row['crmsec']);
 				$table[$tr][] = $severity;
