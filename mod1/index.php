@@ -521,22 +521,24 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	}
 
 	/**
-	 * This method renders the headers of the log table
+	 * This method renders the header of the log table for a given field
+	 * NOTE: in order to work the name of the field must match the name of label for this field,
+	 * as well as name of the filter
 	 *
-	 * @param	string	$label: label to display in the header
-	 * @param	string	$filter: name of the field to build the filter on, if any
+	 * @param	string	$field: name of the field for which the header is being rendered
+	 * @param	string	$addFilter: set to true to display the filter for the given column
 	 * @param	string	$addCSH: set to true to display CSH in the header
 	 * @return	string	HTML to display
 	 */
-	function renderHeader($label, $addFilter = false, $addCsh = false) {
-		$header = $GLOBALS['LANG']->getLL($label);
+	function renderHeader($field, $addFilter = false, $addCsh = false) {
+		$header = $GLOBALS['LANG']->getLL($field);
 			// If turned on, add context-sensitive help for header
 		if ($addCsh) {
-			$header .= $this->renderCsh($label);
+			$header .= $this->renderCsh($field);
 		}
-			// If defined and in "all" log view, add filter
+			// If turned on and in "all" log view, add filter
 		if ($this->selectedLog == -1 && $addFilter) {
-			$header .= '<br />' . $this->renderFilterMenu($label);
+			$header .= '<br />' . $this->renderFilterMenu($field);
 		}
 		return $header;
 	}
