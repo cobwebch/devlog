@@ -353,18 +353,18 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		
 			// add header row
 		$table[$tr][] = $this->renderHeader('uid');
-		$table[$tr][] = $this->renderHeader('severity', 'severity', true);
+		$table[$tr][] = $this->renderHeader('severity', true, true);
 		$table[$tr][] = $this->renderHeader('crdate');
-		$table[$tr][] = $this->renderHeader('extkey', 'extkey', true);
+		$table[$tr][] = $this->renderHeader('extkey', true, true);
 		$table[$tr][] = $this->renderHeader('message');
 		$table[$tr][] = $this->renderHeader('location');
-		$table[$tr][] = $this->renderHeader('pid', 'pid', true);
+		$table[$tr][] = $this->renderHeader('pid', true, true);
 		$header = $GLOBALS['LANG']->getLL('cruser_id');
 		if ($this->selectedLog == -1) {
 			$header .= '<br />'.$this->renderFilterMenu('cruser_id');
 		}
-		$table[$tr][] = $this->renderHeader('cruser_id', 'cruser_id', true);
-		$table[$tr][] = $this->renderHeader('data_var', '', true);
+		$table[$tr][] = $this->renderHeader('cruser_id', true, true);
+		$table[$tr][] = $this->renderHeader('data_var', false, true);
 
 			// Get all the relevant log entries
 		$dbres = $this->getLogEntries();
@@ -528,15 +528,15 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 * @param	string	$addCSH: set to true to display CSH in the header
 	 * @return	string	HTML to display
 	 */
-	function renderHeader($label, $filter = '', $addCsh = false) {
+	function renderHeader($label, $addFilter = false, $addCsh = false) {
 		$header = $GLOBALS['LANG']->getLL($label);
 			// If turned on, add context-sensitive help for header
 		if ($addCsh) {
 			$header .= $this->renderCsh($label);
 		}
 			// If defined and in "all" log view, add filter
-		if ($this->selectedLog == -1 && !empty($filter)) {
-			$header .= '<br />' . $this->renderFilterMenu($filter);
+		if ($this->selectedLog == -1 && $addFilter) {
+			$header .= '<br />' . $this->renderFilterMenu($label);
 		}
 		return $header;
 	}
