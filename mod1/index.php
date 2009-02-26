@@ -3,7 +3,7 @@
 *  Copyright notice
 *  
 *  (c) 2004 Rene Fritz (r.fritz@colorcube.de)
-*  (c) 2008 Francois Suter (typo3@cobweb.ch)
+*  (c) 2009 Francois Suter (typo3@cobweb.ch)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is 
@@ -358,13 +358,13 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$table[$tr][] = $this->renderHeader('extkey', 'extkey', true);
 		$table[$tr][] = $this->renderHeader('message');
 		$table[$tr][] = $this->renderHeader('location');
-		$table[$tr][] = $this->renderHeader('page', 'pid', true);
-		$header = $GLOBALS['LANG']->getLL('cruser');
+		$table[$tr][] = $this->renderHeader('pid', 'pid', true);
+		$header = $GLOBALS['LANG']->getLL('cruser_id');
 		if ($this->selectedLog == -1) {
 			$header .= '<br />'.$this->renderFilterMenu('cruser_id');
 		}
-		$table[$tr][] = $this->renderHeader('cruser', 'cruser_id', true);
-		$table[$tr][] = $this->renderHeader('extra_data', '', true);
+		$table[$tr][] = $this->renderHeader('cruser_id', 'cruser_id', true);
+		$table[$tr][] = $this->renderHeader('data_var', '', true);
 
 			// Get all the relevant log entries
 		$dbres = $this->getLogEntries();
@@ -398,11 +398,13 @@ class tx_devlog_module1 extends t3lib_SCbase {
 						break;
 				}
 				
-					// add row to table
+					// Add a row to the table
 				$tr++;
 	
-					// if user created log entry use a darker row background
-				if ($row['cruser'] == intval($GLOBALS['BE_USER']->user['uid']))	{
+					// If the user who created log entry is the same as the current user,
+					// use a darker row background
+					// TODO: find an appropriate style in t3skin
+				if ($row['cruser_id'] == intval($GLOBALS['BE_USER']->user['uid']))	{
 					$tableLayout[$tr]['tr'] = array('<tr class="bgColor4">','</tr>');
 				}				
 			
@@ -508,7 +510,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 * @return	string	The original string with the highlighted word
 	 */
 	function highlightString($content, $word) {
-		$replace = '<span style="'.$this->extConf['highlightStyle'].'">'.$word.'</span>';
+		$replace = '<span style="' . $this->extConf['highlightStyle'] . '">' . $word . '</span>';
 		if (function_exists('str_ireplace')) { // If case insensitive replace exists (PHP 5+), use it
 			$highlightedContent = str_ireplace($word, $replace, $content);
 		}
@@ -526,15 +528,15 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 * @param	string	$addCSH: set to true to display CSH in the header
 	 * @return	string	HTML to display
 	 */
-	function renderHeader($label, $filter = '', $addCSH = false) {
+	function renderHeader($label, $filter = '', $addCsh = false) {
 		$header = $GLOBALS['LANG']->getLL($label);
 			// If turned on, add context-sensitive help for header
-		if ($addCSH) {
+		if ($addCsh) {
 			$header .= $this->renderCsh($label);
 		}
 			// If defined and in "all" log view, add filter
 		if ($this->selectedLog == -1 && !empty($filter)) {
-			$header .= '<br />'.$this->renderFilterMenu($filter);
+			$header .= '<br />' . $this->renderFilterMenu($filter);
 		}
 		return $header;
 	}
@@ -548,16 +550,16 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$navigation = '';
 		$numPages = ceil($this->totalLogEntries / $this->extConf['entriesPerPage']);
 		for ($i = 0; $i < $numPages; $i++) {
-			$text = ($i * $this->extConf['entriesPerPage']).'-'.(($i + 1) * $this->extConf['entriesPerPage']);
+			$text = ($i * $this->extConf['entriesPerPage']) . '-' . (($i + 1) * $this->extConf['entriesPerPage']);
 			if ($i == $this->MOD_SETTINGS['page']) {
-				$item = '<strong>'.$text.'</strong>';
+				$item = '<strong>' . $text . '</strong>';
 			}
 			else {
-				$item = '<a href="?SET[page]='.$i.'">'.$text.'</a>';
+				$item = '<a href="?SET[page]=' . $i . '">' . $text . '</a>';
 			}
 			$navigation .= $item.' ';
 		}
-		return '<p>'.$GLOBALS['LANG']->getLL('entries').': '.$navigation.'</p>';
+		return '<p>' . $GLOBALS['LANG']->getLL('entries') . ': ' . $navigation . '</p>';
 	}
 
 	/** 
@@ -647,12 +649,12 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	/**
 	 * Render the CSH icon/box of a given key and return the HTML code
 	 *
-	 * @param       string	  Locallang key
+	 * @param       string	  $str: Locallang key
 	 * @return      string	  HTML output
 	 */
 	function renderCsh($str) {
 		global $BACK_PATH;
-		return t3lib_BEfunc::cshItem($this->cshKey, 'mod_'.$str, $BACK_PATH, '|', false, 'margin-bottom:0px;');
+		return t3lib_BEfunc::cshItem($this->cshKey, $str, $BACK_PATH, '|', false, 'margin-bottom:0px;');
 	}
 
 	/**

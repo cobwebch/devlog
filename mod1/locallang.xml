@@ -35,9 +35,9 @@
             <label index="extkey">Extension</label>
             <label index="message">Message</label>
             <label index="location">Called from</label>
-            <label index="page">Page</label>
-            <label index="cruser">User</label>
-            <label index="extra_data">Extra data</label>
+            <label index="pid">Page</label>
+            <label index="cruser_id">User</label>
+            <label index="data_var">Extra data</label>
             <label index="no_entries_found">No entries found. Try to relax your filter and search criteria.</label>
             <label index="open_view">Open new window</label>
             <label index="line_call">%s, line %d</label>

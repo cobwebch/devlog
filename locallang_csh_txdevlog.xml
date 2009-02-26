@@ -21,9 +21,9 @@
 				$severity: Severity: 0 is info, 1 is notice, 2 is warning, 3 is fatal error, -1 is "OK" message (integer)
 				$dataVar: Additional data you want to pass to the logger. (array)
 			</label>
-			<label index="mod_severity.alttitle">Severity</label>
-			<label index="mod_severity.description">The severity gives you an impression about how serious the logged event is.</label>
-			<label index="mod_severity.details">
+			<label index="severity.alttitle">Severity</label>
+			<label index="severity.description">The severity gives you an impression about how serious the logged event is.</label>
+			<label index="severity.details">
 				There are five levels of severity, to higher the number, the more severe is the event:
 				Ok: Events with severity Ok have a debugging purpose. Debug message provide plenty of informations and are used only while development.
 				Info: Purely informational messages, but less detailed than severity Ok/Debug. Info signals that things are alright, so usually no action is neccessary.
@@ -31,23 +31,23 @@
 				Warning: Warning signals a condition that did not prevent completion of a job, but may require some action to avoid malfunctions in future.
 				Error: Error refers to a condition where some fatal malfunction occurred and action is definitely needed.
 			</label>
-			<label index="mod_severity.image">EXT:devlog/res/csh_severities.png</label>
-			<label index="mod_extkey.alttitle">Extension</label>
-			<label index="mod_extkey.description">The component which triggered the event</label>
-			<label index="mod_extkey.details">
+			<label index="severity.image">EXT:devlog/res/csh_severities.png</label>
+			<label index="extkey.alttitle">Extension</label>
+			<label index="extkey.description">The component which triggered the event</label>
+			<label index="extkey.details">
 				The value could be an extension key but also the core itself or a certain part of it. It depends on the logging implementation of the component which has triggered the event.
 				More details about the file or the part which triggered the event can be found in the column "Called from".
 				One hint about excluded keys: There's an option in the extension manager to excluded some keys from being logged. Notice that if there were events before you excluded a key, those events however are still shown here in the list.
 			</label>
-			<label index="mod_page.alttitle">Page</label>
-			<label index="mod_page.description">The title of the page which has been called when the event happened. It's also the page where the record is stored.</label>
-			<label index="mod_page.details">Events can also be found as page records in the web->list module.</label>
-			<label index="mod_cruser.alttitle">User</label>
-			<label index="mod_cruser.description">The BE user which was logged in the backend and triggered the event.</label>
-			<label index="mod_cruser.details">This field is useful, if multiple BE users are triggering events at the same time, on the same pages or by the same components.</label>
-			<label index="mod_extra_data.alttitle">Extra data</label>
-			<label index="mod_extra_data.description">Extra data can provide an array with detailed information about the circumstances of the event.</label>
-			<label index="mod_extra_data.details">
+			<label index="pid.alttitle">Page</label>
+			<label index="pid.description">The title of the page which has been called when the event happened. It's also the page where the record is stored.</label>
+			<label index="pid.details">Events can also be found as page records in the web->list module.</label>
+			<label index="cruser_id.alttitle">User</label>
+			<label index="cruser_id.description">The BE user which was logged in the backend and triggered the event.</label>
+			<label index="cruser_id.details">This field is useful, if multiple BE users are triggering events at the same time, on the same pages or by the same components.</label>
+			<label index="data_var.alttitle">Extra data</label>
+			<label index="data_var.description">Extra data can provide an array with detailed information about the circumstances of the event.</label>
+			<label index="data_var.details">
 				There are almost no boundaries for this field, except that it is an array. In many cases, this field can contain the processed data, when the event has been triggered. For example, you could get the full stack debug trace when there is an SQL error. Another showcase would be to deliver be the relevant TS setup parts or any other configuration array.
 				The value depends on the logging implementation of the component which has triggered the event.
 			</label>
