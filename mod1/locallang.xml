@@ -32,7 +32,7 @@
             <label index="crdate">Date</label>
             <label index="severity">Severity</label>
             <label index="extkey">Extension</label>
-            <label index="message">Message</label>
+            <label index="msg">Message</label>
             <label index="location">Called from</label>
             <label index="pid">Page</label>
             <label index="cruser_id">User</label>

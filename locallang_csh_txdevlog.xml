@@ -26,8 +26,8 @@
 			<label index="crdate.details">
 				All entries corresponding to the code execution are marked with the same date and time. This makes it possible to view them as a consistent group in the BE module. Such a group is called a "log run"
 			</label>
-			<label index="message.alttitle">Log message</label>
-			<label index="message.description">The main message of the log entry.</label>
+			<label index="msg.alttitle">Log message</label>
+			<label index="msg.description">The main message of the log entry.</label>
 			<label index="severity.alttitle">Severity</label>
 			<label index="severity.description">The severity gives you an impression about how serious the logged event is.</label>
 			<label index="severity.details">

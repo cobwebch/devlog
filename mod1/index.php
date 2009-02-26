@@ -355,7 +355,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$table[$tr][] = $this->renderHeader('crdate');
 		$table[$tr][] = $this->renderHeader('severity', true);
 		$table[$tr][] = $this->renderHeader('extkey', true);
-		$table[$tr][] = $this->renderHeader('message');
+		$table[$tr][] = $this->renderHeader('msg');
 		$table[$tr][] = $this->renderHeader('location');
 		$table[$tr][] = $this->renderHeader('pid', true);
 		$header = $GLOBALS['LANG']->getLL('cruser_id');
