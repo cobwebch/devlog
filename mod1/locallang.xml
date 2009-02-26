@@ -29,7 +29,6 @@
             <label index="log_time">Log time</label>
             <label index="log_period">Log period</label>
             <label index="refresh">Refresh</label>
-            <label index="uid">UID</label>
             <label index="crdate">Date</label>
             <label index="severity">Severity</label>
             <label index="extkey">Extension</label>

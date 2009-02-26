@@ -352,19 +352,18 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$tr = 0;
 		
 			// add header row
-		$table[$tr][] = $this->renderHeader('uid');
-		$table[$tr][] = $this->renderHeader('severity', true, true);
-		$table[$tr][] = $this->renderHeader('crdate', false, true);
-		$table[$tr][] = $this->renderHeader('extkey', true, true);
+		$table[$tr][] = $this->renderHeader('crdate');
+		$table[$tr][] = $this->renderHeader('severity', true);
+		$table[$tr][] = $this->renderHeader('extkey', true);
 		$table[$tr][] = $this->renderHeader('message');
 		$table[$tr][] = $this->renderHeader('location');
-		$table[$tr][] = $this->renderHeader('pid', true, true);
+		$table[$tr][] = $this->renderHeader('pid', true);
 		$header = $GLOBALS['LANG']->getLL('cruser_id');
 		if ($this->selectedLog == -1) {
 			$header .= '<br />'.$this->renderFilterMenu('cruser_id');
 		}
-		$table[$tr][] = $this->renderHeader('cruser_id', true, true);
-		$table[$tr][] = $this->renderHeader('data_var', false, true);
+		$table[$tr][] = $this->renderHeader('cruser_id', true);
+		$table[$tr][] = $this->renderHeader('data_var');
 
 			// Get all the relevant log entries
 		$dbres = $this->getLogEntries();
@@ -407,10 +406,9 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				if ($row['cruser_id'] == intval($GLOBALS['BE_USER']->user['uid']))	{
 					$tableLayout[$tr]['tr'] = array('<tr class="bgColor4">','</tr>');
 				}				
-			
-				$table[$tr][] = $this->linkLogRun($row['uid'], $row['crmsec']);
+
+				$table[$tr][] = $this->linkLogRun(strftime('%d-%m-%y&nbsp;%H:%M:%S',$row['crdate']), $row['crmsec']);
 				$table[$tr][] = $severity;
-				$table[$tr][] = date('d-m-y G:i:s',$row['crdate']);
 				$table[$tr][] = $row['extkey'];
 				$table[$tr][] = $row['msg'];
 				$table[$tr][] = (empty($row['location']) || empty($row['line'])) ? '' : sprintf($GLOBALS['LANG']->getLL('line_call'), $row['location'], $row['line']);
@@ -530,12 +528,10 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 * @param	string	$addCSH: set to true to display CSH in the header
 	 * @return	string	HTML to display
 	 */
-	function renderHeader($field, $addFilter = false, $addCsh = false) {
+	function renderHeader($field, $addFilter = false) {
 		$header = $GLOBALS['LANG']->getLL($field);
-			// If turned on, add context-sensitive help for header
-		if ($addCsh) {
-			$header .= $this->renderCsh($field);
-		}
+			// Add context-sensitive help for header
+		$header .= $this->renderCsh($field);
 			// If turned on and in "all" log view, add filter
 		if ($this->selectedLog == -1 && $addFilter) {
 			$header .= '<br />' . $this->renderFilterMenu($field);

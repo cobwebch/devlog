@@ -47,7 +47,7 @@
 				One hint about excluded keys: There's an option in the extension manager to excluded some keys from being logged. Notice that if there were events before you excluded a key, those events however are still shown here in the list.
 			</label>
 			<label index="location.alttitle">Call location</label>
-			<label index="location.description">The class from which the devLog() call was made, with the line number below.</label>
+			<label index="location.description">The class from which the devLog() call was made, with the line number.</label>
 			<label index="pid.alttitle">Page</label>
 			<label index="pid.description">The title of the page which has been called when the event happened. It's also the page where the record is stored.</label>
 			<label index="pid.details">Events can also be found as page records in the web->list module.</label>
