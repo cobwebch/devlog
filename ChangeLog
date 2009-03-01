@@ -1,3 +1,8 @@
+2009-03-01 Francois Suter <typo3@cobweb.ch>
+
+	* Modified the CSH text, in particular severity levels descriptions
+	* Updated the manual
+
 2009-02-26 Francois Suter <typo3@cobweb.ch>
 
 	* Completed implementation of CSH for both log table view and TCEform single view
