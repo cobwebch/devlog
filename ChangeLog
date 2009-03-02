@@ -1,3 +1,9 @@
+2009-03-02 Francois Suter <typo3@cobweb.ch>
+
+	* Made CSH for severity.image non translatable (thanks to Steffen Muller)
+	* Completed update of the manual
+	* Relased to TER as version 2.7.0
+
 2009-03-01 Francois Suter <typo3@cobweb.ch>
 
 	* Modified the CSH text, in particular severity levels descriptions

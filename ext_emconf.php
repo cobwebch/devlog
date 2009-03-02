@@ -3,7 +3,7 @@
 ########################################################################
 # Extension Manager/Repository config file for ext: "devlog"
 #
-# Auto generated 07-11-2008 18:14
+# Auto generated 02-03-2009 14:50
 #
 # Manual updates:
 # Only the data in the array - anything else is removed by next write.
@@ -31,7 +31,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'author_company' => '',
 	'CGLcompliance' => '',
 	'CGLcompliance_note' => '',
-	'version' => '2.6.1',
+	'version' => '2.7.0',
 	'constraints' => array(
 		'depends' => array(
 			'typo3' => '3.5.0-0.0.0',
@@ -43,7 +43,7 @@ $EM_CONF[$_EXTKEY] = array(
 		'suggests' => array(
 		),
 	),
-	'_md5_values_when_last_written' => 'a:17:{s:9:"ChangeLog";s:4:"784a";s:19:"class.tx_devlog.php";s:4:"4f71";s:21:"ext_conf_template.txt";s:4:"204e";s:12:"ext_icon.gif";s:4:"cd8e";s:17:"ext_localconf.php";s:4:"fc16";s:14:"ext_tables.php";s:4:"b24e";s:14:"ext_tables.sql";s:4:"e1b1";s:18:"icon_tx_devlog.gif";s:4:"cd8e";s:16:"locallang_db.xml";s:4:"a89f";s:7:"tca.php";s:4:"fcb3";s:14:"doc/manual.sxw";s:4:"52bd";s:14:"mod1/clear.gif";s:4:"cc11";s:13:"mod1/conf.php";s:4:"4129";s:14:"mod1/index.php";s:4:"c4cb";s:18:"mod1/locallang.xml";s:4:"8f76";s:22:"mod1/locallang_mod.xml";s:4:"5454";s:19:"mod1/moduleicon.gif";s:4:"cd8e";}',
+	'_md5_values_when_last_written' => 'a:20:{s:9:"ChangeLog";s:4:"590d";s:19:"class.tx_devlog.php";s:4:"e72a";s:28:"class.tx_devlog_tceforms.php";s:4:"5e2a";s:21:"ext_conf_template.txt";s:4:"204e";s:12:"ext_icon.gif";s:4:"cd8e";s:17:"ext_localconf.php";s:4:"a7f0";s:14:"ext_tables.php";s:4:"ab76";s:14:"ext_tables.sql";s:4:"e1b1";s:18:"icon_tx_devlog.gif";s:4:"cd8e";s:26:"locallang_csh_txdevlog.xml";s:4:"b9da";s:16:"locallang_db.xml";s:4:"03db";s:7:"tca.php";s:4:"162e";s:14:"doc/manual.sxw";s:4:"fe4e";s:14:"mod1/clear.gif";s:4:"cc11";s:13:"mod1/conf.php";s:4:"4129";s:14:"mod1/index.php";s:4:"4b6b";s:18:"mod1/locallang.xml";s:4:"4838";s:22:"mod1/locallang_mod.xml";s:4:"5454";s:19:"mod1/moduleicon.gif";s:4:"cd8e";s:22:"res/csh_severities.png";s:4:"facf";}',
 	'suggests' => array(
 	),
 );
