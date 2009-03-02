@@ -38,7 +38,7 @@
 				Warning: These events are used to notify significant problems. Processes have been completed, but parts of them may be missing, wrong or corrupted. Warnings should not be ignored and action should definitely be taken.
 				Error: These events signal that something went fatally wrong. Processes were not completed and action is definitely needed. Alternately this level may be used to point to a failed event, but in a process where failure can be expected, e.g. a login attempt with the wrong password.
 			</label>
-			<label index="severity.image">EXT:devlog/res/csh_severities.png</label>
+			<label index="_severity.image">EXT:devlog/res/csh_severities.png</label>
 			<label index="extkey.alttitle">Extension</label>
 			<label index="extkey.description">The component which triggered the event</label>
 			<label index="extkey.details">
