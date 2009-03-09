@@ -65,6 +65,11 @@ class tx_devlog {
 	 * @return	void	 
 	 */
 	function devLog($logArr) {
+			// If the DB object is not yet instantiated or not connected to the DB, abort writing to the log
+		if (!isset($GLOBALS['TYPO3_DB']) || !is_object($GLOBALS['TYPO3_DB']) || !$GLOBALS['TYPO3_DB']->link) {
+			return;
+		}
+
 		global $TYPO3_CONF_VARS;
 	
 		if ($TYPO3_CONF_VARS['EXTCONF'][$this->extKey]['nolog']) return;
