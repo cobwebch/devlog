@@ -242,12 +242,12 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				if ($this->MOD_SETTINGS['logrun'] <= 1000) {
 					$optMenu['autorefresh'] = '<input type="hidden" name="SET[autorefresh]" value="0">';
 					$onClick = 'toggleReload(this.checked);';
-					$optMenu['autorefresh'] .= '<input type="checkbox" name="SET[autorefresh]" id="autorefresh" value="1"'.($this->MOD_SETTINGS['autorefresh']?' checked':'').' onclick="'.htmlspecialchars($onClick).'"> <label for="autorefresh">'.$GLOBALS['LANG']->getLL('auto_refresh').'</label>';
+					$optMenu['autorefresh'] .= '<input type="checkbox" class="checkbox" name="SET[autorefresh]" id="autorefresh" value="1"'.($this->MOD_SETTINGS['autorefresh']?' checked':'').' onclick="'.htmlspecialchars($onClick).'"> <label for="autorefresh">'.$GLOBALS['LANG']->getLL('auto_refresh').'</label>';
 				}
 				$optMenu['refresh'] = '<input type="submit" name="refresh" value="'.$GLOBALS['LANG']->getLL('refresh').'">';
 				$optMenu['expandAllExtraData'] = '<input type="hidden" name="SET[expandAllExtraData]" value="0">';
 				$onClick = 'document.options.submit();';
-				$optMenu['expandAllExtraData'] .= '<input type="checkbox" name="SET[expandAllExtraData]" id="expandAllExtraData" value="1"'.($this->MOD_SETTINGS['expandAllExtraData']?' checked="checked"':'').' onclick="'.htmlspecialchars($onClick).'"> <label for="expandAllExtraData">'.$GLOBALS['LANG']->getLL('expand_all_extra_data').'</label>';
+				$optMenu['expandAllExtraData'] .= '<input type="checkbox" class="checkbox" name="SET[expandAllExtraData]" id="expandAllExtraData" value="1"'.($this->MOD_SETTINGS['expandAllExtraData']?' checked="checked"':'').' onclick="'.htmlspecialchars($onClick).'"> <label for="expandAllExtraData">'.$GLOBALS['LANG']->getLL('expand_all_extra_data').'</label>';
 
 				$headerSection = $this->doc->menuTable(
 					array(
