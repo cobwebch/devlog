@@ -1,3 +1,8 @@
+2009-03-09 Francois Suter <typo3@cobweb.ch>
+
+	* Added checks for proper initialization of DB object on devlog call
+	* Added custom categories for extension configuration options (usable as TYPO3 4.3)
+
 2009-03-02 Francois Suter <typo3@cobweb.ch>
 
 	* Made CSH for severity.image non translatable (thanks to Steffen Muller)

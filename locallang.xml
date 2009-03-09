@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+    <meta type="array">
+        <description>Labels for EM</description>
+        <type>module</type>
+        <csh_table></csh_table>
+        <labelContext type="array">
+        </labelContext>
+    </meta>
+    <data type="array">
+        <languageKey index="default" type="array">
+            <label index="deprecated">Deprecated</label>
+            <label index="limits">Limits</label>
+            <label index="filtering">Filtering</label>
+            <label index="display">Display</label>
+        </languageKey>
+    </data>
+</T3locallang>

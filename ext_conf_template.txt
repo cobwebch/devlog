@@ -1,28 +1,33 @@
-# cat=basic//; type=integer; label=Maximum number of log runs: Set the maximum number of log runs you want to display in the menu of log runs
+# customsubcategory=limits=LLL:EXT:devlog/locallang.xml:limits
+# customsubcategory=filtering=LLL:EXT:devlog/locallang.xml:filtering
+# customsubcategory=display=LLL:EXT:devlog/locallang.xml:display
+# customsubcategory=deprecated=LLL:EXT:devlog/locallang.xml:deprecated
+
+# cat=basic/limits/; type=integer; label=Maximum number of log runs: Set the maximum number of log runs you want to display in the menu of log runs
 maxLogRuns = 15
 
-# cat=basic//; type=integer; label=Number of entries per page: Set the number of log entries to display per page, when viewing all log entries
+# cat=basic/limits/; type=integer; label=Number of entries per page: Set the number of log entries to display per page, when viewing all log entries
 entriesPerPage = 25
 
-# cat=basic//; type=integer; label=Maximum number of rows: Maximum number of rows that should be stored in the log table
+# cat=basic/limits/; type=integer; label=Maximum number of rows: Maximum number of rows that should be stored in the log table
 maxRows = 1000
 
-# cat=basic//; type=options[-1,0,1,2,3]; label=Minimum level for logging: Minimum message level required for actually writing to the log table
+# cat=basic/filtering/; type=options[-1,0,1,2,3]; label=Minimum level for logging: Minimum message level required for actually writing to the log table
 minLogLevel = -1
 
-# cat=basic//; type=string; label=Exclude keys: Comma-separated list of (extension) keys that should not be logged into the Developer Log
+# cat=basic/filtering/; type=string; label=Exclude keys: Comma-separated list of (extension) keys that should not be logged into the Developer Log
 excludeKeys =
 
-# cat=basic//; type=string; label=Highlight style: Style used for highlighting search keywords. Use proper CSS properties as this goes into a style="" attribute
+# cat=basic/display/; type=string; label=Highlight style: Style used for highlighting search keywords. Use proper CSS properties as this goes into a style="" attribute
 highlightStyle = padding: 2px; background-color: #fc3; border: 1px solid #666
 
-# cat=basic//; type=integer; label=Autorefresh frequency: Set the number of seconds between each refresh, when using the autorefresh feature
+# cat=basic/display/; type=integer; label=Autorefresh frequency: Set the number of seconds between each refresh, when using the autorefresh feature
 refreshFrequency = 2
 
-# cat=basic//; type=string; label=Path to Prototype: If you are using TYPO3 4.0 or less, download the Prototype JavaScript library, put it somewhere in fileadmin or inside some extension and indicate the path here
+# cat=basic/xxx/; type=string; label=Path to Prototype: If you are using TYPO3 4.0 or less, download the Prototype JavaScript library, put it somewhere in fileadmin or inside some extension and indicate the path here
 prototypePath = 
 
-# cat=basic//; type=boolean; label=Automatic clean up: Check this box if you want to automatically clean up log runs in excess of maxLogRuns when entering the BE module (this setting may be dropped in the future, use maxRows instead)
+# cat=basic/deprecated/; type=boolean; label=Automatic clean up: Check this box if you want to automatically clean up log runs in excess of maxLogRuns when entering the BE module (this setting may be dropped in the future, use maxRows instead)
 autoCleanup = 0
 
 TSConstantEditor.basic {
