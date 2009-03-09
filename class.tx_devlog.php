@@ -70,17 +70,23 @@ class tx_devlog {
 			return;
 		}
 
-		global $TYPO3_CONF_VARS;
-	
-		if ($TYPO3_CONF_VARS['EXTCONF'][$this->extKey]['nolog']) return;
+		if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['nolog']) {
+			return;
+		}
 			// this is a hack to prevent logging while initialization - $TYPO3_CONF_VARS will be reset while init
-		if ($GLOBALS['EXTCONF'][$this->extKey]['nolog']) return;
+		if ($GLOBALS['EXTCONF'][$this->extKey]['nolog']) {
+			return;
+		}
 
 			// If the severity is below the minimum logging level, don't log the entry
-		if ($logArr['severity'] < $this->extConf['minLogLevel']) return;
+		if ($logArr['severity'] < $this->extConf['minLogLevel']) {
+			return;
+		}
 
 			// If the key is in the list of keys to exclude, don't log the entry
-		if (t3lib_div::inList($this->extConf['excludeKeys'], $logArr['extKey'])) return;
+		if (t3lib_div::inList($this->extConf['excludeKeys'], $logArr['extKey'])) {
+			return;
+		}
 
 			// Check if the maximum number of rows has been exceeded
 		if (!empty($this->extConf['maxRows'])) {
@@ -101,8 +107,8 @@ class tx_devlog {
 			$pid = 0;
 		}
 		$insertFields['pid'] = $pid;
-		$insertFields['crdate'] = $TYPO3_CONF_VARS['EXTCONF'][$this->extKey]['tstamp'];
-		$insertFields['crmsec'] = $TYPO3_CONF_VARS['EXTCONF'][$this->extKey]['mstamp'];
+		$insertFields['crdate'] = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['tstamp'];
+		$insertFields['crmsec'] = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['mstamp'];
 		$insertFields['cruser_id'] = $GLOBALS['BE_USER']->user['uid'];
 		$insertFields['msg'] = $logArr['msg'];
 		$insertFields['extkey'] = $logArr['extKey'];
