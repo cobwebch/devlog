@@ -41,6 +41,8 @@
             <label index="open_view">Open new window</label>
             <label index="line_call">%s, line %d</label>
             <label index="extra_data_error">Error reading extra data</label>
+            <label index="tx_devlog_error.toolong">The extra data exceeded the maximum size. It was not stored.</label>
+            <label index="tx_devlog_error.invalid">The extra data was not an array. It was not stored.</label>
             <label index="show_extra_data">Show extra data</label>
             <label index="hide_extra_data">Hide extra data</label>
             <label index="severity_ok">OK</label>

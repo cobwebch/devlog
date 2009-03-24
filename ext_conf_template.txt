@@ -12,6 +12,9 @@ entriesPerPage = 25
 # cat=basic/limits/; type=integer; label=Maximum number of rows: Maximum number of rows that should be stored in the log table
 maxRows = 1000
 
+# cat=basic/limits/; type=integer; label=Maximum size of extra data: The extra data field accepts an array containing any number of data. However when that array becomes too large, writing it to the database may actually crash you server. It is recommended to set a limit (in number of characters).
+dumpSize = 1000000
+
 # cat=basic/filtering/; type=options[-1,0,1,2,3]; label=Minimum level for logging: Minimum message level required for actually writing to the log table
 minLogLevel = -1
 

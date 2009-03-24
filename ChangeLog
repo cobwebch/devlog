@@ -1,3 +1,8 @@
+2009-03-24 Francois Suter <typo3@cobweb.ch>
+
+	* Added check for extra data type
+	* Added configuration for filtering extra data of excessive size
+
 2009-03-09 Francois Suter <typo3@cobweb.ch>
 
 	* Added checks for proper initialization of DB object on devlog call

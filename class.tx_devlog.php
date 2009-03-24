@@ -122,7 +122,18 @@ class tx_devlog {
 		}
 
 		if (!empty($logArr['dataVar'])) {
-			$insertFields['data_var'] = serialize($logArr['dataVar']);
+			if (is_array($logArr['dataVar'])) {
+				$serializedData = serialize($logArr['dataVar']);
+				if (!isset($this->extConf['dumpSize']) || strlen($serializedData) <= $this->extConf['dumpSize']) {
+					$insertFields['data_var'] = $serializedData;
+				}
+				else {
+					$insertFields['data_var'] = serialize(array('tx_devlog_error' => 'toolong'));
+				}
+			}
+			else {
+				$insertFields['data_var'] = serialize(array('tx_devlog_error' => 'invalid'));
+			}
 		}
 
 		$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_devlog', $insertFields);

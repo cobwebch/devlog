@@ -358,10 +358,6 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$table[$tr][] = $this->renderHeader('msg');
 		$table[$tr][] = $this->renderHeader('location');
 		$table[$tr][] = $this->renderHeader('pid', true);
-		$header = $GLOBALS['LANG']->getLL('cruser_id');
-		if ($this->selectedLog == -1) {
-			$header .= '<br />'.$this->renderFilterMenu('cruser_id');
-		}
 		$table[$tr][] = $this->renderHeader('cruser_id', true);
 		$table[$tr][] = $this->renderHeader('data_var');
 
@@ -417,6 +413,9 @@ class tx_devlog_module1 extends t3lib_SCbase {
 					}
 					if ($fullData === false) {
 						$dataVar = $GLOBALS['LANG']->getLL('extra_data_error');
+					}
+					elseif (is_array($fullData) && isset($fullData['tx_devlog_error'])) {
+						$dataVar = $GLOBALS['LANG']->getLL('tx_devlog_error.' . $fullData['tx_devlog_error']);
 					}
 					else {
 						if ($this->MOD_SETTINGS['expandAllExtraData']) {
