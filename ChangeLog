@@ -1,3 +1,8 @@
+2009-03-26 Francois Suter <typo3@cobweb.ch>
+
+	* Updated manual
+	* Released to TER as version 2.8.0
+
 2009-03-24 Francois Suter <typo3@cobweb.ch>
 
 	* Added check for extra data type
@@ -6,7 +11,7 @@
 2009-03-09 Francois Suter <typo3@cobweb.ch>
 
 	* Added checks for proper initialization of DB object on devlog call
-	* Added custom categories for extension configuration options (usable as TYPO3 4.3)
+	* Added custom categories for extension configuration options (usable as of TYPO3 4.3)
 
 2009-03-02 Francois Suter <typo3@cobweb.ch>
 
