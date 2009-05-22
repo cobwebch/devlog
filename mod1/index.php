@@ -37,15 +37,15 @@ $EXTCONF['devlog']['nolog'] = TRUE;
 
 	// DEFAULT initialization of a module [BEGIN]
 unset($MCONF);	
-require ('conf.php');
-require ($BACK_PATH.'init.php');
+require('conf.php');
+require($BACK_PATH . 'init.php');
 
 $TYPO3_CONF_VARS['EXTCONF']['devlog']['nolog'] = TRUE;
 
-require ($BACK_PATH.'template.php');
+require($BACK_PATH . 'template.php');
 $GLOBALS['LANG']->includeLLFile('EXT:devlog/mod1/locallang.xml');
-require_once (PATH_t3lib.'class.t3lib_scbase.php');
-$BE_USER->modAccess($MCONF,1);	// This checks permissions and exits if the users has no permission for entry.
+require_once(PATH_t3lib . 'class.t3lib_scbase.php');
+$BE_USER->modAccess($MCONF, 1);	// This checks permissions and exits if the users has no permission for entry.
 	// DEFAULT initialization of a module [END]
 
 class tx_devlog_module1 extends t3lib_SCbase {
@@ -268,10 +268,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$this->content .= '<form name="options" action="" method="POST">'.$this->doc->section('', $this->doc->funcMenu($headerSection, t3lib_BEfunc::getFuncMenu($this->id,'SET[function]',$this->MOD_SETTINGS['function'], $this->MOD_MENU['function']).'&nbsp;&nbsp;&nbsp;'.$this->openNewView())).'</form>';
 			$this->content .= $this->doc->divider(5);
 
-
 			// Render content:
 			$this->moduleContent();
-
 			
 			// ShortCut
 			if ($GLOBALS['BE_USER']->mayMakeShortcut())	{
@@ -380,7 +378,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 					// Severity: 0 is info, 1 is notice, 2 is warning, 3 is fatal error, -1 is "OK" message
 				switch ($row['severity']) {
 					case 0:
-						$severity = '<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/info.gif','width="18" height="16"').' alt="" />';
+						$severity = '<img' . t3lib_iconWorks::skinImg($BACK_PATH,'gfx/info.gif', 'width="18" height="16"') . ' alt="" />';
 						break;
 					case -1:
 					case 1:
@@ -396,7 +394,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 					// Add a row to the table
 				$tr++;
 
-				$table[$tr][] = $this->linkLogRun(strftime('%d-%m-%y&nbsp;%H:%M:%S',$row['crdate']), $row['crmsec']);
+				$table[$tr][] = $this->linkLogRun(strftime('%d-%m-%y&nbsp;%H:%M:%S', $row['crdate']), $row['crmsec']);
 				$table[$tr][] = $severity;
 				$table[$tr][] = $row['extkey'];
 				$table[$tr][] = $row['msg'];
@@ -406,7 +404,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				$dataVar = '';
 				if (!empty($row['data_var'])) {
 					if (strpos($row['data_var'], '"') === 0) {
-						$fullData = @unserialize(stripslashes(substr($row['data_var'],1,strlen($row['data_var'])-1)));
+						$fullData = @unserialize(stripslashes(substr($row['data_var'], 1, strlen($row['data_var']) - 1)));
 					}
 					else {
 						$fullData = @unserialize($row['data_var']);
@@ -421,16 +419,16 @@ class tx_devlog_module1 extends t3lib_SCbase {
 						if ($this->MOD_SETTINGS['expandAllExtraData']) {
 							$style = '';
 							$label = $GLOBALS['LANG']->getLL('hide_extra_data');
-							$icon = '<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/minusbullet_list.gif','width="18" height="12"').' alt="-" />';
+							$icon = '<img' . t3lib_iconWorks::skinImg($BACK_PATH,'gfx/minusbullet_list.gif','width="18" height="12"') . ' alt="-" />';
 						} else {
 							$style = ' style="display: none;"';
 							$label = $GLOBALS['LANG']->getLL('show_extra_data');
-							$icon = '<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/plusbullet_list.gif','width="18" height="12"').' alt="+" />';
+							$icon = '<img' . t3lib_iconWorks::skinImg($BACK_PATH,'gfx/plusbullet_list.gif','width="18" height="12"') . ' alt="+" />';
 						}
-						$dataVar = '<a href="javascript:toggleExtraData(\''.$row['uid'].'\')" id="debug-link-'.$row['uid'].'" title="'.$label.'">';
+						$dataVar = '<a href="javascript:toggleExtraData(\'' . $row['uid'] . '\')" id="debug-link-' . $row['uid'] . '" title="' . $label . '">';
 						$dataVar .= $icon;
 						$dataVar .= '</a>';
-						$dataVar .= '<div id="debug-row-'.$row['uid'].'"'.$style.'>'.t3lib_div::view_array($fullData).'</div>';
+						$dataVar .= '<div id="debug-row-' . $row['uid'] . '"' . $style . '>' . t3lib_div::view_array($fullData) . '</div>';
 					}
 				}
 				$table[$tr][] = $dataVar;
