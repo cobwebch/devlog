@@ -61,7 +61,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	var $selectedFilters = array(); // Selected filters and their values
 	var $extConf = array(); // Extension configuration
 	var $defaultEntriesPerPage = 25; // Default value for number of entries per page configuration parameter
-
+	var $cshKey; // Key of the CSH file
 	var $cleanupPeriods = array('1hour' => '-1 hour', '1week' => '-1 week', '1month' => '-1 month', '3months' => '-3 months', '6months' => '-6 months', '1year' => '-1 year'); // List of possible periods for cleaning up log entries
 
 	/**
@@ -515,7 +515,6 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 *
 	 * @param	string	$field: name of the field for which the header is being rendered
 	 * @param	string	$addFilter: set to true to display the filter for the given column
-	 * @param	string	$addCSH: set to true to display CSH in the header
 	 * @return	string	HTML to display
 	 */
 	function renderHeader($field, $addFilter = false) {
