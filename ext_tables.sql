@@ -18,4 +18,4 @@ CREATE TABLE tx_devlog (
 	KEY parent (pid),
 	KEY crdate (crdate),
 	KEY crmsec (crmsec)
-);
+) ENGINE = InnoDB;
