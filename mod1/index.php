@@ -333,7 +333,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		global $BACK_PATH;
 		$content = '';
 
-			// init table layout
+			// Initialise table layout
 		$tableLayout = array (
 			'table' => array ('<table border="0" cellspacing="1" cellpadding="2" style="width:auto;">', '</table>'),
 			'0' => array (
@@ -349,7 +349,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$table = array();
 		$tr = 0;
 		
-			// add header row
+			// Header row
 		$table[$tr][] = $this->renderHeader('crdate');
 		$table[$tr][] = $this->renderHeader('severity', true);
 		$table[$tr][] = $this->renderHeader('extkey', true);
@@ -369,7 +369,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			// Otherwise loop on the results and build table for display
 		else {
 			$endDate = 0;
-			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
+			while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres))) {
 	
 					// Memorise start and end date of selected entries
 				if (empty($endDate)) $endDate = $row['crdate'];
