@@ -189,14 +189,12 @@ class tx_devlog {
 				// Delete all rows older or same age as previously found timestamp
 				// This will problably delete a bit more than 10% of maxRows, but will at least
 				// delete complete log runs
-t3lib_div::debug('Purging the table');
 			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', "crdate <= '".$crdate."'");
 			$numRemovedRows = $GLOBALS['TYPO3_DB']->sql_affected_rows();
 				// Update (cached) number of rows
 			$this->numRows -= $numRemovedRows;
 				// Optimize the table (if option is active)
 			if ($this->extConf['optimize']) {
-t3lib_div::debug('Optimizing the table');
 				$GLOBALS['TYPO3_DB']->sql_query('OPTIMIZE table tx_devlog');
 			}
 		}

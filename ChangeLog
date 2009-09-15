@@ -1,3 +1,8 @@
+2009-09-15 Francois Suter <typo3@cobweb.ch>
+
+	* Removed some left-over debug statements (sorry!)
+	* Released to TER as version 2.9.1
+
 2009-09-09 Francois Suter <typo3@cobweb.ch>
 
 	* Added optimization option when deleting excess records from the devlog table
