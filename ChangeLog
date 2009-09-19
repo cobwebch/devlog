@@ -1,3 +1,7 @@
+2009-09-19 Francois Suter <typo3@cobweb.ch>
+
+	* Corrected TCA configuration so that devlog records are properly allowed anywhere in the page tree
+
 2009-09-15 Francois Suter <typo3@cobweb.ch>
 
 	* Removed some left-over debug statements (sorry!)
