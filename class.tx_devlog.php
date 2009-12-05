@@ -95,16 +95,14 @@ class tx_devlog {
 
 		$insertFields = array();
 			// Try to get a pid that makes sense
+		$pid = 0;
 			// In the FE context, this is obviously the current page
 		if (isset($GLOBALS['TSFE'])) {
 			$pid = $GLOBALS['TSFE']->id;
-		}
+
 			// In other contexts, a global variable may be set with a relevant pid
-		elseif (isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['debugData']['pid'])) {
+		} elseif (isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['debugData']['pid'])) {
 			$pid = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['debugData']['pid'];
-		}
-		else {
-			$pid = 0;
 		}
 		$insertFields['pid'] = $pid;
 		$insertFields['crdate'] = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['tstamp'];
@@ -126,12 +124,10 @@ class tx_devlog {
 				$serializedData = serialize($logArr['dataVar']);
 				if (!isset($this->extConf['dumpSize']) || strlen($serializedData) <= $this->extConf['dumpSize']) {
 					$insertFields['data_var'] = $serializedData;
-				}
-				else {
+				} else {
 					$insertFields['data_var'] = serialize(array('tx_devlog_error' => 'toolong'));
 				}
-			}
-			else {
+			} else {
 				$insertFields['data_var'] = serialize(array('tx_devlog_error' => 'invalid'));
 			}
 		}
