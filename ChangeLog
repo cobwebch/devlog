@@ -1,6 +1,7 @@
 2009-12-21 Francois Suter <typo3@cobweb.ch>
 
 	* Added protection against possible XSS attacks
+	* Released to TER as version 2.9.2
 
 2009-09-19 Francois Suter <typo3@cobweb.ch>
 
