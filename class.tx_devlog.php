@@ -108,9 +108,19 @@ class tx_devlog {
 		$insertFields['crdate'] = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['tstamp'];
 		$insertFields['crmsec'] = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['mstamp'];
 		$insertFields['cruser_id'] = $GLOBALS['BE_USER']->user['uid'];
-		$insertFields['msg'] = $logArr['msg'];
-		$insertFields['extkey'] = $logArr['extKey'];
-		$insertFields['severity'] = $logArr['severity'];
+			// Clean up the message before insertion into the database
+			// If possible use RemoveXSS (TYPO3 4.2+), otherwise strip all tags
+		$message = '';
+		if (method_exists('t3lib_div', 'removeXSS')) {
+			$message = t3lib_div::removeXSS($logArr['msg']);
+		} else {
+			$message = strip_tags($logArr['msg']);
+		}
+		$insertFields['msg'] = $message;
+			// There's no reason to have any markup in the extension key
+		$insertFields['extkey'] = strip_tags($logArr['extKey']);
+			// Severity can only be a number
+		$insertFields['severity'] = intval($logArr['severity']);
 
 			// Try to get information about the place where this method was called from
 		if (function_exists('debug_backtrace')) {

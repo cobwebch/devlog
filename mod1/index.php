@@ -396,8 +396,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 				$table[$tr][] = $this->linkLogRun(strftime('%d-%m-%y&nbsp;%H:%M:%S', $row['crdate']), $row['crmsec']);
 				$table[$tr][] = $severity;
-				$table[$tr][] = $row['extkey'];
-				$table[$tr][] = $row['msg'];
+				$table[$tr][] = htmlspecialchars($row['extkey']);
+				$table[$tr][] = htmlspecialchars($row['msg']);
 				$table[$tr][] = (empty($row['location']) || empty($row['line'])) ? '' : sprintf($GLOBALS['LANG']->getLL('line_call'), $row['location'], $row['line']);
 				$table[$tr][] = $this->getPageLink($row['pid']);
 				$table[$tr][] = $this->getRecordDetails('be_users', $row['cruser_id']);

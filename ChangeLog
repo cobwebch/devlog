@@ -1,3 +1,7 @@
+2009-12-21 Francois Suter <typo3@cobweb.ch>
+
+	* Added protection against possible XSS attacks
+
 2009-09-19 Francois Suter <typo3@cobweb.ch>
 
 	* Corrected TCA configuration so that devlog records are properly allowed anywhere in the page tree
