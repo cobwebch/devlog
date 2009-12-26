@@ -372,7 +372,9 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres))) {
 	
 					// Memorise start and end date of selected entries
-				if (empty($endDate)) $endDate = $row['crdate'];
+				if (empty($endDate)) {
+					$endDate = $row['crdate'];
+				}
 				$startDate = $row['crdate'];
 				
 					// Severity: 0 is info, 1 is notice, 2 is warning, 3 is fatal error, -1 is "OK" message
@@ -498,11 +500,11 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 * @return	string	The original string with the highlighted word
 	 */
 	function highlightString($content, $word) {
+		$highlightedContent = '';
 		$replace = '<span style="' . $this->extConf['highlightStyle'] . '">' . $word . '</span>';
 		if (function_exists('str_ireplace')) { // If case insensitive replace exists (PHP 5+), use it
 			$highlightedContent = str_ireplace($word, $replace, $content);
-		}
-		else {
+		} else {
 			$highlightedContent = str_replace($word, $replace, $content);
 		}
 		return $highlightedContent;
@@ -538,10 +540,10 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$numPages = ceil($this->totalLogEntries / $this->extConf['entriesPerPage']);
 		for ($i = 0; $i < $numPages; $i++) {
 			$text = ($i * $this->extConf['entriesPerPage']) . '-' . (($i + 1) * $this->extConf['entriesPerPage']);
+			$item = '';
 			if ($i == $this->MOD_SETTINGS['page']) {
 				$item = '<strong>' . $text . '</strong>';
-			}
-			else {
+			} else {
 				$item = '<a href="?SET[page]=' . $i . '">' . $text . '</a>';
 			}
 			$navigation .= $item.' ';
@@ -577,26 +579,35 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		if ($this->selectedLog == $oldestRun) {
 			$oldestRun = 0;
 			$previousRun = 0;
-		}
-		elseif ($this->selectedLog == $latestRun) {
+		} elseif ($this->selectedLog == $latestRun) {
 			$latestRun = 0;
 			$nextRun = 0;
 		}
 
 			// Assemble browse links: oldest, previous, next, latest (if relevant)
 		$browser = '';
-		if ($oldestRun > 0) $browser .= $this->linkLogRun($GLOBALS['LANG']->getLL('oldest'), $oldestRun);
+		if ($oldestRun > 0) {
+			$browser .= $this->linkLogRun($GLOBALS['LANG']->getLL('oldest'), $oldestRun);
+		}
 		if ($previousRun > 0) {
-			if (!empty($browser)) $browser .= '&nbsp;&nbsp;';
+			if (!empty($browser)) {
+				$browser .= '&nbsp;&nbsp;';
+			}
 			$browser .= $this->linkLogRun($GLOBALS['LANG']->getLL('previous'), $previousRun);
 		}
-		if (!empty($browser)) $browser .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		if (!empty($browser)) {
+			$browser .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		}
 		if ($nextRun > 0) {
-			if (!empty($browser)) $browser .= '&nbsp;&nbsp;';
+			if (!empty($browser)) {
+				$browser .= '&nbsp;&nbsp;';
+			}
 			$browser .= $this->linkLogRun($GLOBALS['LANG']->getLL('next'), $nextRun);
 		}
 		if ($latestRun > 0) {
-			if (!empty($browser)) $browser .= '&nbsp;&nbsp;';
+			if (!empty($browser)) {
+				$browser .= '&nbsp;&nbsp;';
+			}
 			$browser .= $this->linkLogRun($GLOBALS['LANG']->getLL('latest'), $latestRun);
 		}
 		return $browser;
@@ -613,16 +624,14 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 */
 	function renderFilterMenu($filterKey) {
 		if (isset($this->filters[$filterKey])) {
-			$filter = '<form name="filter'.$filterKey.'" action="" method="GET">';
-			$filter .= '<select name="SET[filters]['.$filterKey.']" onchange="this.form.submit()">';
+			$filter = '<form name="filter' . $filterKey . '" action="" method="GET">';
+			$filter .= '<select name="SET[filters][' . $filterKey . ']" onchange="this.form.submit()">';
 			foreach ($this->filters[$filterKey] as $key => $value) {
+				$selected = '';
 				if ((string)$key == (string)$this->selectedFilters[$filterKey]) {
 					$selected = ' selected="selected"';
 				}
-				else {
-					$selected = '';
-				}
-				$filter .= '<option value="'.$key.'"'.$selected.'>'.$value.'</option>';
+				$filter .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
 			}
 			$filter .= '</select>';
 			$filter .= '</form>';
@@ -654,12 +663,11 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$content .= $this->doc->spacer(20);
 
 			// Act on clear commands
-		if ($clearParameters = t3lib_div::_GP('clear')) {
+		if (($clearParameters = t3lib_div::_GP('clear'))) {
 			$where = '';
 			if (isset($clearParameters['extension'])) {
 				$where = "extkey = '".$clearParameters['extension']."'";
-			}
-			elseif (isset($clearParameters['period'])) {
+			} elseif (isset($clearParameters['period'])) {
 				$where = "crdate <= '".$clearParameters['period']."'";
 			}
 			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', $where);
@@ -670,18 +678,17 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			// Display delete forms
 
 			// Get total number of log entries
-		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('COUNT(uid) AS total', 'tx_devlog', $where_clause='');
+		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('COUNT(uid) AS total', 'tx_devlog', '');
 		$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres);
 		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
 		if ($row['total'] == 0) { // No entries, display a simple message
 			$content .= '<p>'.$GLOBALS['LANG']->getLL('no_entries').'</p>';
-		}
-		else { // Display delete forms only if there's at least one log entry
+		} else { // Display delete forms only if there's at least one log entry
 			$content .= '<p>'.sprintf($GLOBALS['LANG']->getLL('xx_entries'), $row['total']).'</p>';
 			$content .= $this->doc->spacer(10);
 
 				// Get list of existing extension keys in the log table
-			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT extkey', 'tx_devlog', $where_clause='', $groupBy='', $orderBy='extkey ASC');
+			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT extkey', 'tx_devlog', '', '', 'extkey ASC');
 				// Display form for deleting log entries per extension
 			$content .= '<p>'.$GLOBALS['LANG']->getLL('cleanup_for_extension').'</p>';
 			$content .= '<form name="cleanExt" action="" method="POST">';
@@ -757,7 +764,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$this->logRuns = array();
 		$this->recentRuns = array();
 		$runLimit = empty($this->extConf['maxLogRuns']) ? 0 : $this->extConf['maxLogRuns'];
-		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT crmsec,crdate', 'tx_devlog', $where_clause='', $groupBy='', $orderBy='crmsec DESC');
+		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT crmsec,crdate', 'tx_devlog', '', '', 'crmsec DESC');
 			// Assemble those runs in an associative array with run timestamp as a key
 		$counter = 0;
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
@@ -806,10 +813,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$this->getLogEntriesCount($whereClause);
 
 				// Make sure the start page number is not an empty string
-			if (empty($this->MOD_SETTINGS['page'])) {
-				$page = 0;
-			}
-			else {
+			$page = 0;
+			if (!empty($this->MOD_SETTINGS['page'])) {
 				$page = $this->MOD_SETTINGS['page'];
 			}
 				// Calculate start page
@@ -849,9 +854,9 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 */
 	function getLogFilters() {
 			// Get list of existing extension keys in the log table
-		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT extkey', 'tx_devlog', $where_clause='', $groupBy='', $orderBy='extkey ASC');
+		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT extkey', 'tx_devlog', '', '', 'extkey ASC');
 		$this->filters['extkey'] = array('*' => '');
-		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
+		while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres))) {
 			$this->filters['extkey'][$row['extkey']] = $row['extkey'];
 		}
 		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
@@ -925,7 +930,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		if (!empty($this->extConf['maxLogRuns']) && count($this->logRuns) >= $this->extConf['maxLogRuns']) {
 			$keys = array_keys($this->logRuns);
 			$logRun = $keys[$this->extConf['maxLogRuns'] - 1];
-			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', 'crmsec < '.$logRun);
+			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', 'crmsec < ' . $logRun);
 		}
 	}	
 	
@@ -938,9 +943,9 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		global $BACK_PATH;
 
 		$url = t3lib_div::getIndpEnv('TYPO3_REQUEST_SCRIPT');		
-		$onClick = "devlogWin=window.open('".$url."','devlog','width=790,status=0,menubar=1,resizable=1,location=0,scrollbars=1,toolbar=0');devlogWin.focus();return false;";
-		$content = '<a id="openview" href="#" onclick="'.htmlspecialchars($onClick).'">'.
-					'<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/open_in_new_window.gif','width="19" height="14"').' title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.openInNewWindow',1).'" class="absmiddle" '.$addAttrib.' alt="" />'.
+		$onClick = "devlogWin=window.open('" . $url . "','devlog','width=790,status=0,menubar=1,resizable=1,location=0,scrollbars=1,toolbar=0');devlogWin.focus();return false;";
+		$content = '<a id="openview" href="#" onclick="' . htmlspecialchars($onClick).'">' .
+					'<img' . t3lib_iconWorks::skinImg($BACK_PATH,'gfx/open_in_new_window.gif', 'width="19" height="14"') . ' title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.openInNewWindow', 1) . '" class="absmiddle" alt="" />' .
 					'</a>';
 		return $content;						
 	}	
@@ -951,7 +956,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 * @return	string
 	 */
 	function linkLogRun($str, $logRun) {		
-		$content = '<a href="?SET[logrun]='.$logRun.'">'.$str.'</a>';
+		$content = '<a href="?SET[logrun]=' . $logRun . '">' . $str . '</a>';
 		return $content;						
 	}
 
@@ -967,19 +972,18 @@ class tx_devlog_module1 extends t3lib_SCbase {
         global $BACK_PATH;
 		if (empty($uid)) {
 			return '';
-		}
-		else {
+		} else {
 				// Retrieve the stored page information
 				// (pages were already fetched in getLogFilters)
 			$row = $this->records['pages'][$uid];
 			$iconAltText = t3lib_BEfunc::getRecordIconAltText($row, 'pages');
 	
 				// Create icon for record
-			$elementIcon = t3lib_iconworks::getIconImage('pages', $row, $BACK_PATH, 'class="c-recicon" title="'.$iconAltText.'"');
+			$elementIcon = t3lib_iconworks::getIconImage('pages', $row, $BACK_PATH, 'class="c-recicon" title="' . $iconAltText . '"');
 	
 				// Return item with edit link
-			$editOnClick = 'top.loadEditId('.$uid.')';
-			$string = '<a href="#" onclick="'.htmlspecialchars($editOnClick).'">'.$elementIcon.$row['t3lib_BEfunc::title'].'</a>';
+			$editOnClick = 'top.loadEditId(' . $uid . ')';
+			$string = '<a href="#" onclick="' . htmlspecialchars($editOnClick) . '">' . $elementIcon . $row['t3lib_BEfunc::title'] . '</a>';
 			return $string;
 		}
     }
@@ -996,17 +1000,16 @@ class tx_devlog_module1 extends t3lib_SCbase {
         global $BACK_PATH;
 		if (empty($table) || empty($uid)) {
 			return '';
-		}
-		else {
+		} else {
+			$row = array();
 			if (isset($this->records[$table][$uid])) {
 				$row = $this->records[$table][$uid];
-			}
-			else {
+			} else {
 				$row = t3lib_BEfunc::getRecord($table, $uid);
 			}
 	        $iconAltText = t3lib_BEfunc::getRecordIconAltText($row, $table);
             $elementTitle = t3lib_BEfunc::getRecordTitle($table, $row, 1);
-	        $elementIcon = t3lib_iconworks::getIconImage($table, $row, $BACK_PATH, 'class="c-recicon" title="'.$iconAltText.'"');
+	        $elementIcon = t3lib_iconworks::getIconImage($table, $row, $BACK_PATH, 'class="c-recicon" title="' . $iconAltText . '"');
 			return $elementIcon.$elementTitle;
 		}
 	}
