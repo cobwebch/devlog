@@ -964,9 +964,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
      * Returns a linked icon with title from a record
      * NOTE: currently this is only called for the pages table, as table names are not stored in the devlog (but a pid may be)
      *
-     * @param   string      Table name (tt_content,...)
-     * @param   array       Record array
-     * @return  string      Rendered icon
+     * @param	integer		ID of the record to link to
+     * @return  string		HTML for icon, title and link
      */
     function getPageLink($uid) {
         global $BACK_PATH;
