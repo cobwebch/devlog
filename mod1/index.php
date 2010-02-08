@@ -1,20 +1,20 @@
 <?php
 /***************************************************************
 *  Copyright notice
-*  
+*
 *  (c) 2004 Rene Fritz (r.fritz@colorcube.de)
 *  (c) 2009 Francois Suter (typo3@cobweb.ch)
 *  All rights reserved
 *
-*  This script is part of the TYPO3 project. The TYPO3 project is 
+*  This script is part of the TYPO3 project. The TYPO3 project is
 *  free software; you can redistribute it and/or modify
 *  it under the terms of the GNU General Public License as published by
 *  the Free Software Foundation; either version 2 of the License, or
 *  (at your option) any later version.
-* 
+*
 *  The GNU General Public License can be found at
 *  http://www.gnu.org/copyleft/gpl.html.
-* 
+*
 *  This script is distributed in the hope that it will be useful,
 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
 *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -25,7 +25,7 @@
 *  $Id$
 ***************************************************************/
 
-/** 
+/**
  * BE module for the 'devlog' extension.
  *
  * @author	Rene Fritz <r.fritz@colorcube.de>
@@ -34,35 +34,26 @@
 
 	// this is a hack to prevent logging while initialization inside of this module
 $EXTCONF['devlog']['nolog'] = TRUE;
-
-	// DEFAULT initialization of a module [BEGIN]
-unset($MCONF);	
-require('conf.php');
-require($BACK_PATH . 'init.php');
-
 $TYPO3_CONF_VARS['EXTCONF']['devlog']['nolog'] = TRUE;
 
-require($BACK_PATH . 'template.php');
 $GLOBALS['LANG']->includeLLFile('EXT:devlog/mod1/locallang.xml');
-require_once(PATH_t3lib . 'class.t3lib_scbase.php');
 $BE_USER->modAccess($MCONF, 1);	// This checks permissions and exits if the users has no permission for entry.
-	// DEFAULT initialization of a module [END]
 
 class tx_devlog_module1 extends t3lib_SCbase {
-	var $pageinfo;
-
-	var $logRuns = array(); // List of all log runs
-	var $recentRuns = array(); // List of recent log runs
-	var $setVars = array(); // All variables passed when calling the script (GET and POST)
-	var $selectedLog; // Flag for the number of logs to display
-	var $totalLogEntries; // Total number of log entries in the database
-	var $filters = array(); // List of possible values for the log filters
-	var $records = array(); // List of records that are gotten from the database and that may be used several times
-	var $selectedFilters = array(); // Selected filters and their values
-	var $extConf = array(); // Extension configuration
-	var $defaultEntriesPerPage = 25; // Default value for number of entries per page configuration parameter
-	var $cshKey; // Key of the CSH file
-	var $cleanupPeriods = array('1hour' => '-1 hour', '1week' => '-1 week', '1month' => '-1 month', '3months' => '-3 months', '6months' => '-6 months', '1year' => '-1 year'); // List of possible periods for cleaning up log entries
+	protected $pageinfo;
+	protected $logRuns = array(); // List of all log runs
+	protected $recentRuns = array(); // List of recent log runs
+	protected $setVars = array(); // All variables passed when calling the script (GET and POST)
+	protected $selectedLog; // Flag for the number of logs to display
+	protected $totalLogEntries; // Total number of log entries in the database
+	protected $filters = array(); // List of possible values for the log filters
+	protected $records = array(); // List of records that are gotten from the database and that may be used several times
+	protected $selectedFilters = array(); // Selected filters and their values
+	protected $extConf = array(); // Extension configuration
+	protected $defaultEntriesPerPage = 25; // Default value for number of entries per page configuration parameter
+	protected $cshKey; // Key of the CSH file
+	protected $cleanupPeriods = array('1hour' => '-1 hour', '1week' => '-1 week', '1month' => '-1 month', '3months' => '-3 months', '6months' => '-6 months', '1year' => '-1 year'); // List of possible periods for cleaning up log entries
+	protected $extensionName = 'devlog';
 
 	/**
 	 * Initialise the plugin
@@ -73,16 +64,16 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		global $MCONF;
 
 			// Get extension configuration
-		$this->extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$MCONF['extKey']]);
+		$this->extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['devlog']);
 		if (empty($this->extConf['entriesPerPage'])) $this->extConf['entriesPerPage'] = $this->defaultEntriesPerPage;
 
 			// Get log run list
 		$this->getLogRuns();
-		
+
 			// Clean up excess logs (if activated)
 		if ($this->extConf['autoCleanup']) $this->logGC();
 
-			// Get and store the GET and POST variables		
+			// Get and store the GET and POST variables
 		$this->setVars = t3lib_div::_GP('SET');
 
 		parent::init();
@@ -104,11 +95,6 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$this->getLogFilters();
 
 		$this->MOD_MENU = array(
-			'function' => array(
-				'showlog' => $GLOBALS['LANG']->getLL('showlog'),
-				'cleanup' => $GLOBALS['LANG']->getLL('cleanup'),
-//				'setup' => $GLOBALS['LANG']->getLL('setup'),
-			),
 			'logrun' => array(
 				'1000' => $GLOBALS['LANG']->getLL('latest_run'),
 				'25' => $GLOBALS['LANG']->getLL('latest_25'),
@@ -156,139 +142,144 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 */
 	function main()	{
 		global $BACK_PATH;
-		
+
 		// Access check! Allow only admin user to view this content
 		if ($GLOBALS['BE_USER']->user['admin'])	{
-	
+
+				// Processes the parameters passed to tx_devlog
+			$message = $this->processParameters();
+
 				// Draw the header.
 			$this->doc = t3lib_div::makeInstance('template');
 			$this->doc->backPath = $BACK_PATH;
 
-				// JavaScript
+				// @todo: legacy code to delete after revision by Francois
 				// Load Prototype library (check if it exists in the TYPO3 source, otherwise get it from extension configuration)
-			$pathToPrototype = '';
-			if (file_exists($BACK_PATH.'contrib/prototype/prototype.js')) {
-				$pathToPrototype = $BACK_PATH.'contrib/prototype/prototype.js';
-			}
-			elseif (isset($this->extConf['prototypePath'])) {
-				$testPath = t3lib_div::getFileAbsFileName($this->extConf['prototypePath']);
-				if (file_exists($testPath)) $pathToPrototype = $BACK_PATH.'../'.$this->extConf['prototypePath'];
-			}
-			if (!empty($pathToPrototype)) $this->doc->JScode .= '<script type="text/javascript" src="'.$pathToPrototype.'"></script>'."\n";
+//			$pathToPrototype = '';
+//			if (file_exists($BACK_PATH . 'contrib/prototype/prototype.js')) {
+//				$pathToPrototype = $BACK_PATH.'contrib/prototype/prototype.js';
+//			}
+//			elseif (isset($this->extConf['prototypePath'])) {
+//				$testPath = t3lib_div::getFileAbsFileName($this->extConf['prototypePath']);
+//				if (file_exists($testPath)) $pathToPrototype = $BACK_PATH.'../'.$this->extConf['prototypePath'];
+//			}
+//			if (!empty($pathToPrototype)) $this->doc->JScode .= '<script type="text/javascript" src="'.$pathToPrototype.'"></script>'."\n";
+
+
+
+			
+				// Load ExtCore library
+			$this->doc->getPageRenderer()->loadExtCore();
+				// Load ExtJS libraries and stylesheets (this code is for later use)
+			#$this->doc->getPageRenderer()->loadExtJS();
+			#$this->extJSNamespace = $this->extensionName;
+			#$this->doc->getPageRenderer()->addExtOnReadyCode("\n" . $this->extJSNamespace);
 
 				// Define function for switching visibility of extra data field on or off
-			$this->doc->JScodeArray[] .= 'var imageExpand = \'<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/plusbullet_list.gif','width="18" height="12"').' alt="+" />\';';
-			$this->doc->JScodeArray[] .= 'var imageCollapse = \'<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/minusbullet_list.gif','width="18" height="12"').' alt="-" />\';';
-			$this->doc->JScodeArray[] .= '
-					function toggleExtraData(theID) {
-						var theLink = $(\'debug-link-\' + theID);
-						var theElement = $(\'debug-row-\' + theID);
-						if (theElement.visible()) {
-							theElement.hide();
-							theLink.update(imageExpand);
-							theLink.title = \''.$GLOBALS['LANG']->getLL('show_extra_data').'\';
-						}
-						else {
-							theElement.show();
-							theLink.update(imageCollapse);
-							theLink.title = \''.$GLOBALS['LANG']->getLL('hide_extra_data').'\';
-						}
-					}
-			';
-
-				// JavaScript for menu switching
-			$this->doc->JScodeArray[] = '
-				script_ended = 0;
-				function jumpToUrl(URL)	{
-					document.location = URL;
-				}';
-
-				// JavaScript for automatic reloading of log window
-			$this->doc->JScodeArray[] = '
-				var reloadTimer = null;
-				
-				window.onload = function() {
-				  if(window.name=="devlog") {
-					document.getElementById("openview").style.visibility = "hidden";
-				  }
-				  setReloadTime('.($this->MOD_SETTINGS['autorefresh'] ? $this->extConf['refreshFrequency'] : '0').');
-				}
-				
-				function setReloadTime(secs) {
-				  if (arguments.length == 1) {
-				    if (reloadTimer) clearTimeout(reloadTimer);
-				    if (secs) reloadTimer = setTimeout("setReloadTime()", Math.ceil(parseFloat(secs) * 1000));
-				  }
-				  else {
-				    //window.location.replace(window.location.href);
-				    document.options.submit();
-				  }
-				}
-				
-				function toggleReload(autorefresh) {
-					if(autorefresh){
-						setReloadTime(2);
-					}else{
-						setReloadTime(0);
-					};
-				}';
-				
+			$imageExpand = t3lib_iconWorks::skinImg($BACK_PATH, 'gfx/plusbullet_list.gif','width="18" height="12"');
+			$imageCollapse = t3lib_iconWorks::skinImg($BACK_PATH, 'gfx/minusbullet_list.gif','width="18" height="12"');
+			$autoRefresh = $this->MOD_SETTINGS['autorefresh'] ? $this->extConf['refreshFrequency'] : '0';
+			$this->doc->JScodeArray[] .= <<< EOF
+Ext.ns("{$this->extensionName}");
+devlog = {
+	imageExpand: '<img $imageExpand alt="+" />',
+	imageCollapse: '<img $imageCollapse alt="-" />',
+	show_extra_data: '{$GLOBALS['LANG']->getLL('show_extra_data')}',
+	hide_extra_data: '{$GLOBALS['LANG']->getLL('hide_extra_data')}',
+	autorefresh: $autoRefresh,
+}
+EOF;
+			$jsFile = t3lib_div::getFileAbsFileName('EXT:devlog/Resources/Public/javascripts/application.js');
+			$this->doc->JScodeArray[] .= file_get_contents($jsFile);
 
 
-			$headerSection ='';
-			if ($this->MOD_SETTINGS['function'] == 'showlog') {
-				$optMenu = array ();
-				$optMenu['sellogrun'] = t3lib_BEfunc::getFuncMenu($this->id, 'SET[logrun]', $this->MOD_SETTINGS['logrun'], $this->MOD_MENU['logrun']);
-				if ($this->MOD_SETTINGS['logrun'] <= 1000) {
-					$optMenu['autorefresh'] = '<input type="hidden" name="SET[autorefresh]" value="0">';
-					$onClick = 'toggleReload(this.checked);';
-					$optMenu['autorefresh'] .= '<input type="checkbox" class="checkbox" name="SET[autorefresh]" id="autorefresh" value="1"'.($this->MOD_SETTINGS['autorefresh']?' checked':'').' onclick="'.htmlspecialchars($onClick).'"> <label for="autorefresh">'.$GLOBALS['LANG']->getLL('auto_refresh').'</label>';
-				}
-				$optMenu['refresh'] = '<input type="submit" name="refresh" value="'.$GLOBALS['LANG']->getLL('refresh').'">';
-				$optMenu['expandAllExtraData'] = '<input type="hidden" name="SET[expandAllExtraData]" value="0">';
-				$onClick = 'document.options.submit();';
-				$optMenu['expandAllExtraData'] .= '<input type="checkbox" class="checkbox" name="SET[expandAllExtraData]" id="expandAllExtraData" value="1"'.($this->MOD_SETTINGS['expandAllExtraData']?' checked="checked"':'').' onclick="'.htmlspecialchars($onClick).'"> <label for="expandAllExtraData">'.$GLOBALS['LANG']->getLL('expand_all_extra_data').'</label>';
-
-				$headerSection = $this->doc->menuTable(
-					array(
-						array($GLOBALS['LANG']->getLL('selectlog'), $optMenu['sellogrun']),
-						array('', $optMenu['refresh'])
-					),
-					array(
-						array('', $optMenu['autorefresh']),
-						array('',$optMenu['expandAllExtraData'])
-					)
-				);			
-			}
-			
-			
 			$this->content .= $this->doc->startPage($GLOBALS['LANG']->getLL('title'));
-			$this->content .= $this->doc->header($GLOBALS['LANG']->getLL('title'));
-			$this->content .= $this->doc->spacer(5);
-			$this->content .= '<form name="options" action="" method="POST">'.$this->doc->section('', $this->doc->funcMenu($headerSection, t3lib_BEfunc::getFuncMenu($this->id,'SET[function]',$this->MOD_SETTINGS['function'], $this->MOD_MENU['function']).'&nbsp;&nbsp;&nbsp;'.$this->openNewView())).'</form>';
-			$this->content .= $this->doc->divider(5);
 
-			// Render content:
-			$this->moduleContent();
-			
-			// ShortCut
+			$markers['###HEADER###'] = $this->doc->header($GLOBALS['LANG']->getLL('title'));
+			$markers['###MENUBAR###'] = $this->renderMenuBar();
+			$markers['###CLEAR_BY_TIME_MENU###'] = $this->renderClearByTimeMenu();
+			$markers['###CLEAR_BY_EXTENSION_MENU###'] = $this->renderClearByExtensionMenu();
+			$markers['###NUMBER_OF_ENTRIES###'] = $this->renderClearAllMenu();
+			$markers['###OPEN_NEW_VIEW###'] = $this->openNewView();
+			$markers['###MESSAGE###'] = $message;
+			$markers['###CONTENT###'] = $this->moduleContent();
+			$markers['###SHORTCUT###'] = '';
 			if ($GLOBALS['BE_USER']->mayMakeShortcut())	{
-				$this->content .= $this->doc->spacer(20).$this->doc->section('',$this->doc->makeShortcutIcon('id',implode(',',array_keys($this->MOD_MENU)),$this->MCONF['name']));
+				$markers['###SHORTCUT###'] = $this->doc->makeShortcutIcon('id',implode(',',array_keys($this->MOD_MENU)),$this->MCONF['name']);
 			}
-		
-			$this->content .= $this->doc->spacer(10);
+
+				// Merges label coming from the template (e.g EXT:devlog/Resources/Private/Template/index.html)
+			$markers = array_merge($markers, $this->getLabelMarkers());
+
+			$backendTemplateFile = t3lib_div::getFileAbsFileName('EXT:devlog/Resources/Private/Templates/index.html');
+			$this->content .= t3lib_parsehtml::substituteMarkerArray(file_get_contents($backendTemplateFile), $markers);
 		}
 		else {
 				// If no access
-		
 			$this->doc = t3lib_div::makeInstance('mediumDoc');
 			$this->doc->backPath = $BACK_PATH;
-		
+
 			$this->content .= $this->doc->startPage($GLOBALS['LANG']->getLL('title'));
 			$this->content .= $this->doc->header($GLOBALS['LANG']->getLL('title'));
-			$this->content .= $this->doc->spacer(5);
-			$this->content .= $this->doc->spacer(10);
 		}
+	}
+
+	/**
+	 * Render the "Select log" menu and return the HTML code
+	 *
+	 * @return      string	  HTML output
+	 */
+	private function renderMenuBar() {
+		$headerSection ='';
+		$optMenu = array ();
+		$optMenu['sellogrun'] = t3lib_BEfunc::getFuncMenu($this->id, 'SET[logrun]', $this->MOD_SETTINGS['logrun'], $this->MOD_MENU['logrun']);
+		if ($this->MOD_SETTINGS['logrun'] <= 1000) {
+			$optMenu['autorefresh'] = '<input type="hidden" name="SET[autorefresh]" value="0">';
+			$onClick = 'document.options.submit();';
+			$optMenu['autorefresh'] .= '<input type="checkbox" class="checkbox" name="SET[autorefresh]" id="autorefresh" value="1"'.($this->MOD_SETTINGS['autorefresh']?' checked':'').' onclick="'.htmlspecialchars($onClick).'"> <label for="autorefresh">'.$GLOBALS['LANG']->getLL('auto_refresh').'</label>';
+		}
+		$optMenu['expandAllExtraData'] = '<input type="hidden" name="SET[expandAllExtraData]" value="0">';
+		$onClick = 'document.options.submit();';
+		$optMenu['expandAllExtraData'] .= '<input type="checkbox" class="checkbox" name="SET[expandAllExtraData]" id="expandAllExtraData" value="1"'.($this->MOD_SETTINGS['expandAllExtraData']?' checked="checked"':'').' onclick="'.htmlspecialchars($onClick).'"> <label for="expandAllExtraData">'.$GLOBALS['LANG']->getLL('expand_all_extra_data').'</label>';
+
+		return implode('',$optMenu);
+		// @todo: legacy code to delete after revision by Francois
+//		$content = $optMenu['sellogrun'];
+//		return $content;
+//		$headerSection = $this->doc->menuTable(
+//			array(
+//				array($optMenu['sellogrun']),
+//			),
+//			array(
+//				array('', $optMenu['autorefresh']),
+//				array('',$optMenu['expandAllExtraData'])
+//			)
+//		);
+//		return $this->doc->section('', $this->doc->funcMenu($headerSection));
+	}
+
+	/**
+	 * Fetches labels from the template and translates them.
+	 * Labels have the following pattern ###LL:key###.
+	 *
+	 * @return	array
+	 */
+	private function getLabelMarkers() {
+		$backendTemplateFile = t3lib_div::getFileAbsFileName('EXT:devlog/Resources/Private/Templates/index.html');
+		$templateContent = file_get_contents($backendTemplateFile);
+
+			// Regular expression that fetches all labels
+		preg_match_all('/#{3}LL:(.+)#{3}/isU', $templateContent, $matches);
+		$numberOfMatches = count($matches[0]);
+		
+		$markers = array();
+		for ($index = 0; $index < $numberOfMatches; $index ++) {
+			$labelMarker = $matches[0][$index];
+			$labelName = $matches[1][$index];
+			$markers[$labelMarker] = $GLOBALS['LANG']->getLL($labelName);
+		}
+
+		return $markers;
 	}
 
 	/**
@@ -301,7 +292,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$this->content = $this->doc->insertStylesAndJS($this->content);
 		echo $this->content;
 	}
-	
+
 	/**
 	 * Generates the module content
 	 *
@@ -309,26 +300,31 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 */
 	function moduleContent() {
 
-		switch((string)$this->MOD_SETTINGS['function'])	{
-			case 'showlog':
-				if(count($this->logRuns)) {					
-					$content = $this->getLogTable();
-					$this->content .= $this->doc->section($GLOBALS['LANG']->getLL('log_entries').':', $content, 0, 1);
-				}
-			break;
-			case 'cleanup':
-				$content = $this->cleanupScreen();
-				$this->content .= $this->doc->section($GLOBALS['LANG']->getLL('clearlog').':', $content, 0, 1);
-			break;
-		} 
+		if(count($this->logRuns)) {
+			$content = $this->getLogTable();
+			return $this->doc->section($GLOBALS['LANG']->getLL('log_entries').':', $content, 0, 1);
+		}
+
+		// @todo: legacy code to delete after revision by Francois
+//		switch((string)$this->MOD_SETTINGS['function'])	{
+//			case 'showlog':
+//				if(count($this->logRuns)) {
+//					$content = $this->getLogTable();
+//					return $this->doc->section($GLOBALS['LANG']->getLL('log_entries').':', $content, 0, 1);
+//				}
+//			break;
+//			case 'cleanup':
+//				$content = $this->cleanupScreen();
+//				return $this->doc->section($GLOBALS['LANG']->getLL('clearlog').':', $content, 0, 1);
+//			break;
+//		}
 	}
-	
-	
+
 	/**
 	 * Creates the log entry table
-	 * 
+	 *
 	 * @return	string 	rendered HTML table
-	 */	
+	 */
 	function getLogTable()	{
 		global $BACK_PATH;
 		$content = '';
@@ -348,7 +344,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 		$table = array();
 		$tr = 0;
-		
+
 			// Header row
 		$table[$tr][] = $this->renderHeader('crdate');
 		$table[$tr][] = $this->renderHeader('severity', true);
@@ -370,13 +366,13 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		else {
 			$endDate = 0;
 			while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres))) {
-	
+
 					// Memorise start and end date of selected entries
 				if (empty($endDate)) {
 					$endDate = $row['crdate'];
 				}
 				$startDate = $row['crdate'];
-				
+
 					// Severity: 0 is info, 1 is notice, 2 is warning, 3 is fatal error, -1 is "OK" message
 				switch ($row['severity']) {
 					case 0:
@@ -392,7 +388,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 						$severity = $row['severity'];
 						break;
 				}
-				
+
 					// Add a row to the table
 				$tr++;
 
@@ -530,7 +526,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		return $header;
 	}
 
-	/** 
+	/**
 	 * This method assembles links to navigate between pages of log entries
 	 *
 	 * @return	string	list of pages with links
@@ -551,7 +547,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		return '<p>' . $GLOBALS['LANG']->getLL('entries') . ': ' . $navigation . '</p>';
 	}
 
-	/** 
+	/**
 	 * This method assemble links to navigate between previous and next log runs
 	 *
 	 * @return	string	list of pages with links
@@ -654,73 +650,145 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	}
 
 	/**
+	 * Processes GP parameters
+	 *
+	 * @return      string	  HTML message for the BE
+	 */
+	private function processParameters() {
+		$message = '';
+		$parameters = t3lib_div::_GP('tx_devlog');
+		if (isset($parameters['clear'])) {
+			if ($parameters['clear'] == 'all') {
+				$where = '';
+			}
+			else if ((int) $parameters['clear'] > 0) {
+				$where = "crdate <= '" . $parameters['clear'] . "'";
+			}
+			else {
+				$where = "extkey = '" . $parameters['clear'] . "'";
+			}
+
+			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', $where);
+			$affectedRows = $GLOBALS['TYPO3_DB']->sql_affected_rows();
+			$message = $this->wrapMessage(sprintf($GLOBALS['LANG']->getLL('cleared_log'), $affectedRows), 'success');
+		}
+		return $message;
+	}
+
+	// @todo: legacy code to delete after revision by Francois
+	/**
 	 * This method displays the clean up screen and performs any clean up action requested
 	 *
 	 * @return	string	the HTML code to display
 	 */
-	function cleanupScreen() {
-		$content = '<p>'.$GLOBALS['LANG']->getLL('clearlog_intro').'</p>';
-		$content .= $this->doc->spacer(20);
+//	function cleanupScreen() {
+//		$content = '<p>'.$GLOBALS['LANG']->getLL('clearlog_intro').'</p>';
+//		$content .= $this->doc->spacer(20);
+//
+//			// Act on clear commands
+////		if (($clearParameters = t3lib_div::_GP('clear'))) {
+////			$where = '';
+////			if (isset($clearParameters['extension'])) {
+////				$where = "extkey = '".$clearParameters['extension']."'";
+////			} elseif (isset($clearParameters['period'])) {
+////				$where = "crdate <= '".$clearParameters['period']."'";
+////			}
+////			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', $where);
+////			$affectedRows = $GLOBALS['TYPO3_DB']->sql_affected_rows();
+////			$content .= $this->wrapMessage(sprintf($GLOBALS['LANG']->getLL('cleared_log'), $affectedRows), 'success');
+////			$content .= $this->doc->spacer(10);
+////		}
+////			// Display delete forms
+////
+////			// Get total number of log entries
+////		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('COUNT(uid) AS total', 'tx_devlog', '');
+////		$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres);
+////		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
+////		if ($row['total'] == 0) { // No entries, display a simple message
+////			$content .= '<p>'.$GLOBALS['LANG']->getLL('no_entries').'</p>';
+////		} else { // Display delete forms only if there's at least one log entry
+//			$content .= '<p>'.sprintf($GLOBALS['LANG']->getLL('xx_entries'), $row['total']).'</p>';
+//			$content .= $this->doc->spacer(10);
+//
+//				// Get list of existing extension keys in the log table
+//			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT extkey', 'tx_devlog', '', '', 'extkey ASC');
+//				// Display form for deleting log entries per extension
+//			$content .= '<p>'.$GLOBALS['LANG']->getLL('cleanup_for_extension').'</p>';
+//			$content .= '<form name="cleanExt" action="" method="POST">';
+//			$content .= '<p><select name="clear[extension]">';
+//			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
+//				$content .= '<option value="'.$row['extkey'].'">'.$row['extkey'].'</option>';
+//			}
+//			$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
+//			$content .= '</select></p>';
+//			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearlog').'"></p>';
+//			$content .= '</form>';
+//			$content .= $this->doc->spacer(10);
+//
+//				// Display form for deleting log entries per period
+//			$content .= '<p>'.$GLOBALS['LANG']->getLL('cleanup_for_period').'</p>';
+//			$content .= '<form name="cleanPeriod" action="" method="POST">';
+//			$content .= '<p><select name="clear[period]">';
+//			foreach ($this->cleanupPeriods as $key => $period) {
+//				$date = strtotime($period);
+//				$content .= '<option value="'.$date.'">'.$GLOBALS['LANG']->getLL($key).'</option>';
+//			}
+//			$content .= '</select></p>';
+//			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearlog').'"></p>';
+//			$content .= '</form>';
+//			$content .= $this->doc->spacer(10);
+//
+//				// Display form for deleting all log entries
+//			$content .= '<p><strong>'.$GLOBALS['LANG']->getLL('cleanup_all').'</strong></p>';
+//			$content .= '<form name="cleanAll" action="" method="POST">';
+//			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearalllog').'"></p>';
+//			$content .= '</form>';
+////		}
+//		return $content;
+//	}
 
-			// Act on clear commands
-		if (($clearParameters = t3lib_div::_GP('clear'))) {
-			$where = '';
-			if (isset($clearParameters['extension'])) {
-				$where = "extkey = '".$clearParameters['extension']."'";
-			} elseif (isset($clearParameters['period'])) {
-				$where = "crdate <= '".$clearParameters['period']."'";
-			}
-			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', $where);
-			$affectedRows = $GLOBALS['TYPO3_DB']->sql_affected_rows();
-			$content .= $this->wrapMessage(sprintf($GLOBALS['LANG']->getLL('cleared_log'), $affectedRows), 'success');
-			$content .= $this->doc->spacer(10);
-		}
-			// Display delete forms
-
-			// Get total number of log entries
+	/**
+	 * Render the "clear all" menu option and return the HTML code
+	 *
+	 * @return      string	  HTML output
+	 */
+	private function renderClearAllMenu() {
 		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('COUNT(uid) AS total', 'tx_devlog', '');
 		$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres);
 		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
-		if ($row['total'] == 0) { // No entries, display a simple message
-			$content .= '<p>'.$GLOBALS['LANG']->getLL('no_entries').'</p>';
-		} else { // Display delete forms only if there's at least one log entry
-			$content .= '<p>'.sprintf($GLOBALS['LANG']->getLL('xx_entries'), $row['total']).'</p>';
-			$content .= $this->doc->spacer(10);
+		return sprintf($GLOBALS['LANG']->getLL('xx_entries'), $row['total']);
+	}
 
-				// Get list of existing extension keys in the log table
-			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT extkey', 'tx_devlog', '', '', 'extkey ASC');
-				// Display form for deleting log entries per extension
-			$content .= '<p>'.$GLOBALS['LANG']->getLL('cleanup_for_extension').'</p>';
-			$content .= '<form name="cleanExt" action="" method="POST">';
-			$content .= '<p><select name="clear[extension]">';
-			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
-				$content .= '<option value="'.$row['extkey'].'">'.$row['extkey'].'</option>';
-			}
-			$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
-			$content .= '</select></p>';
-			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearlog').'"></p>';
-			$content .= '</form>';
-			$content .= $this->doc->spacer(10);
-
-				// Display form for deleting log entries per period
-			$content .= '<p>'.$GLOBALS['LANG']->getLL('cleanup_for_period').'</p>';
-			$content .= '<form name="cleanPeriod" action="" method="POST">';
-			$content .= '<p><select name="clear[period]">';
-			foreach ($this->cleanupPeriods as $key => $period) {
-				$date = strtotime($period);
-				$content .= '<option value="'.$date.'">'.$GLOBALS['LANG']->getLL($key).'</option>';
-			}
-			$content .= '</select></p>';
-			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearlog').'"></p>';
-			$content .= '</form>';
-			$content .= $this->doc->spacer(10);
-
-				// Display form for deleting all log entries
-			$content .= '<p><strong>'.$GLOBALS['LANG']->getLL('cleanup_all').'</strong></p>';
-			$content .= '<form name="cleanAll" action="" method="POST">';
-			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearalllog').'"></p>';
-			$content .= '</form>';
+	/**
+	 * Render the "clear by time" menu and return the HTML code
+	 *
+	 * @param       string	  $str: Locallang key
+	 * @return      string	  HTML output
+	 */
+	private function renderClearByTimeMenu() {
+		$content = '';
+		foreach ($this->cleanupPeriods as $key => $period) {
+			$date = strtotime($period);
+			$content .= '<option value="'.$date.'">'.$GLOBALS['LANG']->getLL($key).'</option>';
 		}
+		return $content;
+	}
+
+	/**
+	 * Render the "clear by extension" menu and return the HTML code
+	 *
+	 * @param       string	  $str: Locallang key
+	 * @return      string	  HTML output
+	 */
+	private function renderClearByExtensionMenu() {
+		$content = '';
+			// Get list of existing extension keys in the log table
+		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT extkey', 'tx_devlog', '', '', 'extkey ASC');
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
+			$content .= '<option value="'.$row['extkey'].'">'.$row['extkey'].'</option>';
+		}
+		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
+
 		return $content;
 	}
 
@@ -733,26 +801,33 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 * @param	string	$type: the type of message (success, wraning or error)
 	 * @return	string	The wrapped string
 	 */
-	function wrapMessage($string, $type = 'error') {
+	private function wrapMessage($string, $type = 'error') {
 		switch ($type) {
 			case 'success':
-				$result = '<p style="padding: 4px; background-color: #0f0;">'.$string.'</p>';
+				$type = t3lib_FlashMessage::OK;
 				break;
 			case 'warning':
-				$result = '<p style="padding: 4px; background-color: #f90;">'.$string.'</p>';
+				$type = t3lib_FlashMessage::ERROR;
 				break;
 			default:
-				$result = '<p style="padding: 4px; background-color: #f00; color: #fff">'.$string.'</p>';
+				$type = t3lib_FlashMessage::INFO;
 				break;
 		}
-		return $result;
+
+		$flashMessage = t3lib_div::makeInstance(
+			't3lib_FlashMessage',
+			$string,
+			'',
+			$type
+		);
+		return $flashMessage->render();
 	}
 
 	/*******************************************
 	 *
 	 * DB stuff
 	 *
-	 *******************************************/	
+	 *******************************************/
 
 	/**
 	 * This method gets the list of all the log runs
@@ -918,7 +993,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			// Otherwise just take the logrun value as is
 		else {
 			$this->selectedLog = $this->setVars['logrun'];
-		} 
+		}
 	}
 
 	/**
@@ -932,8 +1007,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$logRun = $keys[$this->extConf['maxLogRuns'] - 1];
 			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', 'crmsec < ' . $logRun);
 		}
-	}	
-	
+	}
+
 	/**
 	 * This method prepares the link for opening the devlog in a new window
 	 *
@@ -942,22 +1017,22 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	function openNewView() {
 		global $BACK_PATH;
 
-		$url = t3lib_div::getIndpEnv('TYPO3_REQUEST_SCRIPT');		
-		$onClick = "devlogWin=window.open('" . $url . "','devlog','width=790,status=0,menubar=1,resizable=1,location=0,scrollbars=1,toolbar=0');devlogWin.focus();return false;";
+		$url = t3lib_div::getIndpEnv('TYPO3_REQUEST_SCRIPT');
+		$onClick = "devlogWin=window.open('" . $GLOBALS['MCONF']['_'] . "','devlog','width=790,status=0,menubar=1,resizable=1,location=0,scrollbars=1,toolbar=0');devlogWin.focus();return false;";
 		$content = '<a id="openview" href="#" onclick="' . htmlspecialchars($onClick).'">' .
 					'<img' . t3lib_iconWorks::skinImg($BACK_PATH,'gfx/open_in_new_window.gif', 'width="19" height="14"') . ' title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.openInNewWindow', 1) . '" class="absmiddle" alt="" />' .
 					'</a>';
-		return $content;						
-	}	
+		return $content;
+	}
 
 	/**
 	 * Assemble the link to select a single log run
 	 *
 	 * @return	string
 	 */
-	function linkLogRun($str, $logRun) {		
-		$content = '<a href="?SET[logrun]=' . $logRun . '">' . $str . '</a>';
-		return $content;						
+	function linkLogRun($str, $logRun) {
+		$content = '<a href="' . $GLOBALS['MCONF']['_'] . '&SET[logrun]=' . $logRun . '">' . $str . '</a>';
+		return $content;
 	}
 
     /**
@@ -976,10 +1051,10 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				// (pages were already fetched in getLogFilters)
 			$row = $this->records['pages'][$uid];
 			$iconAltText = t3lib_BEfunc::getRecordIconAltText($row, 'pages');
-	
+
 				// Create icon for record
 			$elementIcon = t3lib_iconworks::getIconImage('pages', $row, $BACK_PATH, 'class="c-recicon" title="' . $iconAltText . '"');
-	
+
 				// Return item with edit link
 			$editOnClick = 'top.loadEditId(' . $uid . ')';
 			$string = '<a href="#" onclick="' . htmlspecialchars($editOnClick) . '">' . $elementIcon . $row['t3lib_BEfunc::title'] . '</a>';

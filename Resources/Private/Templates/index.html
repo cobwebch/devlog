@@ -1,0 +1,49 @@
+<div id="typo3-docheader">
+	<div id="typo3-docheader-row1">
+		<div class="buttonsleft"></div>
+		<div class="buttonsright">
+			<div class="buttongroup">
+				###SHORTCUT###
+			</div>
+		</div>
+	</div>
+	<div id="typo3-docheader-row2">
+		<div class="docheader-row2-left">
+			<div class="buttongroup">
+				<form name="options" action="" method="post">
+					###MENUBAR###
+				</form>
+			</div>
+		</div>
+		<div class="docheader-row2-right">
+			<!-- clear log menu -->
+			<form method="post" action="" name="cleanPeriod">
+				<!-- cleanPeriod cleanExt cleanAll-->
+				<select onchange="this.parentNode.submit()" name="tx_devlog[clear]">
+					<option selected="selected" value="">###LL:clearlog###</option>
+					<optgroup class="c-divider" label="###LL:clearalllog###">
+						<option value="all">###NUMBER_OF_ENTRIES###</option>
+					</optgroup>
+					<optgroup class="c-divider" label="###LL:cleanup_for_period###">
+						###CLEAR_BY_TIME_MENU###
+					</optgroup>
+					<optgroup class="c-divider" label="###LL:cleanup_for_extension###">
+						###CLEAR_BY_EXTENSION_MENU###
+					</optgroup>
+				</select>
+				###OPEN_NEW_VIEW###
+			</form>
+		</div>
+	</div>
+</div>
+<div id="typo3-docbody">
+	<div id="typo3-inner-docbody">
+
+		<!-- MAIN Header in page top -->
+		###HEADER###
+		###MESSAGE###
+		<br />
+		
+		###CONTENT###
+	</div>
+</div>
