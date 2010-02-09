@@ -13,9 +13,7 @@ function toggleExtraData(theID) {
 	}
 }
 
-
 // JavaScript for menu switching
-// @todo delete this line variable script_ended = 0;
 function jumpToUrl(URL)	{
 	document.location = URL;
 }

@@ -30,6 +30,7 @@
  *
  * @author	Rene Fritz <r.fritz@colorcube.de>
  * @author	Francois Suter <typo3@cobweb.ch>
+ * @author	Fabien Udriot <fabien.udriot@ecodev.ch>
  */
 
 	// this is a hack to prevent logging while initialization inside of this module
@@ -153,21 +154,6 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$this->doc = t3lib_div::makeInstance('template');
 			$this->doc->backPath = $BACK_PATH;
 
-				// @todo: legacy code to delete after revision by Francois
-				// Load Prototype library (check if it exists in the TYPO3 source, otherwise get it from extension configuration)
-//			$pathToPrototype = '';
-//			if (file_exists($BACK_PATH . 'contrib/prototype/prototype.js')) {
-//				$pathToPrototype = $BACK_PATH.'contrib/prototype/prototype.js';
-//			}
-//			elseif (isset($this->extConf['prototypePath'])) {
-//				$testPath = t3lib_div::getFileAbsFileName($this->extConf['prototypePath']);
-//				if (file_exists($testPath)) $pathToPrototype = $BACK_PATH.'../'.$this->extConf['prototypePath'];
-//			}
-//			if (!empty($pathToPrototype)) $this->doc->JScode .= '<script type="text/javascript" src="'.$pathToPrototype.'"></script>'."\n";
-
-
-
-			
 				// Load ExtCore library
 			$this->doc->getPageRenderer()->loadExtCore();
 				// Load ExtJS libraries and stylesheets (this code is for later use)
@@ -197,9 +183,7 @@ EOF;
 
 			$markers['###HEADER###'] = $this->doc->header($GLOBALS['LANG']->getLL('title'));
 			$markers['###MENUBAR###'] = $this->renderMenuBar();
-			$markers['###CLEAR_BY_TIME_MENU###'] = $this->renderClearByTimeMenu();
-			$markers['###CLEAR_BY_EXTENSION_MENU###'] = $this->renderClearByExtensionMenu();
-			$markers['###NUMBER_OF_ENTRIES###'] = $this->renderClearAllMenu();
+			$markers['###CLEARMENU###'] = $this->renderClearMenu();
 			$markers['###OPEN_NEW_VIEW###'] = $this->openNewView();
 			$markers['###MESSAGE###'] = $message;
 			$markers['###CONTENT###'] = $this->moduleContent();
@@ -209,7 +193,7 @@ EOF;
 			}
 
 				// Merges label coming from the template (e.g EXT:devlog/Resources/Private/Template/index.html)
-			$markers = array_merge($markers, $this->getLabelMarkers());
+			#$markers = array_merge($markers, $this->getLabelMarkers());
 
 			$backendTemplateFile = t3lib_div::getFileAbsFileName('EXT:devlog/Resources/Private/Templates/index.html');
 			$this->content .= t3lib_parsehtml::substituteMarkerArray(file_get_contents($backendTemplateFile), $markers);
@@ -243,19 +227,6 @@ EOF;
 		$optMenu['expandAllExtraData'] .= '<input type="checkbox" class="checkbox" name="SET[expandAllExtraData]" id="expandAllExtraData" value="1"'.($this->MOD_SETTINGS['expandAllExtraData']?' checked="checked"':'').' onclick="'.htmlspecialchars($onClick).'"> <label for="expandAllExtraData">'.$GLOBALS['LANG']->getLL('expand_all_extra_data').'</label>';
 
 		return implode('',$optMenu);
-		// @todo: legacy code to delete after revision by Francois
-//		$content = $optMenu['sellogrun'];
-//		return $content;
-//		$headerSection = $this->doc->menuTable(
-//			array(
-//				array($optMenu['sellogrun']),
-//			),
-//			array(
-//				array('', $optMenu['autorefresh']),
-//				array('',$optMenu['expandAllExtraData'])
-//			)
-//		);
-//		return $this->doc->section('', $this->doc->funcMenu($headerSection));
 	}
 
 	/**
@@ -264,23 +235,23 @@ EOF;
 	 *
 	 * @return	array
 	 */
-	private function getLabelMarkers() {
-		$backendTemplateFile = t3lib_div::getFileAbsFileName('EXT:devlog/Resources/Private/Templates/index.html');
-		$templateContent = file_get_contents($backendTemplateFile);
-
-			// Regular expression that fetches all labels
-		preg_match_all('/#{3}LL:(.+)#{3}/isU', $templateContent, $matches);
-		$numberOfMatches = count($matches[0]);
-		
-		$markers = array();
-		for ($index = 0; $index < $numberOfMatches; $index ++) {
-			$labelMarker = $matches[0][$index];
-			$labelName = $matches[1][$index];
-			$markers[$labelMarker] = $GLOBALS['LANG']->getLL($labelName);
-		}
-
-		return $markers;
-	}
+//	private function getLabelMarkers() {
+//		$backendTemplateFile = t3lib_div::getFileAbsFileName('EXT:devlog/Resources/Private/Templates/index.html');
+//		$templateContent = file_get_contents($backendTemplateFile);
+//
+//			// Regular expression that fetches all labels
+//		preg_match_all('/#{3}LL:(.+)#{3}/isU', $templateContent, $matches);
+//		$numberOfMatches = count($matches[0]);
+//
+//		$markers = array();
+//		for ($index = 0; $index < $numberOfMatches; $index ++) {
+//			$labelMarker = $matches[0][$index];
+//			$labelName = $matches[1][$index];
+//			$markers[$labelMarker] = $GLOBALS['LANG']->getLL($labelName);
+//		}
+//
+//		return $markers;
+//	}
 
 	/**
 	 * Prints out the module HTML
@@ -304,20 +275,6 @@ EOF;
 			$content = $this->getLogTable();
 			return $this->doc->section($GLOBALS['LANG']->getLL('log_entries').':', $content, 0, 1);
 		}
-
-		// @todo: legacy code to delete after revision by Francois
-//		switch((string)$this->MOD_SETTINGS['function'])	{
-//			case 'showlog':
-//				if(count($this->logRuns)) {
-//					$content = $this->getLogTable();
-//					return $this->doc->section($GLOBALS['LANG']->getLL('log_entries').':', $content, 0, 1);
-//				}
-//			break;
-//			case 'cleanup':
-//				$content = $this->cleanupScreen();
-//				return $this->doc->section($GLOBALS['LANG']->getLL('clearlog').':', $content, 0, 1);
-//			break;
-//		}
 	}
 
 	/**
@@ -675,77 +632,36 @@ EOF;
 		return $message;
 	}
 
-	// @todo: legacy code to delete after revision by Francois
 	/**
-	 * This method displays the clean up screen and performs any clean up action requested
+	 * Render the "clear all" menu option and return the HTML code
 	 *
-	 * @return	string	the HTML code to display
+	 * @return      string	  HTML output
 	 */
-//	function cleanupScreen() {
-//		$content = '<p>'.$GLOBALS['LANG']->getLL('clearlog_intro').'</p>';
-//		$content .= $this->doc->spacer(20);
-//
-//			// Act on clear commands
-////		if (($clearParameters = t3lib_div::_GP('clear'))) {
-////			$where = '';
-////			if (isset($clearParameters['extension'])) {
-////				$where = "extkey = '".$clearParameters['extension']."'";
-////			} elseif (isset($clearParameters['period'])) {
-////				$where = "crdate <= '".$clearParameters['period']."'";
-////			}
-////			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', $where);
-////			$affectedRows = $GLOBALS['TYPO3_DB']->sql_affected_rows();
-////			$content .= $this->wrapMessage(sprintf($GLOBALS['LANG']->getLL('cleared_log'), $affectedRows), 'success');
-////			$content .= $this->doc->spacer(10);
-////		}
-////			// Display delete forms
-////
-////			// Get total number of log entries
-////		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('COUNT(uid) AS total', 'tx_devlog', '');
-////		$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres);
-////		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
-////		if ($row['total'] == 0) { // No entries, display a simple message
-////			$content .= '<p>'.$GLOBALS['LANG']->getLL('no_entries').'</p>';
-////		} else { // Display delete forms only if there's at least one log entry
-//			$content .= '<p>'.sprintf($GLOBALS['LANG']->getLL('xx_entries'), $row['total']).'</p>';
-//			$content .= $this->doc->spacer(10);
-//
-//				// Get list of existing extension keys in the log table
-//			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT extkey', 'tx_devlog', '', '', 'extkey ASC');
-//				// Display form for deleting log entries per extension
-//			$content .= '<p>'.$GLOBALS['LANG']->getLL('cleanup_for_extension').'</p>';
-//			$content .= '<form name="cleanExt" action="" method="POST">';
-//			$content .= '<p><select name="clear[extension]">';
-//			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
-//				$content .= '<option value="'.$row['extkey'].'">'.$row['extkey'].'</option>';
-//			}
-//			$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
-//			$content .= '</select></p>';
-//			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearlog').'"></p>';
-//			$content .= '</form>';
-//			$content .= $this->doc->spacer(10);
-//
-//				// Display form for deleting log entries per period
-//			$content .= '<p>'.$GLOBALS['LANG']->getLL('cleanup_for_period').'</p>';
-//			$content .= '<form name="cleanPeriod" action="" method="POST">';
-//			$content .= '<p><select name="clear[period]">';
-//			foreach ($this->cleanupPeriods as $key => $period) {
-//				$date = strtotime($period);
-//				$content .= '<option value="'.$date.'">'.$GLOBALS['LANG']->getLL($key).'</option>';
-//			}
-//			$content .= '</select></p>';
-//			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearlog').'"></p>';
-//			$content .= '</form>';
-//			$content .= $this->doc->spacer(10);
-//
-//				// Display form for deleting all log entries
-//			$content .= '<p><strong>'.$GLOBALS['LANG']->getLL('cleanup_all').'</strong></p>';
-//			$content .= '<form name="cleanAll" action="" method="POST">';
-//			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearalllog').'"></p>';
-//			$content .= '</form>';
-////		}
-//		return $content;
-//	}
+	private function renderClearMenu() {
+		global $LANG;
+		$labelClearLog = $LANG->getLL('clearlog');
+		$labelClearAllLog = $LANG->getLL('clearalllog');
+		$labelCleanUpForPeriod = $LANG->getLL('cleanup_for_period');
+		$labelCleanUpForExtension = $LANG->getLL('cleanup_for_extension');
+		$numberOfEntries = $this->renderClearAllMenu();
+		$clearByTimeMenu = $this->renderClearByTimeMenu();
+		$clearByExtensionMenu = $this->renderClearByExtensionMenu();
+		$content .= <<< EOF
+<select onchange="this.parentNode.submit()" name="tx_devlog[clear]">
+	<option selected="selected" value="">$labelClearLog</option>
+	<optgroup class="c-divider" label="$labelClearAllLog">
+		<option value="all">$numberOfEntries</option>
+	</optgroup>
+	<optgroup class="c-divider" label="$labelCleanUpForPeriod">
+		$clearByTimeMenu
+	</optgroup>
+	<optgroup class="c-divider" label="$labelCleanUpForExtension">
+		$clearByExtensionMenu
+	</optgroup>
+</select>
+EOF;
+		return $content;
+	}
 
 	/**
 	 * Render the "clear all" menu option and return the HTML code

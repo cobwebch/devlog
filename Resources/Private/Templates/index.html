@@ -19,18 +19,7 @@
 			<!-- clear log menu -->
 			<form method="post" action="" name="cleanPeriod">
 				<!-- cleanPeriod cleanExt cleanAll-->
-				<select onchange="this.parentNode.submit()" name="tx_devlog[clear]">
-					<option selected="selected" value="">###LL:clearlog###</option>
-					<optgroup class="c-divider" label="###LL:clearalllog###">
-						<option value="all">###NUMBER_OF_ENTRIES###</option>
-					</optgroup>
-					<optgroup class="c-divider" label="###LL:cleanup_for_period###">
-						###CLEAR_BY_TIME_MENU###
-					</optgroup>
-					<optgroup class="c-divider" label="###LL:cleanup_for_extension###">
-						###CLEAR_BY_EXTENSION_MENU###
-					</optgroup>
-				</select>
+				###CLEARMENU###
 				###OPEN_NEW_VIEW###
 			</form>
 		</div>
