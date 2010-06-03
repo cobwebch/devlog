@@ -61,7 +61,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 *
 	 * @return	void
 	 */
-	function init()	{
+	function initialize()	{
 		global $MCONF;
 
 			// Get extension configuration
@@ -155,11 +155,22 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$this->doc->backPath = $BACK_PATH;
 
 				// Load ExtCore library
-			$this->doc->getPageRenderer()->loadExtCore();
+			#$this->doc->getPageRenderer()->loadExtCore();
 				// Load ExtJS libraries and stylesheets (this code is for later use)
-			#$this->doc->getPageRenderer()->loadExtJS();
-			#$this->extJSNamespace = $this->extensionName;
-			#$this->doc->getPageRenderer()->addExtOnReadyCode("\n" . $this->extJSNamespace);
+			$this->doc->getPageRenderer()->loadExtJS();
+			$this->doc->getPageRenderer()->enableExtJsDebug();
+			$this->extJSNamespace = $this->extensionName;
+#			$this->doc->getPageRenderer()->addExtOnReadyCode("\n" . $this->extJSNamespace);
+
+			// Integrate dynamic JavaScript such as configuration or lables:
+//		$this->doc->JScode.= t3lib_div::wrapJS('
+//			Ext.namespace("Recycler");
+//			Recycler.statics = ' . json_encode($this->getJavaScriptConfiguration()) . ';
+//			Recycler.lang = ' . json_encode($this->getJavaScriptLabels()) . ';'
+//		);
+			// Load Recycler JavaScript:
+//		$this->loadJavaScript($this->relativePath . 'res/js/ext_expander.js');
+
 
 				// Define function for switching visibility of extra data field on or off
 			$imageExpand = t3lib_iconWorks::skinImg($BACK_PATH, 'gfx/plusbullet_list.gif','width="18" height="12"');
@@ -1011,13 +1022,14 @@ if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/devlog/
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/devlog/mod1/index.php']);
 }
 
-
-
-
-// Make instance:
-$SOBE = t3lib_div::makeInstance('tx_devlog_module1');
-$SOBE->init();
-$SOBE->main();
-$SOBE->printContent();
-
+try {
+	// Make instance:
+	$SOBE = t3lib_div::makeInstance('tx_devlog_module1');
+	$SOBE->initialize();
+	$SOBE->main();
+	$SOBE->printContent();
+}
+catch (Exception $e) {
+	print $e->getMessage();
+}
 ?>
