@@ -72,6 +72,13 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 */
 	public $doc;
 
+	/**
+	 * the relative javascript path
+	 *
+	 * @var string
+	 */
+	public $javascriptPath;
+
 
 	/**
 	 * Initialise the plugin
@@ -106,6 +113,9 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$this->doc = t3lib_div::makeInstance('template');
 		$this->doc->backPath = $BACK_PATH;
 		$this->pageRendererObject = $this->doc->getPageRenderer();
+
+			// Defines javascript resource file
+		$this->javascriptPath = t3lib_extMgm::extRelPath('devlog') . 'Resources/Public/javascripts/';
 		
 	}
 
@@ -217,9 +227,41 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$this->pageRendererObject->loadExtJS();
 		$this->pageRendererObject->enableExtJsDebug();
 
-		#$this->pageRendererObject->addJsFile($extRelPath . $jsFile, $type, $compressed, $forceOnTop);
+			// Defines what files should be loaded and loads them
+		$files = array();
+		$files[] = 'common.js';
+//		$files[] = 'Application.js';
+		foreach ($files as $file) {
+			$this->pageRendererObject->addJsFile($this->javascriptPath . $file);
+		}
 
-#			$this->doc->getPageRenderer()->addExtOnReadyCode("\n" . $this->extJSNamespace);
+			// Defines onready Javascript
+		$this->readyJavascript = array();
+		$this->pageRendererObject->addExtOnReadyCode(PHP_EOL . implode("\n", $this->readyJavascript) . PHP_EOL);
+
+			// Defines contextual variables
+			// Define function for switching visibility of extra data field on or off
+		$imageExpand = t3lib_iconWorks::skinImg($BACK_PATH, 'gfx/plusbullet_list.gif','width="18" height="12"');
+		$imageCollapse = t3lib_iconWorks::skinImg($BACK_PATH, 'gfx/minusbullet_list.gif','width="18" height="12"');
+
+
+		if (!isset($this->extConf['refreshFrequency'])) {
+			throw new tx_devlog_exception('Missing setting "refreshFrequency". Try to re-set settings in the Extension Manager.', 1275573201);
+		}
+		
+		$autoRefresh = $this->MOD_SETTINGS['autorefresh'] ? $this->extConf['refreshFrequency'] : '0';
+		$this->inlineJavascript[] .= <<< EOF
+Ext.ns("{$this->extensionName}");
+devlog = {
+	imageExpand: '<img $imageExpand alt="+" />',
+	imageCollapse: '<img $imageCollapse alt="-" />',
+	show_extra_data: '{$GLOBALS['LANG']->getLL('show_extra_data')}',
+	hide_extra_data: '{$GLOBALS['LANG']->getLL('hide_extra_data')}',
+	autorefresh: $autoRefresh,
+}
+EOF;
+		$this->pageRendererObject->addJsInlineCode('devlog', implode("\n", $this->inlineJavascript));
+
 
 		// Integrate dynamic JavaScript such as configuration or lables:
 //		$this->doc->JScode.= t3lib_div::wrapJS('
@@ -230,22 +272,6 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		// Load Recycler JavaScript:
 //		$this->loadJavaScript($this->relativePath . 'res/js/ext_expander.js');
 
-			// Define function for switching visibility of extra data field on or off
-		$imageExpand = t3lib_iconWorks::skinImg($BACK_PATH, 'gfx/plusbullet_list.gif','width="18" height="12"');
-		$imageCollapse = t3lib_iconWorks::skinImg($BACK_PATH, 'gfx/minusbullet_list.gif','width="18" height="12"');
-		$autoRefresh = $this->MOD_SETTINGS['autorefresh'] ? $this->extConf['refreshFrequency'] : '0';
-		$this->doc->JScodeArray[] .= <<< EOF
-Ext.ns("{$this->extensionName}");
-devlog = {
-imageExpand: '<img $imageExpand alt="+" />',
-imageCollapse: '<img $imageCollapse alt="-" />',
-show_extra_data: '{$GLOBALS['LANG']->getLL('show_extra_data')}',
-hide_extra_data: '{$GLOBALS['LANG']->getLL('hide_extra_data')}',
-autorefresh: $autoRefresh,
-}
-EOF;
-		$jsFile = t3lib_div::getFileAbsFileName('EXT:devlog/Resources/Public/javascripts/common.js');
-		$this->doc->JScodeArray[] .= file_get_contents($jsFile);
 	}
 
 	/**

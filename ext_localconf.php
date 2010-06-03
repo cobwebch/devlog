@@ -3,6 +3,10 @@ if (!defined ('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
+// Load Devlog Classes
+require_once(t3lib_extMgm::extPath('devlog', 'class.tx_devlog_exception.php'));
+
+
 // Define the timestamp for the current run
 // TODO: move to tx_devlog constructor (as static variables)
 
