@@ -57,12 +57,30 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	protected $extensionName = 'devlog';
 
 	/**
+	 * API of $this->pageRendererObject can be found at
+	 * http://ecodev.ch/api/typo3/html/classt3lib___page_renderer.html
+	 *
+	 * @var t3lib_PageRenderer
+	 */
+	protected $pageRendererObject;
+
+	/**
+	 * API of $this->doc can be found at
+	 * http://ecodev.ch/api/typo3/html/classtemplate.html
+	 *
+	 * @var template
+	 */
+	public $doc;
+
+
+	/**
 	 * Initialise the plugin
 	 *
 	 * @return	void
 	 */
 	function initialize()	{
 		global $MCONF;
+		global $BACK_PATH;
 
 			// Get extension configuration
 		$this->extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['devlog']);
@@ -83,6 +101,12 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 			// Set key for CSH
 		$this->cshKey = '_MOD_'.$MCONF['name'];
+
+			// Initilize properties
+		$this->doc = t3lib_div::makeInstance('template');
+		$this->doc->backPath = $BACK_PATH;
+		$this->pageRendererObject = $this->doc->getPageRenderer();
+		
 	}
 
 	/**
@@ -150,45 +174,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				// Processes the parameters passed to tx_devlog
 			$message = $this->processParameters();
 
-				// Draw the header.
-			$this->doc = t3lib_div::makeInstance('template');
-			$this->doc->backPath = $BACK_PATH;
-
-				// Load ExtCore library
-			#$this->doc->getPageRenderer()->loadExtCore();
-				// Load ExtJS libraries and stylesheets (this code is for later use)
-			$this->doc->getPageRenderer()->loadExtJS();
-			$this->doc->getPageRenderer()->enableExtJsDebug();
-			$this->extJSNamespace = $this->extensionName;
-#			$this->doc->getPageRenderer()->addExtOnReadyCode("\n" . $this->extJSNamespace);
-
-			// Integrate dynamic JavaScript such as configuration or lables:
-//		$this->doc->JScode.= t3lib_div::wrapJS('
-//			Ext.namespace("Recycler");
-//			Recycler.statics = ' . json_encode($this->getJavaScriptConfiguration()) . ';
-//			Recycler.lang = ' . json_encode($this->getJavaScriptLabels()) . ';'
-//		);
-			// Load Recycler JavaScript:
-//		$this->loadJavaScript($this->relativePath . 'res/js/ext_expander.js');
-
-
-				// Define function for switching visibility of extra data field on or off
-			$imageExpand = t3lib_iconWorks::skinImg($BACK_PATH, 'gfx/plusbullet_list.gif','width="18" height="12"');
-			$imageCollapse = t3lib_iconWorks::skinImg($BACK_PATH, 'gfx/minusbullet_list.gif','width="18" height="12"');
-			$autoRefresh = $this->MOD_SETTINGS['autorefresh'] ? $this->extConf['refreshFrequency'] : '0';
-			$this->doc->JScodeArray[] .= <<< EOF
-Ext.ns("{$this->extensionName}");
-devlog = {
-	imageExpand: '<img $imageExpand alt="+" />',
-	imageCollapse: '<img $imageCollapse alt="-" />',
-	show_extra_data: '{$GLOBALS['LANG']->getLL('show_extra_data')}',
-	hide_extra_data: '{$GLOBALS['LANG']->getLL('hide_extra_data')}',
-	autorefresh: $autoRefresh,
-}
-EOF;
-			$jsFile = t3lib_div::getFileAbsFileName('EXT:devlog/Resources/Public/javascripts/util.js');
-			$this->doc->JScodeArray[] .= file_get_contents($jsFile);
-
+				// Load javascript header
+			$this->loadJavascript();
 
 			$this->content .= $this->doc->startPage($GLOBALS['LANG']->getLL('title'));
 
@@ -217,6 +204,48 @@ EOF;
 			$this->content .= $this->doc->startPage($GLOBALS['LANG']->getLL('title'));
 			$this->content .= $this->doc->header($GLOBALS['LANG']->getLL('title'));
 		}
+	}
+
+	/**
+	 * Load Javascript files onto the BE Module
+	 *
+	 * @return void
+	 */
+	protected function loadJavascript() {
+
+			// Load ExtCore library
+		$this->pageRendererObject->loadExtJS();
+		$this->pageRendererObject->enableExtJsDebug();
+
+		#$this->pageRendererObject->addJsFile($extRelPath . $jsFile, $type, $compressed, $forceOnTop);
+
+#			$this->doc->getPageRenderer()->addExtOnReadyCode("\n" . $this->extJSNamespace);
+
+		// Integrate dynamic JavaScript such as configuration or lables:
+//		$this->doc->JScode.= t3lib_div::wrapJS('
+//			Ext.namespace("Recycler");
+//			Recycler.statics = ' . json_encode($this->getJavaScriptConfiguration()) . ';
+//			Recycler.lang = ' . json_encode($this->getJavaScriptLabels()) . ';'
+//		);
+		// Load Recycler JavaScript:
+//		$this->loadJavaScript($this->relativePath . 'res/js/ext_expander.js');
+
+			// Define function for switching visibility of extra data field on or off
+		$imageExpand = t3lib_iconWorks::skinImg($BACK_PATH, 'gfx/plusbullet_list.gif','width="18" height="12"');
+		$imageCollapse = t3lib_iconWorks::skinImg($BACK_PATH, 'gfx/minusbullet_list.gif','width="18" height="12"');
+		$autoRefresh = $this->MOD_SETTINGS['autorefresh'] ? $this->extConf['refreshFrequency'] : '0';
+		$this->doc->JScodeArray[] .= <<< EOF
+Ext.ns("{$this->extensionName}");
+devlog = {
+imageExpand: '<img $imageExpand alt="+" />',
+imageCollapse: '<img $imageCollapse alt="-" />',
+show_extra_data: '{$GLOBALS['LANG']->getLL('show_extra_data')}',
+hide_extra_data: '{$GLOBALS['LANG']->getLL('hide_extra_data')}',
+autorefresh: $autoRefresh,
+}
+EOF;
+		$jsFile = t3lib_div::getFileAbsFileName('EXT:devlog/Resources/Public/javascripts/common.js');
+		$this->doc->JScodeArray[] .= file_get_contents($jsFile);
 	}
 
 	/**
