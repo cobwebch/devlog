@@ -186,7 +186,7 @@ devlog = {
 	autorefresh: $autoRefresh,
 }
 EOF;
-			$jsFile = t3lib_div::getFileAbsFileName('EXT:devlog/Resources/Public/javascripts/application.js');
+			$jsFile = t3lib_div::getFileAbsFileName('EXT:devlog/Resources/Public/javascripts/util.js');
 			$this->doc->JScodeArray[] .= file_get_contents($jsFile);
 
 
