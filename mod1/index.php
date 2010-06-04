@@ -232,9 +232,14 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			// Defines what files should be loaded and loads them
 		$files = array();
 		$files[] = 'common.js';
-//		$files[] = 'Application.js';
+		$files[] = 'Util.js';
+		$files[] = 'Application.js';
+		$files[] = 'Application/MenuRegistry.js';
+		$files[] = 'Application/AbstractBootstrap.js';
+		$files[] = 'UserInterface/Bootstrap.js';
+		$files[] = 'UserInterface/Layout.js';
 		foreach ($files as $file) {
-			$this->pageRendererObject->addJsFile($this->javascriptPath . $file);
+			$this->pageRendererObject->addJsFile($this->javascriptPath . $file, 'text/javascript', FALSE);
 		}
 
 		// FIX ME: temporary paramter for development only
@@ -257,14 +262,14 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				alert(result);
 			}
 		});
-
-		TYPO3.Devlog.Communication.myMethod("qwer", "World!", function(result) {
-			if (typeof console == "object") {
-				console.log(result);
-			} else {
-				alert(result);
-			}
-		});
+//
+//		TYPO3.Devlog.Communication.myMethod("qwer", "World!", function(result) {
+//			if (typeof console == "object") {
+//				console.log(result);
+//			} else {
+//				alert(result);
+//			}
+//		});
 
 EOF;
 
