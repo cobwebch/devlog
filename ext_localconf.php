@@ -23,4 +23,7 @@ if (!$TYPO3_CONF_VARS['EXTCONF'][$_EXTKEY]['mstamp']) {
 // Register the logging method with the appropriate hook
 
 $TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_div.php']['devLog'][$_EXTKEY] = 'EXT:'.$_EXTKEY.'/class.tx_devlog.php:&tx_devlog->devLog';
+
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ExtDirect']['TYPO3.Devlog.Communication'] = 'EXT:devlog/class.tx_devlog_extjs.php:tx_devlog_extjs';
+
 ?>

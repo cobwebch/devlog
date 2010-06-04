@@ -223,10 +223,12 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 */
 	protected function loadJavascript() {
 
+			// *********************************** //
 			// Load ExtCore library
 		$this->pageRendererObject->loadExtJS();
 		$this->pageRendererObject->enableExtJsDebug();
 
+			// *********************************** //
 			// Defines what files should be loaded and loads them
 		$files = array();
 		$files[] = 'common.js';
@@ -235,10 +237,40 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$this->pageRendererObject->addJsFile($this->javascriptPath . $file);
 		}
 
+		// FIX ME: temporary paramter for development only
+		$debugParameter = '&clear_cache=1';
+		$this->pageRendererObject->addJsFile('ajax.php?ajaxID=ExtDirect::getAPI&namespace=TYPO3.Devlog' . $debugParameter, 'text/javascript', FALSE);
+
+			// *********************************** //
 			// Defines onready Javascript
 		$this->readyJavascript = array();
+		$this->readyJavascript[] .= <<< EOF
+
+		for (var api in Ext.app.ExtDirectAPI) {
+			Ext.Direct.addProvider(Ext.app.ExtDirectAPI[api]);
+		}
+
+		TYPO3.Devlog.Communication.testMe("Hellooo", "World!", function(result) {
+			if (typeof console == "object") {
+				console.log(result);
+			} else {
+				alert(result);
+			}
+		});
+
+		TYPO3.Devlog.Communication.myMethod("qwer", "World!", function(result) {
+			if (typeof console == "object") {
+				console.log(result);
+			} else {
+				alert(result);
+			}
+		});
+
+EOF;
+
 		$this->pageRendererObject->addExtOnReadyCode(PHP_EOL . implode("\n", $this->readyJavascript) . PHP_EOL);
 
+			// *********************************** //
 			// Defines contextual variables
 			// Define function for switching visibility of extra data field on or off
 		$imageExpand = t3lib_iconWorks::skinImg($BACK_PATH, 'gfx/plusbullet_list.gif','width="18" height="12"');
@@ -261,17 +293,6 @@ devlog = {
 }
 EOF;
 		$this->pageRendererObject->addJsInlineCode('devlog', implode("\n", $this->inlineJavascript));
-
-
-		// Integrate dynamic JavaScript such as configuration or lables:
-//		$this->doc->JScode.= t3lib_div::wrapJS('
-//			Ext.namespace("Recycler");
-//			Recycler.statics = ' . json_encode($this->getJavaScriptConfiguration()) . ';
-//			Recycler.lang = ' . json_encode($this->getJavaScriptLabels()) . ';'
-//		);
-		// Load Recycler JavaScript:
-//		$this->loadJavaScript($this->relativePath . 'res/js/ext_expander.js');
-
 	}
 
 	/**
