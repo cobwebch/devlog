@@ -194,7 +194,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$markers['###CLEARMENU###'] = $this->renderClearMenu();
 			$markers['###OPEN_NEW_VIEW###'] = $this->openNewView();
 			$markers['###MESSAGE###'] = $message;
-			$markers['###CONTENT###'] = $this->moduleContent();
+//			$markers['###CONTENT###'] = $this->moduleContent();
 			$markers['###SHORTCUT###'] = '';
 			if ($GLOBALS['BE_USER']->mayMakeShortcut())	{
 				$markers['###SHORTCUT###'] = $this->doc->makeShortcutIcon('id',implode(',',array_keys($this->MOD_MENU)),$this->MCONF['name']);
@@ -236,9 +236,10 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$files[] = 'Application.js';
 		$files[] = 'Application/MenuRegistry.js';
 		$files[] = 'Application/AbstractBootstrap.js';
+		$files[] = 'Store/LogStore.js';
 		$files[] = 'UserInterface/Bootstrap.js';
 		$files[] = 'UserInterface/Layout.js';
-//		$files[] = 'UserInterface/Grid.js';
+		$files[] = 'UserInterface/LogPanel.js';
 //		$files[] = 'UserInterface/TestButton.js';
 		foreach ($files as $file) {
 			$this->pageRendererObject->addJsFile($this->javascriptPath . $file, 'text/javascript', FALSE);
@@ -256,16 +257,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		for (var api in Ext.app.ExtDirectAPI) {
 			Ext.Direct.addProvider(Ext.app.ExtDirectAPI[api]);
 		}
-
-		TYPO3.Devlog.Router.testMe("Hellooo", "World!", function(result) {
-			if (typeof console == "object") {
-				console.log(result);
-			} else {
-				alert(result);
-			}
-		});
 //
-//		TYPO3.Devlog.Router.myMethod("qwer", "World!", function(result) {
+//		TYPO3.Devlog.Remote.testMe("Hellooo", "World!", function(result) {
 //			if (typeof console == "object") {
 //				console.log(result);
 //			} else {

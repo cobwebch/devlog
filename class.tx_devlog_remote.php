@@ -31,7 +31,7 @@
  * @package	TYPO3
  * @subpackage	tx_devlog
  */
-class tx_devlog_router {
+class tx_devlog_remote {
 
 	/**
 	 * This method returns the message's content
