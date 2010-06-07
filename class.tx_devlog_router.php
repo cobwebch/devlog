@@ -31,7 +31,7 @@
  * @package	TYPO3
  * @subpackage	tx_devlog
  */
-class tx_devlog_extjs {
+class tx_devlog_router {
 
 	/**
 	 * This method returns the message's content

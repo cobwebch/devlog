@@ -238,12 +238,14 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$files[] = 'Application/AbstractBootstrap.js';
 		$files[] = 'UserInterface/Bootstrap.js';
 		$files[] = 'UserInterface/Layout.js';
+//		$files[] = 'UserInterface/Grid.js';
+//		$files[] = 'UserInterface/TestButton.js';
 		foreach ($files as $file) {
 			$this->pageRendererObject->addJsFile($this->javascriptPath . $file, 'text/javascript', FALSE);
 		}
 
 		// FIX ME: temporary paramter for development only
-		$debugParameter = '&clear_cache=1';
+		$debugParameter = '&no_cache=1';
 		$this->pageRendererObject->addJsFile('ajax.php?ajaxID=ExtDirect::getAPI&namespace=TYPO3.Devlog' . $debugParameter, 'text/javascript', FALSE);
 
 			// *********************************** //
@@ -255,7 +257,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			Ext.Direct.addProvider(Ext.app.ExtDirectAPI[api]);
 		}
 
-		TYPO3.Devlog.Communication.testMe("Hellooo", "World!", function(result) {
+		TYPO3.Devlog.Router.testMe("Hellooo", "World!", function(result) {
 			if (typeof console == "object") {
 				console.log(result);
 			} else {
@@ -263,7 +265,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			}
 		});
 //
-//		TYPO3.Devlog.Communication.myMethod("qwer", "World!", function(result) {
+//		TYPO3.Devlog.Router.myMethod("qwer", "World!", function(result) {
 //			if (typeof console == "object") {
 //				console.log(result);
 //			} else {
