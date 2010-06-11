@@ -39,7 +39,7 @@ TYPO3.Devlog.Application = Ext.apply(new Ext.util.Observable, {
 
 		this.fireEvent('TYPO3.Devlog.Application.afterBootstrap');
 		
-//		this._initializeHistoryManager();
+		this._initializeHistoryManager();
 	},
 
 	/**
@@ -79,6 +79,7 @@ TYPO3.Devlog.Application = Ext.apply(new Ext.util.Observable, {
 			bootstrapper.initialize();
 		});
 	},
+
 	_initializeHistoryManager: function() {
 		Ext.History.on('change', function(token) {
 			this.fireEvent('TYPO3.Devlog.Application.navigate', token);
@@ -88,6 +89,7 @@ TYPO3.Devlog.Application = Ext.apply(new Ext.util.Observable, {
 			history.fireEvent('change', history.getToken());
 		}, this);
 	},
+
 	_registerEventDebugging: function() {
 		Ext.util.Observable.capture(
 			this,

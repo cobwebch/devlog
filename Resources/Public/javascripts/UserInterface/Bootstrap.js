@@ -7,9 +7,8 @@ TYPO3.Devlog.UserInterface.Bootstrap = Ext.apply(new TYPO3.Devlog.Application.Ab
 		TYPO3.Devlog.Application.on('TYPO3.Devlog.Application.afterBootstrap', this.initViewport, this);
 	},
 	initViewport: function() {
-//		TYPO3.Devlog.UserInterface.viewport = new TYPO3.Devlog.UserInterface.Layout();
+		TYPO3.Devlog.UserInterface.viewport = new TYPO3.Devlog.UserInterface.Layout();
 	}
-
 });
 
 TYPO3.Devlog.Application.registerBootstrap(TYPO3.Devlog.UserInterface.Bootstrap);

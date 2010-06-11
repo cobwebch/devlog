@@ -236,11 +236,12 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$files[] = 'Application.js';
 		$files[] = 'Application/MenuRegistry.js';
 		$files[] = 'Application/AbstractBootstrap.js';
+		$files[] = 'Store/Bootstrap.js';
 		$files[] = 'Store/LogStore.js';
 		$files[] = 'UserInterface/Bootstrap.js';
 		$files[] = 'UserInterface/Layout.js';
 		$files[] = 'UserInterface/LogPanel.js';
-//		$files[] = 'UserInterface/TestButton.js';
+		$files[] = 'UserInterface/TestingPanel.js';
 		foreach ($files as $file) {
 			$this->pageRendererObject->addJsFile($this->javascriptPath . $file, 'text/javascript', FALSE);
 		}
@@ -257,14 +258,14 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		for (var api in Ext.app.ExtDirectAPI) {
 			Ext.Direct.addProvider(Ext.app.ExtDirectAPI[api]);
 		}
-//
-//		TYPO3.Devlog.Remote.testMe("Hellooo", "World!", function(result) {
-//			if (typeof console == "object") {
-//				console.log(result);
-//			} else {
-//				alert(result);
-//			}
-//		});
+		
+		TYPO3.Devlog.Remote.testMe("Hellooo", "World!", function(result) {
+			if (typeof console == "object") {
+				console.log(result);
+			} else {
+				alert(result);
+			}
+		});
 
 EOF;
 

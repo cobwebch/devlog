@@ -51,6 +51,18 @@ class tx_devlog_remote {
 	public function myMethod($string1, $string2) {
 		return $string1 . ' ' . $string2;
 	}
+
+	public function getLogs() {
+		$datasource['tid'] = 2;
+		$datasource['action'] = 'Remote';
+		$datasource['type'] = 'rpc';
+		$datasource['method'] = 'getLogs';
+		$datasource['data'] = array(
+			array('source' => 'native', 'description' => 'Testin 1234'),
+
+		);
+		return $datasource;
+	}
 }
 
 ?>
