@@ -237,7 +237,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 //		$files[] = 'Application/MenuRegistry.js';
 		$files[] = 'Application/AbstractBootstrap.js';
 		$files[] = 'Store/Bootstrap.js';
-		$files[] = 'Store/LogStore.js';
+		$files[] = 'Store/LogDirectStore.js';
 		$files[] = 'UserInterface/Bootstrap.js';
 		$files[] = 'UserInterface/Layout.js';
 		$files[] = 'UserInterface/LogDataView.js';

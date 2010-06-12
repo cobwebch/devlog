@@ -1,23 +1,12 @@
 Ext.ns("TYPO3.Devlog.Store");
 
-//var store = new Ext.data.JsonStore({
-//    url: 'get-images.php',
-//    root: 'images',
-//    fields: [
-//        'name', 'url',
-//        {name:'size', type: 'float'},
-//        {name:'lastmod', type:'date', dateFormat:'timestamp'}
-//    ]
-//});
-//store.load();
-
-TYPO3.Devlog.initLogStore = function() {
+TYPO3.Devlog.initLogJsonStore = function() {
 	return new Ext.data.DirectStore({
-		paramsAsHash: true,
+		// @todo
+//		url: '',
 		autoLoad: true,
 		idProperty: 'uid',
 		root: 'data',
-		directFn: TYPO3.Devlog.Remote.getLogs,
 		fields: [
 			{name: 'uid', type:'int'},
 			{name: 'pid', type:'int'},
