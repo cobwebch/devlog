@@ -52,15 +52,24 @@ class tx_devlog_remote {
 		return $string1 . ' ' . $string2;
 	}
 
+	/**
+	 * Fetches log depending on parameters
+	 * 
+	 * @global t3lib_DB $TYPO3_DB
+	 * @return array
+	 */
 	public function getLogs() {
-		$datasource['tid'] = 2;
+		global $TYPO3_DB;
+		$datasource['tid'] = 1;
 		$datasource['action'] = 'Remote';
 		$datasource['type'] = 'rpc';
 		$datasource['method'] = 'getLogs';
-		$datasource['data'] = array(
-			array('source' => 'native', 'description' => 'Testin 1234'),
+		#$TYPO3_DB->SELECTquery('*', 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $limit = 25);
 
-		);
+		$records = $TYPO3_DB->exec_SELECTgetRows('*', 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $limit = 25);
+//		print_r($records);
+
+		$datasource['data'] = $records;
 		return $datasource;
 	}
 }

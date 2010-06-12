@@ -1,49 +1,36 @@
 Ext.ns("TYPO3.Devlog.UserInterface");
 
-
-   var myData = [
-        ['3m Co',71.72,0.02,0.03,'9/1 12:00am'],
-        ['Alcoa Inc',29.01,0.42,1.47,'9/1 12:00am'],
-        ['Altria Group Inc',83.81,0.28,0.34,'9/1 12:00am']
-    ];
-
-
- // create the data store
-    var store = new Ext.data.ArrayStore({
-        fields: [
-           {name: 'company'},
-           {name: 'price', type: 'float'},
-           {name: 'change', type: 'float'},
-           {name: 'pctChange', type: 'float'},
-           {name: 'lastChange', type: 'date', dateFormat: 'n/j h:ia'}
-        ]
-    });
-
-    // manually load local data
-    store.loadData(myData);
-
-
 /**
  * Button of the rootline menu
  * @class TYPO3.Devlog.UserInterface.LogPanel
  * @extends Ext.LogPanel
  */
 TYPO3.Devlog.UserInterface.LogPanel = Ext.extend(Ext.grid.GridPanel, {
+	/**
+	 * @event TYPO3.Devlog.UserInterface.LogPanel.afterInit
+	 * @param {TYPO3.Devlog.UserInterface.LogPanel} a reference to the main area,
+	 *
+	 * Event triggered after initialization of the main area.
+	 */
+	
 	enableToggle: true,
-
 	initComponent: function() {
 		var config = {
 
 			store: TYPO3.Devlog.LogStore,
 			columns: [
-//				{id:'name',header: 'Name', width: 160, sortable: true, dataIndex: 'name'},
-				{id:'source',header: 'Company', width: 160, sortable: true},
+				{id:'crdate', dataIndex:'crdate', header: 'Date', sortable: true},
+				{id:'severity', dataIndex:'severity', header: 'Severity', sortable: true},
+				{id:'extkey', dataIndex:'extkey', header: 'Extension', sortable: true},
+				{id:'msg', dataIndex:'msg', header: 'Message', width: 160, sortable: true},
+				{id:'location', dataIndex:'location', header: 'Called from', sortable: true},
+//				{id:'page', header: 'Page', width: 160, sortable: true},
+//				{id:'user', header: 'User', width: 160, sortable: true},
 			],
 			stripeRows: true,
-//			autoExpandColumn: 'company',
+			autoExpandColumn: 'msg',
 			height: 350,
-			width: 'auto',
-			title: 'Array Grid'
+			width: 'auto'
 		};
 		Ext.apply(this, config);
 		TYPO3.Devlog.UserInterface.LogPanel.superclass.initComponent.call(this);
