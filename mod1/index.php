@@ -37,7 +37,6 @@
 $EXTCONF['devlog']['nolog'] = TRUE;
 $TYPO3_CONF_VARS['EXTCONF']['devlog']['nolog'] = TRUE;
 
-$GLOBALS['LANG']->includeLLFile('EXT:devlog/mod1/locallang.xml');
 $BE_USER->modAccess($MCONF, 1);	// This checks permissions and exits if the users has no permission for entry.
 
 class tx_devlog_module1 extends t3lib_SCbase {
@@ -93,6 +92,9 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$this->extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['devlog']);
 		if (empty($this->extConf['entriesPerPage'])) $this->extConf['entriesPerPage'] = $this->defaultEntriesPerPage;
 
+			// Load language
+		$GLOBALS['LANG']->includeLLFile('EXT:devlog/Resources/Private/Language/locallang.xml');
+		
 			// Get log run list
 		$this->getLogRuns();
 
@@ -109,6 +111,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			// Set key for CSH
 		$this->cshKey = '_MOD_'.$MCONF['name'];
 
+		
 			// Initilize properties
 		$this->doc = t3lib_div::makeInstance('template');
 		$this->doc->backPath = $BACK_PATH;
@@ -234,7 +237,6 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$files[] = 'common.js';
 		$files[] = 'Util.js';
 		$files[] = 'Application.js';
-//		$files[] = 'Application/MenuRegistry.js';
 		$files[] = 'Application/AbstractBootstrap.js';
 		$files[] = 'Store/Bootstrap.js';
 		$files[] = 'Store/LogDirectStore.js';
@@ -248,10 +250,15 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		// FIX ME: temporary paramter for development only
 		$this->pageRendererObject->addJsFile('ajax.php?ajaxID=ExtDirect::getAPI&namespace=TYPO3.Devlog', 'text/javascript', FALSE);
 
+		$labels = json_encode($this->getLabels());
+
 			// *********************************** //
 			// Defines onready Javascript
 		$this->readyJavascript = array();
 		$this->readyJavascript[] .= <<< EOF
+			Ext.ns("TYPO3.Devlog");
+
+			TYPO3.Devlog.Language = $labels
 
 //		for (var api in Ext.app.ExtDirectAPI) {
 //			Ext.Direct.addProvider(Ext.app.ExtDirectAPI[api]);
@@ -295,6 +302,27 @@ EOF;
 	}
 
 	/**
+	 * Return labels in the form of an array
+	 *
+	 * @global Language $LANG
+	 * @global array $LANG_LANG
+	 * @return array
+	 */
+	protected function getLabels() {
+		global $LANG;
+		global $LOCAL_LANG;
+
+		if (isset($LOCAL_LANG[$LANG->lang]) && !empty($LOCAL_LANG[$LANG->lang])) {
+			$markers = $LOCAL_LANG[$LANG->lang];
+			//$markers = $LANG->includeLLFile('EXT:devlog/Resources/Private/Language/locallang.xml', 0);
+		}
+		else {
+			throw new tx_devlog_exception('Now file lang has been loaded', 1276451853);
+		}
+		return $markers;
+	}
+
+	/**
 	 * Render the "Select log" menu and return the HTML code
 	 *
 	 * @return      string	  HTML output
@@ -314,30 +342,6 @@ EOF;
 
 		return implode('',$optMenu);
 	}
-
-	/**
-	 * Fetches labels from the template and translates them.
-	 * Labels have the following pattern ###LL:key###.
-	 *
-	 * @return	array
-	 */
-//	private function getLabelMarkers() {
-//		$backendTemplateFile = t3lib_div::getFileAbsFileName('EXT:devlog/Resources/Private/Templates/index.html');
-//		$templateContent = file_get_contents($backendTemplateFile);
-//
-//			// Regular expression that fetches all labels
-//		preg_match_all('/#{3}LL:(.+)#{3}/isU', $templateContent, $matches);
-//		$numberOfMatches = count($matches[0]);
-//
-//		$markers = array();
-//		for ($index = 0; $index < $numberOfMatches; $index ++) {
-//			$labelMarker = $matches[0][$index];
-//			$labelName = $matches[1][$index];
-//			$markers[$labelMarker] = $GLOBALS['LANG']->getLL($labelName);
-//		}
-//
-//		return $markers;
-//	}
 
 	/**
 	 * Prints out the module HTML

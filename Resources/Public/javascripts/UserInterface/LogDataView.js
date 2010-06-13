@@ -19,29 +19,30 @@ TYPO3.Devlog.UserInterface.LogDataView = Ext.extend(Ext.DataView, {
 
 			store: TYPO3.Devlog.LogStore,
 			tpl: new Ext.XTemplate(
+			//@todo: translation
 				'<table class="t3-list">',
 					'<thead>',
 					'<tr class="t3-row-header">',
 						'<th class="t3-column t3-cell t3-td-1">',
-							'<div class="t3-cell-inner">Date</div>',
+							'<div class="t3-cell-inner">{TYPO3.Devlog.Language.crdate}</div>',
 						'</th>',
 						'<th class="t3-column t3-cell t3-td-2">',
-							'<div class="t3-cell-inner">Severity</div>',
+							'<div class="t3-cell-inner">{TYPO3.Devlog.Language.severity}</div>',
 						'</th>',
 						'<th class="t3-column t3-cell t3-td-3">',
-							'<div class="t3-cell-inner">Extension</div>',
+							'<div class="t3-cell-inner">{TYPO3.Devlog.Language.extkey}</div>',
 						'</th>',
 						'<th class="t3-column t3-cell t3-td-4">',
-							'<div class="t3-cell-inner">Message</div>',
+							'<div class="t3-cell-inner">{TYPO3.Devlog.Language.msg}</div>',
 						'</th>',
 						'<th class="t3-column t3-cell t3-td-5">',
-							'<div class="t3-cell-inner">Called from</div>',
+							'<div class="t3-cell-inner">{TYPO3.Devlog.Language.location}</div>',
 						'</th>',
 						'<th class="t3-column t3-cell t3-td-6">',
-							'<div class="t3-cell-inner">Page</div>',
+							'<div class="t3-cell-inner">{TYPO3.Devlog.Language.pid}</div>',
 						'</th>',
 						'<th class="t3-column t3-cell t3-td-7">',
-							'<div class="t3-cell-inner">User</div>',
+							'<div class="t3-cell-inner">{TYPO3.Devlog.Language.cruser_id}</div>',
 						'</th>',
 //						'<th class="t3-column t3-cell t3-td-8" style="">',
 //							'<div class="t3-cell-inner">Extra data</div>',
@@ -194,4 +195,5 @@ TYPO3.Devlog.UserInterface.LogDataView = Ext.extend(Ext.DataView, {
 //	}
 
 });
+
 Ext.reg('TYPO3.Devlog.UserInterface.LogDataView', TYPO3.Devlog.UserInterface.LogDataView);
