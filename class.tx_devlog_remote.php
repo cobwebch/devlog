@@ -58,19 +58,54 @@ class tx_devlog_remote {
 	 * @global t3lib_DB $TYPO3_DB
 	 * @return array
 	 */
-	public function getLogs() {
+	public function indexAction() {
 		global $TYPO3_DB;
-		$datasource['tid'] = 1;
-		$datasource['action'] = 'Remote';
-		$datasource['type'] = 'rpc';
-		$datasource['method'] = 'getLogs';
+
+		// ExtJS api: http://www.extjs.com/deploy/dev/docs/?class=Ext.data.JsonReader
+//		metaData: {
+//        // used by store to set its sortInfo
+//        "sortInfo":{
+//           "field": "name",
+//           "direction": "ASC"
+//        },
+//        // paging data (if applicable)
+//        "start": 0,
+//        "limit": 2,
+//        // custom property
+//        "foo": "bar"
+//    },
+		$metaData['idProperty'] = 'uid';
+		$metaData['root'] = 'records';
+		$metaData['totalProperty'] = 'total';
+		$metaData['successProperty'] = 'success';
+		$metaData['fields'] = array(
+			array('name' => 'uid', 'type' => 'int'),
+			array('name' => 'pid', 'type' => 'int'),
+			array('name' => 'crdate', 'type' => 'date', 'dateFormat' => 'timestamp'),
+			array('name' => 'crmsec', 'type' => 'date', 'dateFormat' => 'timestamp'),
+			array('name' => 'cruser_id', 'type' => 'int'),
+			array('name' => 'severity', 'type' => 'int'),
+			array('name' => 'extkey', 'type' => 'string'),
+			array('name' => 'msg', 'type' => 'string'),
+			array('name' => 'location', 'type' => 'string'),
+			array('name' => 'line', 'type' => 'string'),
+			array('name' => 'data_var', 'type' => 'string'),
+
+		);
+
 		#$TYPO3_DB->SELECTquery('*', 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $limit = 25);
 
 		$records = $TYPO3_DB->exec_SELECTgetRows('*', 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $limit = 25);
-//		print_r($records);
 
-		$datasource['data'] = $records;
-		return $datasource;
+		$datasource['metaData'] = $metaData;
+		$datasource['total'] = count($records);
+		$datasource['records'] = $records;
+		$datasource['success'] = TRUE;
+		// For ExtDirect
+		//return $datasource;
+
+		// For JsonReader
+		echo json_encode($datasource);
 	}
 }
 

@@ -10,7 +10,8 @@ TYPO3.Devlog.Store.Bootstrap = Ext.apply(new TYPO3.Devlog.Application.AbstractBo
 		for (var api in Ext.app.ExtDirectAPI) {
 			Ext.Direct.addProvider(Ext.app.ExtDirectAPI[api]);
 		}
-		TYPO3.Devlog.LogStore = TYPO3.Devlog.initLogDirectStore()
+//		TYPO3.Devlog.LogStore = TYPO3.Devlog.initLogDirectStore()
+		TYPO3.Devlog.LogStore = TYPO3.Devlog.initLogJsonStore()
 	}
 });
 

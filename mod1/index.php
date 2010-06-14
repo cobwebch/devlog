@@ -187,6 +187,9 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				// Processes the parameters passed to tx_devlog
 			$message = $this->processParameters();
 
+				// Load Inline CSS
+			$this->loadCSS();
+
 				// Load javascript header
 			$this->loadJavascript();
 
@@ -220,6 +223,31 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	}
 
 	/**
+	 * Load CSS styles onto the BE Module
+	 *
+	 * @return void
+	 */
+	protected function loadCSS() {
+
+		$inlineCSS[] .= <<< EOF
+.x-selectable, .x-selectable * {
+		-moz-user-select: text!important;
+		-khtml-user-select: text!important;
+}
+
+
+td.x-grid3-td-msg {
+    overflow: hidden;
+}
+td.x-grid3-td-msg div.x-grid3-cell-inner {
+    white-space: normal;
+}
+
+EOF;
+		$this->pageRendererObject->addCssInlineBlock('Devlog', PHP_EOL . implode("\n", $inlineCSS) . PHP_EOL);
+	}
+
+	/**
 	 * Load Javascript files onto the BE Module
 	 *
 	 * @return void
@@ -235,11 +263,13 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			// Defines what files should be loaded and loads them
 		$files = array();
 		$files[] = 'common.js';
+		$files[] = 'Override/GridPanel.js';
 		$files[] = 'Util.js';
 		$files[] = 'Application.js';
 		$files[] = 'Application/AbstractBootstrap.js';
 		$files[] = 'Store/Bootstrap.js';
 		$files[] = 'Store/LogDirectStore.js';
+		$files[] = 'Store/LogJsonStore.js';
 		$files[] = 'UserInterface/Bootstrap.js';
 		$files[] = 'UserInterface/Layout.js';
 		$files[] = 'UserInterface/LogGridPanel.js';
@@ -251,14 +281,16 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$this->pageRendererObject->addJsFile('ajax.php?ajaxID=ExtDirect::getAPI&namespace=TYPO3.Devlog', 'text/javascript', FALSE);
 
 		$labels = json_encode($this->getLabels());
+		$preferences = json_encode($this->getPreferences());
 
 			// *********************************** //
 			// Defines onready Javascript
-		$this->readyJavascript = array();
-		$this->readyJavascript[] .= <<< EOF
+		$readyJavascript = array();
+		$readyJavascript[] .= <<< EOF
 			Ext.ns("TYPO3.Devlog");
 
-			TYPO3.Devlog.Language = $labels
+			TYPO3.Devlog.Language = $labels;
+			TYPO3.Devlog.Preferences = $preferences;
 
 //		for (var api in Ext.app.ExtDirectAPI) {
 //			Ext.Direct.addProvider(Ext.app.ExtDirectAPI[api]);
@@ -274,7 +306,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 EOF;
 
-		$this->pageRendererObject->addExtOnReadyCode(PHP_EOL . implode("\n", $this->readyJavascript) . PHP_EOL);
+		$this->pageRendererObject->addExtOnReadyCode(PHP_EOL . implode("\n", $readyJavascript) . PHP_EOL);
 
 			// *********************************** //
 			// Defines contextual variables
@@ -317,9 +349,24 @@ EOF;
 			//$markers = $LANG->includeLLFile('EXT:devlog/Resources/Private/Language/locallang.xml', 0);
 		}
 		else {
-			throw new tx_devlog_exception('Now file lang has been loaded', 1276451853);
+			throw new tx_devlog_exception('No language file has been found', 1276451853);
 		}
 		return $markers;
+	}
+
+	/**
+	 * Returns some preferences for the Application
+	 *
+	 * @global array $TYPO3_CONF_VARS
+	 * @return array
+	 */
+	protected function getPreferences() {
+		global $TYPO3_CONF_VARS;
+
+		$preferences['dateFormat'] = $TYPO3_CONF_VARS['SYS']['ddmmyy'];
+		$preferences['timeFormat'] = $TYPO3_CONF_VARS['SYS']['hhmm'];
+//		$preferences['ajaxController'] = $this->doc->backPath . 'ajax.php';
+		return $preferences;
 	}
 
 	/**

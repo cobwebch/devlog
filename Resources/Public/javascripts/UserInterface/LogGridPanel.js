@@ -15,13 +15,18 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	initComponent: function() {
 		var config = {
-
 			store: TYPO3.Devlog.LogStore,
 			columns: this._getColumns(),
-//			stripeRows: true,
-//			autoExpandColumn: 'msg',
+			stripeRows: true,
+			columnLines: true,
+			autoExpandColumn: 'msg',
 			height: 350,
 			width: 'auto',
+			
+			viewConfig: {
+				enableRowBody: true,
+//				getRowClass:this.getRowClass
+			},
 
 			// Top Bar
 			tbar: [
@@ -51,11 +56,6 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 //			console.log(123);
 //		});
 
-//		this.enableBubble([
-//			'TYPO3.Devlog.UserInterface.buttonPressed',
-//			'TYPO3.Devlog.UserInterface.buttonUnpressed'
-//		]);
-
 //		this.on(
 //			'toggle',
 //			this.onToogleAction,
@@ -69,56 +69,76 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 //		);
 	},
 
+	// private
+	/**
+	 * Renders the severity column
+	 *
+	 * @param {int} value: -1 OK, 0 Info, 1 Notice, 2 Warning, 3 Error
+	 * @return string
+	 */
+	_renderSeverity: function(value) {
+//		return String.format("{0}",(value==1)?'Yes': 'No');
+		return value;
+	},
+
+	/**
+	 * Returns the configuration array
+	 *
+	 * @method _getColumns
+	 * @return array
+	 */
 	_getColumns: function() {
 		var columns = [
 			{
-				id:'crdate',
-				dataIndex:'crdate',
-				header: TYPO3.Devlog.Language.crdate,
-				sortable: true,
-				renderer: Ext.util.Format.dateRenderer('m/d/Y')
-			},
-
-			{
-				id:'severity',
-				dataIndex:'severity',
-				header: TYPO3.Devlog.Language.severity,
+				id: 'uid',
+				dataIndex: 'uid',
+				header: 'UID',
+//				width: '3%',
 				sortable: true
 			},
-
 			{
-				id:'extkey',
-				dataIndex:'extkey',
+				id: 'crdate',
+				dataIndex: 'crdate',
+				header: TYPO3.Devlog.Language.crdate,
+				sortable: true,
+				renderer: Ext.util.Format.dateRenderer(TYPO3.Devlog.Preferences.dateFormat + ' ' + TYPO3.Devlog.Preferences.timeFormat)
+			},
+			{
+				id: 'severity',
+				dataIndex: 'severity',
+				header: TYPO3.Devlog.Language.severity,
+				renderer: this._renderSeverity,
+				sortable: true
+			},
+			{
+				id: 'extkey',
+				dataIndex: 'extkey',
 				header: TYPO3.Devlog.Language.extkey,
 				sortable: true
 			},
-
 			{
-				id:'msg',
-				dataIndex:'msg',
+				id: 'msg',
+				dataIndex: 'msg',
 				header: TYPO3.Devlog.Language.msg,
-				width: 160,
+				renderer: this._renderMessage,
 				sortable: true
 			},
-
 			{
-				id:'location',
-				dataIndex:'location',
+				id: 'location',
+				dataIndex: 'location',
 				header: TYPO3.Devlog.Language.location,
 				sortable: true
 			},
-
 			{
-				id:'page',
+				id: 'page',
+				dataIndex: 'pid',
 				header: TYPO3.Devlog.Language.pid,
-				width: 160,
 				sortable: true
 			},
-
 			{
-				id:'user',
+				id: 'user',
+				dataIndex: 'cruser_id',
 				header: TYPO3.Devlog.Language.cruser_id,
-				width: 160,
 				sortable: true
 			},
 		];
