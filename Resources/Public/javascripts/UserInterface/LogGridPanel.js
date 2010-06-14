@@ -2,88 +2,49 @@ Ext.ns("TYPO3.Devlog.UserInterface");
 
 /**
  * Button of the rootline menu
- * @class TYPO3.Devlog.UserInterface.LogDataView
- * @extends Ext.LogDataView
+ * @class TYPO3.Devlog.UserInterface.LogGridPanel
+ * @extends Ext.LogGridPanel
  */
-TYPO3.Devlog.UserInterface.LogDataView = Ext.extend(Ext.DataView, {
-	/**
-	 * @event TYPO3.Devlog.UserInterface.LogDataView.afterInit
-	 * @param {TYPO3.Devlog.UserInterface.LogDataView} a reference to the main area,
-	 *
-	 * Event triggered after initialization of the main area.
-	 */
+TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 	
-	enableToggle: true,
+	/**
+	 * Event triggered after initialization of the main area.
+	 *
+	 * @event TYPO3.Devlog.UserInterface.LogGridPanel.afterInit
+	 *
+	 */
 	initComponent: function() {
 		var config = {
 
 			store: TYPO3.Devlog.LogStore,
-			tpl: new Ext.XTemplate(
-			//@todo: translation
-				'<table class="t3-list">',
-					'<thead>',
-					'<tr class="t3-row-header">',
-						'<th class="t3-column t3-cell t3-td-1">',
-							'<div class="t3-cell-inner">{TYPO3.Devlog.Language.crdate}</div>',
-						'</th>',
-						'<th class="t3-column t3-cell t3-td-2">',
-							'<div class="t3-cell-inner">{TYPO3.Devlog.Language.severity}</div>',
-						'</th>',
-						'<th class="t3-column t3-cell t3-td-3">',
-							'<div class="t3-cell-inner">{TYPO3.Devlog.Language.extkey}</div>',
-						'</th>',
-						'<th class="t3-column t3-cell t3-td-4">',
-							'<div class="t3-cell-inner">{TYPO3.Devlog.Language.msg}</div>',
-						'</th>',
-						'<th class="t3-column t3-cell t3-td-5">',
-							'<div class="t3-cell-inner">{TYPO3.Devlog.Language.location}</div>',
-						'</th>',
-						'<th class="t3-column t3-cell t3-td-6">',
-							'<div class="t3-cell-inner">{TYPO3.Devlog.Language.pid}</div>',
-						'</th>',
-						'<th class="t3-column t3-cell t3-td-7">',
-							'<div class="t3-cell-inner">{TYPO3.Devlog.Language.cruser_id}</div>',
-						'</th>',
-//						'<th class="t3-column t3-cell t3-td-8" style="">',
-//							'<div class="t3-cell-inner">Extra data</div>',
-//						'</th>',
-					'</tr>',
-					'</thead>',
-					'<tpl for=".">',
-					'<tr>',
-						'<td>{crdate}</td>',
-						'<td>{severity}</td>',
-						'<td>{extkey}</td>',
-						'<td>{msg}</td>',
-						'<td>{location} line {line}</td>',
-					'</tr>',
-					'</tpl>',
-				'</table>'
-			),
-			autoHeight:true,
-			multiSelect: true,
-			overClass:'x-view-over',
-			itemSelector:'div.thumb-wrap',
-			emptyText: 'No images to display'
-//			width: 'auto'
-
-//			store: TYPO3.Devlog.LogStore,
-//			columns: [
-//				{id:'crdate', dataIndex:'crdate', header: 'Date', sortable: true},
-//				{id:'severity', dataIndex:'severity', header: 'Severity', sortable: true},
-//				{id:'extkey', dataIndex:'extkey', header: 'Extension', sortable: true},
-//				{id:'msg', dataIndex:'msg', header: 'Message', width: 160, sortable: true},
-//				{id:'location', dataIndex:'location', header: 'Called from', sortable: true},
-////				{id:'page', header: 'Page', width: 160, sortable: true},
-////				{id:'user', header: 'User', width: 160, sortable: true},
-//			],
+			columns: this._getColumns(),
 //			stripeRows: true,
 //			autoExpandColumn: 'msg',
-//			height: 350,
-//			width: 'auto'
+			height: 350,
+			width: 'auto',
+
+			// Top Bar
+			tbar: [
+				{
+					xtype: 'button',
+					text: 'button'
+				},
+			],
+
+			// Button Bar
+			bbar: new Ext.PagingToolbar({
+				store: TYPO3.Devlog.LogStore,       // grid and PagingToolbar using same store
+				displayInfo: true,
+				pageSize: 5,
+				prependButtons: true
+//				items: [
+//					'text 1'
+//				]
+			})
 		};
+		
 		Ext.apply(this, config);
-		TYPO3.Devlog.UserInterface.LogDataView.superclass.initComponent.call(this);
+		TYPO3.Devlog.UserInterface.LogGridPanel.superclass.initComponent.call(this);
 		TYPO3.Devlog.Application.fireEvent('TYPO3.Devlog.UserInterface.afterInit', this);
 
 //		this.on('afterrender', function(menu) {
@@ -107,7 +68,63 @@ TYPO3.Devlog.UserInterface.LogDataView = Ext.extend(Ext.DataView, {
 //			this
 //		);
 	},
-//
+
+	_getColumns: function() {
+		var columns = [
+			{
+				id:'crdate',
+				dataIndex:'crdate',
+				header: TYPO3.Devlog.Language.crdate,
+				sortable: true,
+				renderer: Ext.util.Format.dateRenderer('m/d/Y')
+			},
+
+			{
+				id:'severity',
+				dataIndex:'severity',
+				header: TYPO3.Devlog.Language.severity,
+				sortable: true
+			},
+
+			{
+				id:'extkey',
+				dataIndex:'extkey',
+				header: TYPO3.Devlog.Language.extkey,
+				sortable: true
+			},
+
+			{
+				id:'msg',
+				dataIndex:'msg',
+				header: TYPO3.Devlog.Language.msg,
+				width: 160,
+				sortable: true
+			},
+
+			{
+				id:'location',
+				dataIndex:'location',
+				header: TYPO3.Devlog.Language.location,
+				sortable: true
+			},
+
+			{
+				id:'page',
+				header: TYPO3.Devlog.Language.pid,
+				width: 160,
+				sortable: true
+			},
+
+			{
+				id:'user',
+				header: TYPO3.Devlog.Language.cruser_id,
+				width: 160,
+				sortable: true
+			},
+		];
+		return columns;
+	}
+	
 //	/**
 //	 * @method onToogleAction
 //	 * @param {object} button
@@ -196,4 +213,4 @@ TYPO3.Devlog.UserInterface.LogDataView = Ext.extend(Ext.DataView, {
 
 });
 
-Ext.reg('TYPO3.Devlog.UserInterface.LogDataView', TYPO3.Devlog.UserInterface.LogDataView);
+Ext.reg('TYPO3.Devlog.UserInterface.LogGridPanel', TYPO3.Devlog.UserInterface.LogGridPanel);

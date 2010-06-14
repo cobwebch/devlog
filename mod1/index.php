@@ -242,7 +242,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$files[] = 'Store/LogDirectStore.js';
 		$files[] = 'UserInterface/Bootstrap.js';
 		$files[] = 'UserInterface/Layout.js';
-		$files[] = 'UserInterface/LogDataView.js';
+		$files[] = 'UserInterface/LogGridPanel.js';
 		foreach ($files as $file) {
 			$this->pageRendererObject->addJsFile($this->javascriptPath . $file, 'text/javascript', FALSE);
 		}
