@@ -17,7 +17,6 @@ TYPO3.Devlog.initLogJsonStore = function() {
 		listeners : {
 			load: function (element, data) {
 				// Decides whether to sort server side or client side
-				console.log(TYPO3.Devlog.LogStore.getCount());
 //				if (element.reader.jsonData.total > element.getCount()) {
 //					element.remoteSort = true;
 //				}

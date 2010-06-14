@@ -90,12 +90,16 @@ class tx_devlog_remote {
 			array('name' => 'location', 'type' => 'string'),
 			array('name' => 'line', 'type' => 'string'),
 			array('name' => 'data_var', 'type' => 'string'),
+			array('name' => 'cruser_formated', 'type' => 'string'),
 
 		);
 
 		#$TYPO3_DB->SELECTquery('*', 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $limit = 25);
 
 		$records = $TYPO3_DB->exec_SELECTgetRows('*', 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $limit = 25);
+		foreach ($records as &$record) {
+			$record['cruser_formated'] = $this->getRecordDetails('be_users', $record['cruser_id']);
+		}
 
 		$datasource['metaData'] = $metaData;
 		$datasource['total'] = count($records);
@@ -106,6 +110,24 @@ class tx_devlog_remote {
 
 		// For JsonReader
 		echo json_encode($datasource);
+	}
+
+
+	/**
+	 * This method gets the title and the icon for a given record of a given table
+	 * It returns these as a HTML string
+	 *
+	 * @param	string		$table: name of the table
+	 * @param	integer		$uid: primary key of the record
+	 * @return	string		HTML to display
+	 */
+	protected function getRecordDetails($table = 'be_users', $uid) {
+		global $TCA;
+		$row = t3lib_BEfunc::getRecord($table, $uid);
+		$elementTitle = t3lib_BEfunc::getRecordTitle($table, $row, 1);
+		$spriteName = $TCA['be_users']['ctrl']['typeicon_classes'][$row['admin']];
+		$elementIcon = t3lib_iconWorks::getSpriteIcon($spriteName);
+		return $elementIcon . $elementTitle;
 	}
 }
 

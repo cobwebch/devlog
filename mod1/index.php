@@ -235,13 +235,22 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		-khtml-user-select: text!important;
 }
 
-
+/* Makes column msg beeing wrapped */
 td.x-grid3-td-msg {
     overflow: hidden;
 }
 td.x-grid3-td-msg div.x-grid3-cell-inner {
     white-space: normal;
 }
+
+td.x-grid3-td-location {
+    overflow: hidden;
+}
+td.x-grid3-td-location div.x-grid3-cell-inner {
+    white-space: normal;
+}
+
+ .x-grid3-cell-inner, .x-grid3-hd-inner { white-space:normal !important; }
 
 EOF;
 		$this->pageRendererObject->addCssInlineBlock('Devlog', PHP_EOL . implode("\n", $inlineCSS) . PHP_EOL);
@@ -273,6 +282,7 @@ EOF;
 		$files[] = 'UserInterface/Bootstrap.js';
 		$files[] = 'UserInterface/Layout.js';
 		$files[] = 'UserInterface/LogGridPanel.js';
+//		$files[] = 'UserInterface/RowExpander.js';
 		foreach ($files as $file) {
 			$this->pageRendererObject->addJsFile($this->javascriptPath . $file, 'text/javascript', FALSE);
 		}

@@ -25,7 +25,14 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 			
 			viewConfig: {
 				enableRowBody: true,
-//				getRowClass:this.getRowClass
+				showPreview: true,
+				getRowClass : function(record, rowIndex, p, store){
+					if(this.showPreview){
+						p.body = '<p>record.data.excerpt</p>';
+						return 'x-grid3-row-expanded';
+					}
+					return 'x-grid3-row-collapsed';
+				}
 			},
 
 			// Top Bar
@@ -42,9 +49,6 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 				displayInfo: true,
 				pageSize: 5,
 				prependButtons: true
-//				items: [
-//					'text 1'
-//				]
 			})
 		};
 		
@@ -82,6 +86,18 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 	},
 
 	/**
+	 * Renders the "called from" column
+	 *
+	 * @param {int} value: -1 OK, 0 Info, 1 Notice, 2 Warning, 3 Error
+	 * @param {Object} parent
+	 * @param {Object} record
+	 * @return string
+	 */
+	_renderLocation: function(value, parent, record) {
+		return String.format('{0}<br/>' + TYPO3.Devlog.Language.line + ' {1}', value, record.data['line']);
+	},
+
+	/**
 	 * Returns the configuration array
 	 *
 	 * @method _getColumns
@@ -93,7 +109,7 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 				id: 'uid',
 				dataIndex: 'uid',
 				header: 'UID',
-//				width: '3%',
+				width: 30,
 				sortable: true
 			},
 			{
@@ -108,6 +124,7 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 				dataIndex: 'severity',
 				header: TYPO3.Devlog.Language.severity,
 				renderer: this._renderSeverity,
+				width: 60,
 				sortable: true
 			},
 			{
@@ -127,19 +144,29 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 				id: 'location',
 				dataIndex: 'location',
 				header: TYPO3.Devlog.Language.location,
+				width: 200,
+				renderer: this._renderLocation,
 				sortable: true
 			},
 			{
 				id: 'page',
 				dataIndex: 'pid',
 				header: TYPO3.Devlog.Language.pid,
+				width: 50,
 				sortable: true
 			},
 			{
 				id: 'user',
-				dataIndex: 'cruser_id',
+				dataIndex: 'cruser_formated',
 				header: TYPO3.Devlog.Language.cruser_id,
+				width: 50,
 				sortable: true
+			},
+			{
+				id: 'line',
+				dataIndex: 'line',
+				header: TYPO3.Devlog.Language.line,
+				hidden: true
 			},
 		];
 		return columns;

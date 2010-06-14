@@ -40,6 +40,7 @@
             <label index="no_entries_found">No entries found. Try to relax your filter and search criteria.</label>
             <label index="open_view">Open new window</label>
             <label index="line_call">%s, line %d</label>
+            <label index="line">line</label>
             <label index="extra_data_error">Error reading extra data</label>
             <label index="tx_devlog_error.toolong">The extra data exceeded the maximum size. It was not stored.</label>
             <label index="tx_devlog_error.invalid">The extra data was not an array. It was not stored.</label>
