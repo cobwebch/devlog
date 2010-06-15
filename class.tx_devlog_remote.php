@@ -47,24 +47,6 @@ class tx_devlog_remote {
 	public function __construct() {
 		$this->parameters = array_merge(t3lib_div::_GET(), t3lib_div::_POST());
 	}
-	/**
-	 * This method returns the message's content
-	 *
-	 * @param	array			$PA: information related to the field
-	 * @param	t3lib_tceform	$fobj: reference to calling TCEforms object
-	 * @return	string	The HTML for the form field
-	 */
-	public function concatenateStrings($string1, $string2) {
-		return $string1 . ' ' . $string2;
-	}
-
-	public function testMe($string1, $string2) {
-		return $string1 . ' ' . $string2;
-	}
-
-	public function myMethod($string1, $string2) {
-		return $string1 . ' ' . $string2;
-	}
 
 	/**
 	 * Fetches log depending on parameters
@@ -75,6 +57,45 @@ class tx_devlog_remote {
 	public function indexAction() {
 		global $TYPO3_DB;
 
+		// Defines list of fields
+		$fields = array();
+		$fields[] = 'uid';
+		$fields[] = 'pid';
+		$fields[] = 'crdate';
+		$fields[] = 'crmsec';
+		$fields[] = 'cruser_id';
+		$fields[] = 'severity';
+		$fields[] = 'extkey';
+		$fields[] = 'msg';
+		$fields[] = 'location';
+		$fields[] = 'line';
+		$fields[] = 'data_var';
+		
+		$records = $TYPO3_DB->exec_SELECTgetRows(implode(',', $fields), 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $this->getLimit());
+		foreach ($records as &$record) {
+			$record['cruser_formated'] = $this->formatCruser($record['cruser_id']);
+			$record['severity_formated'] = $this->formatSeverity($record['severity']);
+			$record['pid_formated'] = $this->formatPid($record['pid']);
+		}
+
+		$datasource['metaData'] = $this->getMetaData($fields);
+		$datasource['total'] = $TYPO3_DB->exec_SELECTcountRows('uid', 'tx_devlog', '');
+		$datasource['records'] = $records;
+		$datasource['success'] = TRUE;
+		// For ExtDirect
+		//return $datasource;
+
+		// For JsonReader
+		echo json_encode($datasource);
+	}
+
+	/**
+	 * Get datasource's meta data
+	 *
+	 * @param array $fields: list of field
+	 * @return array $metaData
+	 */
+	protected function getMetaData($fields) {
 
 		// ExtJS api: http://www.extjs.com/deploy/dev/docs/?class=Ext.data.JsonReader
 //		metaData: {
@@ -94,42 +115,43 @@ class tx_devlog_remote {
 		$metaData['totalProperty'] = 'total';
 		$metaData['successProperty'] = 'success';
 		$metaData['fields'] = array(
-			array('name' => 'uid', 'type' => 'int'),
-			array('name' => 'pid', 'type' => 'int'),
-			array('name' => 'crdate', 'type' => 'date', 'dateFormat' => 'timestamp'),
-			array('name' => 'crmsec', 'type' => 'date', 'dateFormat' => 'timestamp'),
-			array('name' => 'cruser_id', 'type' => 'int'),
-			array('name' => 'severity', 'type' => 'int'),
-			array('name' => 'extkey', 'type' => 'string'),
-			array('name' => 'msg', 'type' => 'string'),
-			array('name' => 'location', 'type' => 'string'),
-			array('name' => 'line', 'type' => 'string'),
-			array('name' => 'data_var', 'type' => 'string'),
-
-			// Additional field
+			// Additional fields
 			array('name' => 'cruser_formated', 'type' => 'string'),
 			array('name' => 'severity_formated', 'type' => 'string'),
 			array('name' => 'pid_formated', 'type' => 'string'),
 		);
 
-		#$TYPO3_DB->SELECTquery('*', 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $limit = 25);
+		// merges additiionnal fields with "regular" fields
+		$metaData['fields'] = array_merge($this->getFieldMetaData($fields), $metaData['fields']);
+		return $metaData;
+	}
 
-		$records = $TYPO3_DB->exec_SELECTgetRows('*', 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $this->getLimit());
-		foreach ($records as &$record) {
-			$record['cruser_formated'] = $this->formatCruser($record['cruser_id']);
-			$record['severity_formated'] = $this->formatSeverity($record['severity']);
-			$record['pid_formated'] = $this->formatPid($record['pid']);
+	/**
+	 * Get MetaData for fields
+	 *
+	 * @global t3lib_DB $TYPO3_DB
+	 * @param array $fields: list of field
+	 * @return array $fieldsMetaData: list of metadata for the given $fields
+	 */
+	protected function getFieldMetaData($fields) {
+		global $TYPO3_DB;
+		$fieldsInTable = $TYPO3_DB->admin_get_fields('tx_devlog');
+
+		foreach ($fields as $fieldName) {
+			if ($fieldName == 'crdate' || $fieldName == 'crmsec') {
+				$fieldsMetaData[] = array('name' => $fieldName, 'type' => 'date', 'dateFormat' => 'timestamp');
+			}
+			elseif (isset($fieldsInTable[$fieldName])) {
+				$fieldType = $fieldsInTable[$fieldName]['Type'];
+				if (strpos($fieldType, 'int') !== FALSE) {
+					$fieldsMetaData[] = array('name' => $fieldName, 'type' => 'int');
+				}
+				else { // means this is a string
+					$fieldsMetaData[] = array('name' => $fieldName, 'type' => 'string');
+				}
+			}
 		}
-
-		$datasource['metaData'] = $metaData;
-		$datasource['total'] = $TYPO3_DB->exec_SELECTcountRows('uid', 'tx_devlog', '');
-		$datasource['records'] = $records;
-		$datasource['success'] = TRUE;
-		// For ExtDirect
-		//return $datasource;
-
-		// For JsonReader
-		echo json_encode($datasource);
+		return $fieldsMetaData;
 	}
 
 	/**
