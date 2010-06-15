@@ -34,6 +34,20 @@
 class tx_devlog_remote {
 
 	/**
+	 * Get / Post parameters
+	 * 
+	 * @var array
+	 */
+	var $parameters = array();
+
+	/**
+	 * Constructor
+	 * 
+	 */
+	public function __construct() {
+		$this->parameters = array_merge(t3lib_div::_GET(), t3lib_div::_POST());
+	}
+	/**
 	 * This method returns the message's content
 	 *
 	 * @param	array			$PA: information related to the field
@@ -60,6 +74,7 @@ class tx_devlog_remote {
 	 */
 	public function indexAction() {
 		global $TYPO3_DB;
+
 
 		// ExtJS api: http://www.extjs.com/deploy/dev/docs/?class=Ext.data.JsonReader
 //		metaData: {
@@ -96,13 +111,13 @@ class tx_devlog_remote {
 
 		#$TYPO3_DB->SELECTquery('*', 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $limit = 25);
 
-		$records = $TYPO3_DB->exec_SELECTgetRows('*', 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $limit = 25);
+		$records = $TYPO3_DB->exec_SELECTgetRows('*', 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $this->getLimit());
 		foreach ($records as &$record) {
 			$record['cruser_formated'] = $this->getRecordDetails('be_users', $record['cruser_id']);
 		}
 
 		$datasource['metaData'] = $metaData;
-		$datasource['total'] = count($records);
+		$datasource['total'] = $TYPO3_DB->exec_SELECTcountRows('uid', 'tx_devlog', '');
 		$datasource['records'] = $records;
 		$datasource['success'] = TRUE;
 		// For ExtDirect
@@ -110,6 +125,24 @@ class tx_devlog_remote {
 
 		// For JsonReader
 		echo json_encode($datasource);
+	}
+
+
+	/**
+	 * Returns LIMIT 3 OFFSET 0
+	 * @return string
+	 */
+	protected function getLimit() {
+		$request = '';
+		if (isset($this->parameters['limit'])) {
+			$limit = filter_input(INPUT_GET, 'limit', FILTER_SANITIZE_NUMBER_INT);
+			$start = 0;
+			if (isset($this->parameters['start'])) {
+				$start = filter_input(INPUT_GET, 'start', FILTER_SANITIZE_NUMBER_INT);
+			}
+			$request = $limit . ' OFFSET ' . $start;
+		}
+		return $request;
 	}
 
 

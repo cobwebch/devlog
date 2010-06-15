@@ -6,8 +6,8 @@ TYPO3.Devlog.initLogJsonStore = function() {
 		autoLoad: true,
 		remoteSort: true,
 		baseParams: {
-			ajaxID: 'LogController::indexAction'
-//			limit: Addresses.statics.pagingSize
+			ajaxID: 'LogController::indexAction',
+			limit: TYPO3.Devlog.Preferences.pageSize
 		},
 		proxy: new Ext.data.HttpProxy({
 			method: 'GET',

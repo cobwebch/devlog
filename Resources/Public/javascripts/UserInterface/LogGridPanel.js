@@ -47,7 +47,7 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 			bbar: new Ext.PagingToolbar({
 				store: TYPO3.Devlog.LogStore,       // grid and PagingToolbar using same store
 				displayInfo: true,
-				pageSize: 5,
+				pageSize: TYPO3.Devlog.Preferences.pageSize,
 				prependButtons: true
 			})
 		};
