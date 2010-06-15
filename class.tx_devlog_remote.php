@@ -109,15 +109,16 @@ class tx_devlog_remote {
 			// Additional field
 			array('name' => 'cruser_formated', 'type' => 'string'),
 			array('name' => 'severity_formated', 'type' => 'string'),
-
+			array('name' => 'pid_formated', 'type' => 'string'),
 		);
 
 		#$TYPO3_DB->SELECTquery('*', 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $limit = 25);
 
 		$records = $TYPO3_DB->exec_SELECTgetRows('*', 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $this->getLimit());
 		foreach ($records as &$record) {
-			$record['cruser_formated'] = $this->getRecordDetails('be_users', $record['cruser_id']);
-			$record['severity_formated'] = $this->getSeverityIcon($record['severity']);
+			$record['cruser_formated'] = $this->formatCruser($record['cruser_id']);
+			$record['severity_formated'] = $this->formatSeverity($record['severity']);
+			$record['pid_formated'] = $this->formatPid($record['pid']);
 		}
 
 		$datasource['metaData'] = $metaData;
@@ -132,11 +133,41 @@ class tx_devlog_remote {
 	}
 
 	/**
+     * Returns a linked icon with title from a record
+     * NOTE: currently this is only called for the pages table, as table names are not stored in the devlog (but a pid may be)
+     *
+     * @param	integer		ID of the record to link to
+     * @return  string		HTML for icon, title and link
+     */
+    function formatPid($uid) {
+		if (empty($uid)) {
+			return '';
+		}
+		else {
+				// Retrieve the stored page information
+				// (pages were already fetched in getLogFilters)
+			$page = t3lib_BEfunc::getRecord('pages', $uid);
+			$elementTitle = t3lib_BEfunc::getRecordTitle('pages', $page, 1);
+//			$row = $this->records['pages'][$uid];
+//			$iconAltText = t3lib_BEfunc::getRecordIconAltText($row, 'pages');
+
+				// Create icon for record
+//			$elementIcon = t3lib_iconworks::getIconImage('pages', $row, $BACK_PATH, 'class="c-recicon" title="' . $iconAltText . '"');
+			$elementIcon = t3lib_iconWorks::getSpriteIcon('apps-pagetree-page-default');
+
+				// Return item with edit link
+			$editOnClick = 'top.loadEditId(' . $uid . ')';
+			$string = '<a href="#" onclick="' . htmlspecialchars($editOnClick) . '">' . $elementIcon . $elementTitle . '</a>';
+			return $string;
+		}
+    }
+
+	/**
 	 * Returns the serverity icon
 	 *
 	 * @return string
 	 */
-	protected function getSeverityIcon($severity) {
+	protected function formatSeverity($severity) {
 		switch ($severity) {
 			case -1 : // OK
 				$spriteName = 'status-dialog-ok';
@@ -157,6 +188,22 @@ class tx_devlog_remote {
 
 		return t3lib_iconWorks::getSpriteIcon($spriteName);
 	}
+
+	/**
+	 * This method gets the title and the icon for a given record of a given table
+	 * It returns these as a HTML string
+	 *
+	 * @param	integer		$uid: primary key of the record
+	 * @return	string		HTML to display
+	 */
+	protected function formatCruser($uid = 0) {
+		global $TCA;
+		$row = t3lib_BEfunc::getRecord('be_users', $uid);
+		$elementTitle = t3lib_BEfunc::getRecordTitle('be_users', $row, 1);
+		$spriteName = $TCA['be_users']['ctrl']['typeicon_classes'][$row['admin']];
+		$elementIcon = t3lib_iconWorks::getSpriteIcon($spriteName);
+		return $elementIcon . $elementTitle;
+	}
 	
 	/**
 	 * Returns LIMIT 3 OFFSET 0
@@ -176,23 +223,6 @@ class tx_devlog_remote {
 		return $request;
 	}
 
-
-	/**
-	 * This method gets the title and the icon for a given record of a given table
-	 * It returns these as a HTML string
-	 *
-	 * @param	string		$table: name of the table
-	 * @param	integer		$uid: primary key of the record
-	 * @return	string		HTML to display
-	 */
-	protected function getRecordDetails($table = 'be_users', $uid = 0) {
-		global $TCA;
-		$row = t3lib_BEfunc::getRecord($table, $uid);
-		$elementTitle = t3lib_BEfunc::getRecordTitle($table, $row, 1);
-		$spriteName = $TCA['be_users']['ctrl']['typeicon_classes'][$row['admin']];
-		$elementIcon = t3lib_iconWorks::getSpriteIcon($spriteName);
-		return $elementIcon . $elementTitle;
-	}
 }
 
 ?>
