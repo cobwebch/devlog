@@ -105,7 +105,10 @@ class tx_devlog_remote {
 			array('name' => 'location', 'type' => 'string'),
 			array('name' => 'line', 'type' => 'string'),
 			array('name' => 'data_var', 'type' => 'string'),
+
+			// Additional field
 			array('name' => 'cruser_formated', 'type' => 'string'),
+			array('name' => 'severity_formated', 'type' => 'string'),
 
 		);
 
@@ -114,6 +117,7 @@ class tx_devlog_remote {
 		$records = $TYPO3_DB->exec_SELECTgetRows('*', 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $this->getLimit());
 		foreach ($records as &$record) {
 			$record['cruser_formated'] = $this->getRecordDetails('be_users', $record['cruser_id']);
+			$record['severity_formated'] = $this->getSeverityIcon($record['severity']);
 		}
 
 		$datasource['metaData'] = $metaData;
@@ -127,9 +131,36 @@ class tx_devlog_remote {
 		echo json_encode($datasource);
 	}
 
+	/**
+	 * Returns the serverity icon
+	 *
+	 * @return string
+	 */
+	protected function getSeverityIcon($severity) {
+		switch ($severity) {
+			case -1 : // OK
+				$spriteName = 'status-dialog-ok';
+				break;
+			case 0 : // Info
+				$spriteName = 'status-dialog-information';
+				break;
+			case 1 : // Notice
+				$spriteName = 'status-dialog-notification';
+				break;
+			case 2 : // Warning
+				$spriteName = 'status-dialog-warning';
+				break;
+			case 3 : // Error
+				$spriteName = 'status-dialog-error';
+				break;
+		}
 
+		return t3lib_iconWorks::getSpriteIcon($spriteName);
+	}
+	
 	/**
 	 * Returns LIMIT 3 OFFSET 0
+	 *
 	 * @return string
 	 */
 	protected function getLimit() {
@@ -154,7 +185,7 @@ class tx_devlog_remote {
 	 * @param	integer		$uid: primary key of the record
 	 * @return	string		HTML to display
 	 */
-	protected function getRecordDetails($table = 'be_users', $uid) {
+	protected function getRecordDetails($table = 'be_users', $uid = 0) {
 		global $TCA;
 		$row = t3lib_BEfunc::getRecord($table, $uid);
 		$elementTitle = t3lib_BEfunc::getRecordTitle($table, $row, 1);

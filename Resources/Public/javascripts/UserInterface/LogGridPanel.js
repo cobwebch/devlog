@@ -121,7 +121,7 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 			},
 			{
 				id: 'severity',
-				dataIndex: 'severity',
+				dataIndex: 'severity_formated',
 				header: TYPO3.Devlog.Language.severity,
 				renderer: this._renderSeverity,
 				width: 60,
