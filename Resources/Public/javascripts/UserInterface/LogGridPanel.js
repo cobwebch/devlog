@@ -14,6 +14,10 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 	 *
 	 */
 	initComponent: function() {
+
+		// Init the row expander plugin
+		this._initRowExpander();
+
 		var config = {
 			store: TYPO3.Devlog.LogStore,
 			columns: this._getColumns(),
@@ -22,13 +26,14 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 			autoExpandColumn: 'msg',
 			height: 350,
 			width: 'auto',
-			
+			plugins: TYPO3.Devlog.UserInterface.expander,
+
 			viewConfig: {
 				enableRowBody: true,
 				showPreview: true,
 				getRowClass : function(record, rowIndex, p, store){
 					if(this.showPreview){
-						p.body = '<p>record.data.excerpt</p>';
+						p.body = '<p>' + record.data.data_var + '</p>';
 						return 'x-grid3-row-expanded';
 					}
 					return 'x-grid3-row-collapsed';
@@ -56,9 +61,21 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 		TYPO3.Devlog.UserInterface.LogGridPanel.superclass.initComponent.call(this);
 		TYPO3.Devlog.Application.fireEvent('TYPO3.Devlog.UserInterface.afterInit', this);
 
-//		this.on('afterrender', function(menu) {
-//			console.log(123);
-//		});
+		console.log(this.getView());
+		this.getView().on('refresh', function(menu) {
+			var numberOfRows = this.grid.getStore().getCount();
+
+			for (index = 0; index < numberOfRows; index++) {
+
+				// By default, hide the cell that contains the controller icon
+				var row = this.grid.getView().getRow(index);
+				console.log(row);
+//				var images = Ext.query('img[alt=edit]', row)[0];
+//				Ext.get(images).parent('td').setStyle({
+//					visibility: 'hidden'
+//				});
+			}
+		});
 
 //		this.on(
 //			'toggle',
@@ -73,10 +90,11 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 //		);
 	},
 
-	// private
 	/**
 	 * Renders the severity column
 	 *
+	 * @access private
+	 * @method _renderSeverity
 	 * @param {int} value: -1 OK, 0 Info, 1 Notice, 2 Warning, 3 Error
 	 * @return string
 	 */
@@ -88,7 +106,9 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 	/**
 	 * Renders the "called from" column
 	 *
-	 * @param {int} value: -1 OK, 0 Info, 1 Notice, 2 Warning, 3 Error
+	 * @access private
+	 * @method _renderLocation
+	 * @param {string} value
 	 * @param {Object} parent
 	 * @param {Object} record
 	 * @return string
@@ -100,11 +120,13 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 	/**
 	 * Returns the configuration array
 	 *
+	 * @access private
 	 * @method _getColumns
 	 * @return array
 	 */
 	_getColumns: function() {
 		var columns = [
+			TYPO3.Devlog.UserInterface.expander,
 			{
 				id: 'uid',
 				dataIndex: 'uid',
@@ -170,6 +192,20 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 			},
 		];
 		return columns;
+	},
+
+	/**
+	 * Initialize the row expander
+	 *
+	 * @method _initRowExpander
+	 * @return void
+	 */
+	_initRowExpander: function() {
+		TYPO3.Devlog.UserInterface.expander = new TYPO3.Devlog.UserInterface.RowExpander({
+				tpl : new Ext.Template(
+					'{data_var}'
+				)
+		});
 	}
 	
 //	/**

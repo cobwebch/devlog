@@ -273,7 +273,7 @@ EOF;
 		$files = array();
 		$files[] = 'common.js';
 		$files[] = 'Override/GridPanel.js';
-		$files[] = 'Util.js';
+		$files[] = 'Utils.js';
 		$files[] = 'Application.js';
 		$files[] = 'Application/AbstractBootstrap.js';
 		$files[] = 'Store/Bootstrap.js';
@@ -282,7 +282,7 @@ EOF;
 		$files[] = 'UserInterface/Bootstrap.js';
 		$files[] = 'UserInterface/Layout.js';
 		$files[] = 'UserInterface/LogGridPanel.js';
-//		$files[] = 'UserInterface/RowExpander.js';
+		$files[] = 'UserInterface/RowExpander.js';
 		foreach ($files as $file) {
 			$this->pageRendererObject->addJsFile($this->javascriptPath . $file, 'text/javascript', FALSE);
 		}
@@ -376,7 +376,6 @@ EOF;
 		$preferences['dateFormat'] = $TYPO3_CONF_VARS['SYS']['ddmmyy'];
 		$preferences['timeFormat'] = $TYPO3_CONF_VARS['SYS']['hhmm'];
 		$preferences['pageSize'] = 10;
-//		$preferences['ajaxController'] = $this->doc->backPath . 'ajax.php';
 		return $preferences;
 	}
 

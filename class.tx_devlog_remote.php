@@ -76,6 +76,7 @@ class tx_devlog_remote {
 			$record['cruser_formated'] = $this->formatCruser($record['cruser_id']);
 			$record['severity_formated'] = $this->formatSeverity($record['severity']);
 			$record['pid_formated'] = $this->formatPid($record['pid']);
+			$record['data_var'] = $this->formatDataVar($record['data_var']);
 		}
 
 		$datasource['metaData'] = $this->getMetaData($fields);
@@ -155,6 +156,21 @@ class tx_devlog_remote {
 	}
 
 	/**
+     * Returns a a formated data var
+     *
+     * @param	string		data var to be formated
+     * @return  string		foramted data var
+     */
+    function formatDataVar($dataVar) {
+		$result = '';
+		if ($dataVar !== '') {
+			$fullData = @unserialize($dataVar);
+			$result = t3lib_div::view_array($fullData);
+		}
+		return $result;
+	}
+
+	/**
      * Returns a linked icon with title from a record
      * NOTE: currently this is only called for the pages table, as table names are not stored in the devlog (but a pid may be)
      *
@@ -162,26 +178,18 @@ class tx_devlog_remote {
      * @return  string		HTML for icon, title and link
      */
     function formatPid($uid) {
-		if (empty($uid)) {
-			return '';
-		}
-		else {
-				// Retrieve the stored page information
-				// (pages were already fetched in getLogFilters)
-			$page = t3lib_BEfunc::getRecord('pages', $uid);
-			$elementTitle = t3lib_BEfunc::getRecordTitle('pages', $page, 1);
-//			$row = $this->records['pages'][$uid];
-//			$iconAltText = t3lib_BEfunc::getRecordIconAltText($row, 'pages');
+			// Retrieve the stored page information
+			// (pages were already fetched in getLogFilters)
+		$page = t3lib_BEfunc::getRecord('pages', $uid);
+		$elementTitle = t3lib_BEfunc::getRecordTitle('pages', $page, 1);
 
-				// Create icon for record
-//			$elementIcon = t3lib_iconworks::getIconImage('pages', $row, $BACK_PATH, 'class="c-recicon" title="' . $iconAltText . '"');
-			$elementIcon = t3lib_iconWorks::getSpriteIcon('apps-pagetree-page-default');
+			// Create icon for record
+		$elementIcon = t3lib_iconWorks::getSpriteIcon('apps-pagetree-page-default');
 
-				// Return item with edit link
-			$editOnClick = 'top.loadEditId(' . $uid . ')';
-			$string = '<a href="#" onclick="' . htmlspecialchars($editOnClick) . '">' . $elementIcon . $elementTitle . '</a>';
-			return $string;
-		}
+			// Return item with edit link
+		$editOnClick = 'top.loadEditId(' . $uid . ')';
+		$string = '<a href="#" onclick="' . htmlspecialchars($editOnClick) . '">' . $elementIcon . $elementTitle . '</a>';
+		return $string;
     }
 
 	/**

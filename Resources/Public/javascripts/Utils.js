@@ -30,3 +30,17 @@ TYPO3.Devlog.Utils.clone = function(o) {
 	}
 	return c;
 };
+
+/**
+ * Generates a sprite icon according to TYPO3 convention
+ *
+ * @param {String} spriteName
+ * @return {String}
+ */
+TYPO3.Devlog.Utils.getSpriteIcon = function(spriteName) {
+	var elements = spriteName.split('-');
+	var category = elements[0];
+	var baseClass = category + '-' + elements[1];
+	var className = spriteName.replace(category + '-', '');
+	return '<span class="t3-icon t3-icon-' + category + ' t3-icon-' + baseClass + ' t3-icon-' + className + '"></span>';
+}
