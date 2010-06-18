@@ -29,15 +29,15 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 			plugins: TYPO3.Devlog.UserInterface.expander,
 
 			viewConfig: {
-				enableRowBody: true,
-				showPreview: true,
-				getRowClass : function(record, rowIndex, p, store){
-					if(this.showPreview){
-						p.body = '<p>' + record.data.data_var + '</p>';
-						return 'x-grid3-row-expanded';
-					}
-					return 'x-grid3-row-collapsed';
-				}
+//				enableRowBody: true,
+//				showPreview: true,
+//				getRowClass : function(record, rowIndex, p, store){
+//					if(this.showPreview){
+//						p.body = '<p>' + record.data.data_var + '</p>';
+//						return 'x-grid3-row-expanded';
+//					}
+//					return 'x-grid3-row-collapsed';
+//				}
 			},
 
 			// Top Bar
@@ -46,6 +46,27 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 					xtype: 'button',
 					text: 'button'
 				},
+				'-',
+				{
+					pressed: false,
+					enableToggle: true,
+					text: TYPO3.Devlog.Language.expand_all_extra_data,
+					cls: 'x-btn-text-icon details',
+					toggleHandler: function(btn, pressed){
+						
+						var view = TYPO3.Devlog.UserInterface.container.gridPanel.getView();
+						var numberOfRows = TYPO3.Devlog.LogStore.getCount();
+
+						for (index = 0; index < numberOfRows; index++) {
+							var row = view.getRow(index);
+								var expander = Ext.query('div.x-grid3-row-expander', row)[0];
+								if (expander) {
+									TYPO3.Devlog.Utils.fireEvent('mousedown', expander);
+								}
+						}
+					}
+				}
+
 			],
 
 			// Button Bar

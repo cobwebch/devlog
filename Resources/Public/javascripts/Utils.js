@@ -44,3 +44,21 @@ TYPO3.Devlog.Utils.getSpriteIcon = function(spriteName) {
 	var className = spriteName.replace(category + '-', '');
 	return '<span class="t3-icon t3-icon-' + category + ' t3-icon-' + baseClass + ' t3-icon-' + className + '"></span>';
 }
+
+
+/**
+ * Simulate a mouse event on the GUI
+ *
+ * @param {String} eventName
+ * @param {Object} element
+ * @return void
+ */
+TYPO3.Devlog.Utils.fireEvent = function(eventName, element) {
+	if( document.createEvent ) {
+		var evObj = document.createEvent('MouseEvents');
+		evObj.initEvent( eventName, true, false );
+		element.dispatchEvent(evObj);
+	} else if( document.createEventObject ) {
+		element.fireEvent(eventName);
+	}
+}
