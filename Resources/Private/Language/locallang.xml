@@ -72,6 +72,7 @@
 			<label index="1year">1 year</label>
 			<label index="no_entries">There are currently no log entries in the Developer Log.</label>
 			<label index="xx_entries">There are currently %d log entries in the Developer Log.</label>
+			<label index="loading">Loading...</label>
         </languageKey>
     </data>
 </T3locallang>

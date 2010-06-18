@@ -63,7 +63,10 @@ TYPO3.Devlog.UserInterface.FilterByTime = Ext.extend(Ext.form.ComboBox, {
 	 * @return void
 	 */
 	onselect: function() {
-		console.log(123);
+		var value = this.value - 0; // makes sure it is a number
+		TYPO3.Devlog.LogStore.baseParams.limit = value;
+		TYPO3.Devlog.UserInterface.container.gridPanel.pagebrowser.pageSize = value
+		TYPO3.Devlog.LogStore.load();
 	}
 
 });

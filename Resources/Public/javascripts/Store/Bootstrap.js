@@ -7,6 +7,7 @@ TYPO3.Devlog.Store.Bootstrap = Ext.apply(new TYPO3.Devlog.Application.AbstractBo
 		TYPO3.Devlog.Application.on('TYPO3.Devlog.Application.afterBootstrap', this.initStore, this);
 	},
 	initStore: function() {
+		// Ext Direct integration
 //		for (var api in Ext.app.ExtDirectAPI) {
 //			Ext.Direct.addProvider(Ext.app.ExtDirectAPI[api]);
 //		}

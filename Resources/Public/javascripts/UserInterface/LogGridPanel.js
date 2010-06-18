@@ -28,6 +28,12 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 			width: 'auto',
 			plugins: TYPO3.Devlog.UserInterface.expander,
 
+			// loading mask configuration
+			loadMask: {
+				msg: TYPO3.Devlog.Language.loading
+			},
+
+			// custom  view configuration
 			viewConfig: {
 //				enableRowBody: true,
 //				showPreview: true,
@@ -69,12 +75,15 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 			],
 
 			// Button Bar
-			bbar: new Ext.PagingToolbar({
-				store: TYPO3.Devlog.LogStore,       // grid and PagingToolbar using same store
-				displayInfo: true,
-				pageSize: TYPO3.Devlog.Preferences.pageSize,
-				prependButtons: true
-			})
+			bbar: [
+				new Ext.PagingToolbar({
+					store: TYPO3.Devlog.LogStore,       // grid and PagingToolbar using same store
+					displayInfo: true,
+					pageSize: TYPO3.Devlog.Preferences.pageSize,
+					prependButtons: true,
+					ref: '../pagebrowser'
+				})
+			]
 		};
 		
 		Ext.apply(this, config);

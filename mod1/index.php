@@ -422,7 +422,7 @@ EOF;
 
 		$preferences['dateFormat'] = $TYPO3_CONF_VARS['SYS']['ddmmyy'];
 		$preferences['timeFormat'] = $TYPO3_CONF_VARS['SYS']['hhmm'];
-		$preferences['pageSize'] = 10;
+		$preferences['pageSize'] = 25;
 		return $preferences;
 	}
 
