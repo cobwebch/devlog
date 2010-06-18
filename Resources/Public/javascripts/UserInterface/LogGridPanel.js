@@ -43,8 +43,7 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 			// Top Bar
 			tbar: [
 				{
-					xtype: 'button',
-					text: 'button'
+					xtype: 'TYPO3.Devlog.UserInterface.FilterByTime'
 				},
 				'-',
 				{

@@ -25,6 +25,6 @@ if (!$TYPO3_CONF_VARS['EXTCONF'][$_EXTKEY]['mstamp']) {
 $TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_div.php']['devLog'][$_EXTKEY] = 'EXT:'.$_EXTKEY.'/class.tx_devlog.php:&tx_devlog->devLog';
 
 // @todo: choose one technique for loading data
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ExtDirect']['TYPO3.Devlog.Remote'] = 'EXT:devlog/class.tx_devlog_remote.php:tx_devlog_remote';
+//$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ExtDirect']['TYPO3.Devlog.Remote'] = 'EXT:devlog/class.tx_devlog_remote.php:tx_devlog_remote';
 $TYPO3_CONF_VARS['BE']['AJAX']['LogController::indexAction'] = 'EXT:devlog/class.tx_devlog_remote.php:tx_devlog_remote->indexAction';
 ?>

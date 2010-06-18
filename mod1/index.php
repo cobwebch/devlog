@@ -276,22 +276,27 @@ EOF;
 		$files[] = 'Utils.js';
 		$files[] = 'Application.js';
 		$files[] = 'Application/AbstractBootstrap.js';
+		
 		$files[] = 'Store/Bootstrap.js';
-		$files[] = 'Store/LogDirectStore.js';
+//		$files[] = 'Store/LogDirectStore.js';
 		$files[] = 'Store/LogJsonStore.js';
+		$files[] = 'Store/FilterByTimeArrayStore.js';
+
 		$files[] = 'UserInterface/Bootstrap.js';
 		$files[] = 'UserInterface/Layout.js';
 		$files[] = 'UserInterface/LogGridPanel.js';
 		$files[] = 'UserInterface/RowExpander.js';
+		$files[] = 'UserInterface/FilterByTimeComboBox.js';
 		foreach ($files as $file) {
 			$this->pageRendererObject->addJsFile($this->javascriptPath . $file, 'text/javascript', FALSE);
 		}
 
-		// FIX ME: temporary paramter for development only
-		$this->pageRendererObject->addJsFile('ajax.php?ajaxID=ExtDirect::getAPI&namespace=TYPO3.Devlog', 'text/javascript', FALSE);
+		// @todo: no need of that now. Though, this line may be still used in the future for Ext Direct calls.
+//		$this->pageRendererObject->addJsFile('ajax.php?ajaxID=ExtDirect::getAPI&namespace=TYPO3.Devlog', 'text/javascript', FALSE);
 
 		$labels = json_encode($this->getLabels());
 		$preferences = json_encode($this->getPreferences());
+		$filterByTime = json_encode($this->getFilterByTimeAction());
 
 			// *********************************** //
 			// Defines onready Javascript
@@ -301,6 +306,10 @@ EOF;
 
 			TYPO3.Devlog.Language = $labels;
 			TYPO3.Devlog.Preferences = $preferences;
+
+			Ext.ns("TYPO3.Devlog.Data");
+			TYPO3.Devlog.Data.FilterByTime = $filterByTime;
+			
 
 //		for (var api in Ext.app.ExtDirectAPI) {
 //			Ext.Direct.addProvider(Ext.app.ExtDirectAPI[api]);
@@ -341,6 +350,44 @@ devlog = {
 }
 EOF;
 		$this->pageRendererObject->addJsInlineCode('devlog', implode("\n", $this->inlineJavascript));
+	}
+
+
+	/**
+	 * Fetches filter by time
+	 *
+	 * @global t3lib_DB $TYPO3_DB
+	 * @global Language $LANG;
+	 * @return array
+	 */
+	public function getFilterByTimeAction() {
+		global $TYPO3_DB;
+		global $LANG;
+		
+			// Initialize $records with default value
+		$records[] = array('1000', $LANG->getLL('latest_run'));
+		$records[] = array('25', $LANG->getLL('latest_25'));
+		$records[] = array('50', $LANG->getLL('latest_50'));
+		$records[] = array('100', $LANG->getLL('latest_100'));
+		$records[] = array('-1', $LANG->getLL('all_entries'));
+
+		$runLimit = empty($this->extConf['maxLogRuns']) ? 0 : $this->extConf['maxLogRuns'];
+		$dbres = $TYPO3_DB->exec_SELECTquery('DISTINCT crmsec, crdate', 'tx_devlog', '', '', 'crmsec DESC');
+
+			// Assemble those runs in an associative array with run timestamp as a key
+		$counter = 0;
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
+			$formattedDate = t3lib_befunc::dateTimeAge($row['crdate']);
+			$logRuns[$row['crmsec']] = $formattedDate;
+			if ($runLimit != 0 && $counter < $runLimit) {
+				$records[] = array($row['crmsec'], $formattedDate);
+			}
+			$counter++;
+		}
+
+		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
+
+		return $records;
 	}
 
 	/**

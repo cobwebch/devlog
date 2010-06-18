@@ -41,11 +41,26 @@ class tx_devlog_remote {
 	var $parameters = array();
 
 	/**
+	 * Extension configuration
+	 *
+	 * @var array
+	 */
+	var $configurations = array();
+
+	/**
 	 * Constructor
-	 * 
+	 *
+	 * @global Language $LANG;
 	 */
 	public function __construct() {
+		global $LANG;
 		$this->parameters = array_merge(t3lib_div::_GET(), t3lib_div::_POST());
+		
+		// Load language
+		$LANG->includeLLFile('EXT:devlog/Resources/Private/Language/locallang.xml');
+
+		// Get extension configuration
+		$this->configurations = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['devlog']);
 	}
 
 	/**
