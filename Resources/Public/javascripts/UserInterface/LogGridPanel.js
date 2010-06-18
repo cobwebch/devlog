@@ -105,8 +105,25 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 	 * @return string
 	 */
 	_renderSeverity: function(value) {
-//		return String.format("{0}",(value==1)?'Yes': 'No');
-		return value;
+		var spriteName = '';
+		switch (value) {
+			case -1 : // OK
+				spriteName = 'status-dialog-ok';
+				break;
+			case 0 : // Info
+				spriteName = 'status-dialog-information';
+				break;
+			case 1 : // Notice
+				spriteName = 'status-dialog-notification';
+				break;
+			case 2 : // Warning
+				spriteName = 'status-dialog-warning';
+				break;
+			case 3 : // Error
+				spriteName = 'status-dialog-error';
+				break;
+		}
+		return String.format((spriteName) ? TYPO3.Devlog.Utils.getSpriteIcon(spriteName) : '');
 	},
 
 	/**
@@ -149,7 +166,7 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 			},
 			{
 				id: 'severity',
-				dataIndex: 'severity_formated',
+				dataIndex: 'severity',
 				header: TYPO3.Devlog.Language.severity,
 				renderer: this._renderSeverity,
 				width: 60,
@@ -165,16 +182,14 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 				id: 'msg',
 				dataIndex: 'msg',
 				header: TYPO3.Devlog.Language.msg,
-				renderer: this._renderMessage,
-				sortable: true
+				renderer: this._renderMessage
 			},
 			{
 				id: 'location',
 				dataIndex: 'location',
 				header: TYPO3.Devlog.Language.location,
 				width: 200,
-				renderer: this._renderLocation,
-				sortable: true
+				renderer: this._renderLocation
 			},
 			{
 				id: 'page',

@@ -71,10 +71,9 @@ class tx_devlog_remote {
 		$fields[] = 'line';
 		$fields[] = 'data_var';
 		
-		$records = $TYPO3_DB->exec_SELECTgetRows(implode(',', $fields), 'tx_devlog', '', $groupBy = '', $orderBy = 'uid DESC', $this->getLimit());
+		$records = $TYPO3_DB->exec_SELECTgetRows(implode(',', $fields), 'tx_devlog', '', $groupBy = '', $this->getOrder(), $this->getLimit());
 		foreach ($records as &$record) {
 			$record['cruser_formated'] = $this->formatCruser($record['cruser_id']);
-			$record['severity_formated'] = $this->formatSeverity($record['severity']);
 			$record['pid_formated'] = $this->formatPid($record['pid']);
 			$record['data_var'] = $this->formatDataVar($record['data_var']);
 		}
@@ -83,11 +82,34 @@ class tx_devlog_remote {
 		$datasource['total'] = $TYPO3_DB->exec_SELECTcountRows('uid', 'tx_devlog', '');
 		$datasource['records'] = $records;
 		$datasource['success'] = TRUE;
-		// For ExtDirect
+		
+		// For ExtDirect (when it will be working with metadata)
 		//return $datasource;
 
+//		t3lib_div::debug($datasource, '$datasource');
 		// For JsonReader
 		echo json_encode($datasource);
+	}
+
+	/**
+	 * Get SQL order
+	 *
+	 * @return array $metaData
+	 */
+	protected function getOrder() {
+		$order = 'uid DESC';
+		if (isset($this->parameters['sort']) && isset($this->parameters['dir'])) {
+			// check wheter the field is formated or not
+			// if yes removed the "_formated" suffix to query the database properly
+			if (strpos($this->parameters['sort'], '_formated') > 1) {
+				$this->parameters['sort'] = str_replace('_formated', '', $this->parameters['sort']);
+			}
+
+			if ($this->parameters['dir'] == 'ASC' || $this->parameters['dir'] == 'DESC') {
+				$order = $this->parameters['sort'] . ' ' . $this->parameters['dir'];
+			}
+		}
+		return $order;
 	}
 
 	/**
@@ -118,7 +140,6 @@ class tx_devlog_remote {
 		$metaData['fields'] = array(
 			// Additional fields
 			array('name' => 'cruser_formated', 'type' => 'string'),
-			array('name' => 'severity_formated', 'type' => 'string'),
 			array('name' => 'pid_formated', 'type' => 'string'),
 		);
 
@@ -191,33 +212,6 @@ class tx_devlog_remote {
 		$string = '<a href="#" onclick="' . htmlspecialchars($editOnClick) . '">' . $elementIcon . $elementTitle . '</a>';
 		return $string;
     }
-
-	/**
-	 * Returns the serverity icon
-	 *
-	 * @return string
-	 */
-	protected function formatSeverity($severity) {
-		switch ($severity) {
-			case -1 : // OK
-				$spriteName = 'status-dialog-ok';
-				break;
-			case 0 : // Info
-				$spriteName = 'status-dialog-information';
-				break;
-			case 1 : // Notice
-				$spriteName = 'status-dialog-notification';
-				break;
-			case 2 : // Warning
-				$spriteName = 'status-dialog-warning';
-				break;
-			case 3 : // Error
-				$spriteName = 'status-dialog-error';
-				break;
-		}
-
-		return t3lib_iconWorks::getSpriteIcon($spriteName);
-	}
 
 	/**
 	 * This method gets the title and the icon for a given record of a given table
