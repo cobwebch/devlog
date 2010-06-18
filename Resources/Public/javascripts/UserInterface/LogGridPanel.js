@@ -61,32 +61,39 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 		TYPO3.Devlog.UserInterface.LogGridPanel.superclass.initComponent.call(this);
 		TYPO3.Devlog.Application.fireEvent('TYPO3.Devlog.UserInterface.afterInit', this);
 
-		this.getView().on('refresh', function() {
-			var numberOfRows = TYPO3.Devlog.LogStore.getCount();
-
-			for (index = 0; index < numberOfRows; index++) {
-
-				// Hide collapse / expande button when no data_var is defined
-				var row = this.getRow(index);
-				var record = TYPO3.Devlog.LogStore.getAt(index);
-				if (record.data['data_var'] === '') {
-					var expanderButton = Ext.query('div.x-grid3-row-expander', row)[0];
-					Ext.get(expanderButton).removeClass('x-grid3-row-expander')
-				}
-			}
-		});
+		// Adds behaviour when grid is refreshed.
+		this.getView().on(
+			'refresh',
+			this.onrefresh
+		);
 
 //		this.on(
 //			'toggle',
 //			this.onToogleAction,
 //			this
 //		);
+	},
 
-//		this.on(
-//			'mouseover',
-//			this.onMouseoverAction,
-//			this
-//		);
+	/**
+	 * Hides collapse / expand button when no data_var is defined
+	 *
+	 * @access public
+	 * @method onrefresh
+	 * @return void
+	 */
+	onrefresh: function() {
+		var numberOfRows = TYPO3.Devlog.LogStore.getCount();
+
+		for (index = 0; index < numberOfRows; index++) {
+
+			var row = this.getRow(index);
+			var record = TYPO3.Devlog.LogStore.getAt(index);
+			if (record.data['data_var'] === '') {
+				// Fetches DOM element
+				var expanderButton = Ext.query('div.x-grid3-row-expander', row)[0];
+				Ext.get(expanderButton).removeClass('x-grid3-row-expander')
+			}
+		}
 	},
 
 	/**
