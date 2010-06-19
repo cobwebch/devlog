@@ -86,7 +86,10 @@ class tx_devlog_remote {
 		$fields[] = 'line';
 		$fields[] = 'data_var';
 		
-		$records = $TYPO3_DB->exec_SELECTgetRows(implode(',', $fields), 'tx_devlog', '', $groupBy = '', $this->getOrder(), $this->getLimit());
+		$records = $TYPO3_DB->exec_SELECTgetRows(implode(',', $fields), 'tx_devlog', $this->getClause(), $groupBy = '', $this->getOrder(), $this->getLimit());
+//		$request = $TYPO3_DB->SELECTquery(implode(',', $fields), 'tx_devlog', $this->getClause(), $groupBy = '', $this->getOrder(), $this->getLimit());
+//		t3lib_div::debug($request, '$datasource');
+		
 		foreach ($records as &$record) {
 			$record['cruser_formated'] = $this->formatCruser($record['cruser_id']);
 			$record['pid_formated'] = $this->formatPid($record['pid']);
@@ -94,7 +97,7 @@ class tx_devlog_remote {
 		}
 
 		$datasource['metaData'] = $this->getMetaData($fields);
-		$datasource['total'] = $TYPO3_DB->exec_SELECTcountRows('uid', 'tx_devlog', '');
+		$datasource['total'] = $TYPO3_DB->exec_SELECTcountRows('uid', 'tx_devlog', $this->getClause());
 		$datasource['records'] = $records;
 		$datasource['success'] = TRUE;
 		
@@ -104,6 +107,31 @@ class tx_devlog_remote {
 //		t3lib_div::debug($datasource, '$datasource');
 		// For JsonReader
 		echo json_encode($datasource);
+	}
+
+	/**
+	 * Get clause SQL order
+	 *
+	 * @global t3lib_DB $TYPO3_DB
+	 * @return array $metaData
+	 */
+	protected function getClause() {
+		global $TYPO3_DB;
+
+		$clauses = array();
+
+		// Add other parameter
+		if (isset($this->parameters['limit']) && $this->parameters['limit'] == '1000') {
+			$records = $TYPO3_DB->exec_SELECTgetRows('MAX(crmsec) AS maximum, MIN(crmsec) AS minimum', 'tx_devlog', '');
+			if (!empty($records)) {
+				$clauses[] = 'crmsec = ' . $records[0]['maximum'];
+				
+			}
+		}
+		elseif (isset($this->parameters['limit']) && (int) $this->parameters['limit'] > 1000) {
+			$clauses[] = 'crmsec = ' . $this->parameters['limit'];
+		}
+		return implode(' AND ', $clauses);
 	}
 
 	/**
@@ -251,7 +279,7 @@ class tx_devlog_remote {
 	 */
 	protected function getLimit() {
 		$request = '';
-		if (isset($this->parameters['limit'])) {
+		if (isset($this->parameters['limit']) && (int) $this->parameters['limit'] != -1) {
 			$limit = filter_input(INPUT_GET, 'limit', FILTER_SANITIZE_NUMBER_INT);
 			$start = 0;
 			if (isset($this->parameters['start'])) {
