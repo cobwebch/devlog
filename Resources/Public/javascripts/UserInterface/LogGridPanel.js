@@ -268,6 +268,7 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 	 * @return void
 	 */
 	onafterrender: function() {
+		// 120 is an empiric value... maybe a better way to implement that ;)
 		this.setHeight(window.innerHeight - 120);
 	}
 	

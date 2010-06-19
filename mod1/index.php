@@ -369,6 +369,7 @@ EOF;
 		global $TYPO3_DB;
 		global $LANG;
 
+		$content = '';
 		$startDate = $endDate = 0;
 
 		// Fetches interval of time
