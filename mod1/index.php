@@ -200,7 +200,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$markers['###CLEARMENU###'] = $this->renderClearMenu();
 			$markers['###OPEN_NEW_VIEW###'] = $this->openNewView();
 			$markers['###MESSAGE###'] = $message;
-			$markers['###CONTENT###'] = $this->moduleContent();
+			#$markers['###CONTENT###'] = $this->moduleContent();
 			$markers['###SHORTCUT###'] = '';
 			if ($GLOBALS['BE_USER']->mayMakeShortcut())	{
 				$markers['###SHORTCUT###'] = $this->doc->makeShortcutIcon('id',implode(',',array_keys($this->MOD_MENU)),$this->MCONF['name']);
@@ -294,9 +294,13 @@ EOF;
 		// @todo: no need of that now. Though, this line may be still used in the future for Ext Direct calls.
 //		$this->pageRendererObject->addJsFile('ajax.php?ajaxID=ExtDirect::getAPI&namespace=TYPO3.Devlog', 'text/javascript', FALSE);
 
+		// label / preference datasoure
 		$labels = json_encode($this->getLabels());
 		$preferences = json_encode($this->getPreferences());
+
+		// Other datasource
 		$filterByTime = json_encode($this->getFilterByTimeAction());
+		$logPeriod = json_encode($this->getLogPeriod());
 
 			// *********************************** //
 			// Defines onready Javascript
@@ -308,7 +312,9 @@ EOF;
 			TYPO3.Devlog.Preferences = $preferences;
 
 			Ext.ns("TYPO3.Devlog.Data");
+
 			TYPO3.Devlog.Data.FilterByTime = $filterByTime;
+			TYPO3.Devlog.Data.LogPeriod = $logPeriod;
 			
 
 //		for (var api in Ext.app.ExtDirectAPI) {
@@ -352,6 +358,39 @@ EOF;
 		$this->pageRendererObject->addJsInlineCode('devlog', implode("\n", $this->inlineJavascript));
 	}
 
+	/**
+	 * Get log period
+	 *
+	 * @global t3lib_DB $TYPO3_DB
+	 * @global Language $LANG;
+	 * @return string
+	 */
+	public function getLogPeriod() {
+		global $TYPO3_DB;
+		global $LANG;
+
+		$startDate = $endDate = 0;
+
+		// Fetches interval of time
+		$records = $TYPO3_DB->exec_SELECTgetRows('MAX(crdate) AS maximum, MIN(crdate) AS minimum', 'tx_devlog', '');
+		if (!empty($records[0])) {
+			$endDate = $records[0]['maximum'];
+			$startDate = $records[0]['minimum'];
+		}
+		
+		if ($startDate > 0 && $endDate > 0) {
+			// return rendered table and pagination
+			if ($startDate != $endDate) {
+				$content = $LANG->getLL('log_period').': '.t3lib_befunc::dateTimeAge($startDate).' - '.t3lib_befunc::dateTimeAge($endDate);
+			}
+			else {
+				$content = $LANG->getLL('log_period') . ': '.t3lib_befunc::dateTimeAge($startDate);
+			}
+
+		}
+		
+		return $content;
+	}
 
 	/**
 	 * Fetches filter by time

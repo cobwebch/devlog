@@ -82,7 +82,9 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 					pageSize: TYPO3.Devlog.Preferences.pageSize,
 					prependButtons: true,
 					ref: '../pagebrowser'
-				})
+				}),
+				'->',
+				TYPO3.Devlog.Data.LogPeriod
 			]
 		};
 		
