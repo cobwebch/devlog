@@ -57,19 +57,14 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 					enableToggle: true,
 					text: TYPO3.Devlog.Language.expand_all_extra_data,
 					cls: 'x-btn-text-icon details',
-					toggleHandler: function(btn, pressed){
-						
-						var view = TYPO3.Devlog.UserInterface.container.gridPanel.getView();
-						var numberOfRows = TYPO3.Devlog.LogStore.getCount();
-
-						for (index = 0; index < numberOfRows; index++) {
-							var row = view.getRow(index);
-								var expander = Ext.query('div.x-grid3-row-expander', row)[0];
-								if (expander) {
-									TYPO3.Devlog.Utils.fireEvent('mousedown', expander);
-								}
-						}
-					}
+					toggleHandler: this.ontoggleexpand
+				},
+				{
+					pressed: false,
+					enableToggle: true,
+					text: TYPO3.Devlog.Language.auto_refresh,
+					cls: 'x-btn-text-icon details',
+					toggleHandler: this.ontoggleautorefresh
 				}
 
 			],
@@ -107,7 +102,7 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 	},
 
 	/**
-	 * Hides collapse / expand button when no data_var is defined
+	 * Hides the "collapse / expand" button when no data_var is defined
 	 *
 	 * @access public
 	 * @method onrefresh
@@ -126,6 +121,54 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 				Ext.get(expanderButton).removeClass('x-grid3-row-expander')
 			}
 		}
+	},
+
+	/**
+	 * Collapse / expand data_var
+	 *
+	 * @access public
+	 * @method ontoggleexpand
+	 * @param {Object} button
+	 * @param {bool} pressed
+	 * @return void
+	 */
+	ontoggleexpand: function(button, pressed){
+
+		var view = TYPO3.Devlog.UserInterface.container.gridPanel.getView();
+		var numberOfRows = TYPO3.Devlog.LogStore.getCount();
+
+		for (index = 0; index < numberOfRows; index++) {
+			var row = view.getRow(index);
+				var expander = Ext.query('div.x-grid3-row-expander', row)[0];
+				if (expander) {
+					TYPO3.Devlog.Utils.fireEvent('mousedown', expander);
+				}
+		}
+	},
+
+	/**
+	 * Auto refresh data
+	 *
+	 * @access public
+	 * @method ontoggleexpand
+	 * @param {Object} button
+	 * @param {bool} pressed
+	 * @return void
+	 */
+	ontoggleautorefresh: function(button, pressed){
+		var task = {
+			run: function(){
+				TYPO3.Devlog.LogStore.load();
+			},
+			interval: 2000
+		}
+		if (pressed) {
+			Ext.TaskMgr.start(task);
+		}
+		else {
+			Ext.TaskMgr.stopAll();
+		}
+
 	},
 
 	/**

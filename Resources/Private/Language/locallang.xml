@@ -25,7 +25,7 @@
             <label index="latest_50">latest 50 entries</label>
             <label index="latest_100">latest 100 entries</label>
             <label index="all_entries">all entries</label>
-            <label index="auto_refresh">Auto refresh</label>
+            <label index="auto_refresh">Auto reload when new data</label>
             <label index="log_time">Log time</label>
             <label index="log_period">Log period</label>
             <label index="refresh">Refresh</label>

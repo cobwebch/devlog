@@ -196,7 +196,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$this->content .= $this->doc->startPage($GLOBALS['LANG']->getLL('title'));
 
 			$markers['###HEADER###'] = $this->doc->header($GLOBALS['LANG']->getLL('title'));
-			$markers['###MENUBAR###'] = $this->renderMenuBar();
+//			$markers['###MENUBAR###'] = $this->renderMenuBar();
 			$markers['###CLEARMENU###'] = $this->renderClearMenu();
 			$markers['###OPEN_NEW_VIEW###'] = $this->openNewView();
 			$markers['###MESSAGE###'] = $message;
@@ -315,7 +315,7 @@ EOF;
 
 			TYPO3.Devlog.Data.FilterByTime = $filterByTime;
 			TYPO3.Devlog.Data.LogPeriod = $logPeriod;
-			
+
 
 //		for (var api in Ext.app.ExtDirectAPI) {
 //			Ext.Direct.addProvider(Ext.app.ExtDirectAPI[api]);
