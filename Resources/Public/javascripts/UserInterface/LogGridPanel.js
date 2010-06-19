@@ -95,14 +95,15 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 		// Adds behaviour when grid is refreshed.
 		this.getView().on(
 			'refresh',
-			this.onrefresh
+			this.onrefresh,
+			this.getView()
 		);
 
-//		this.on(
-//			'toggle',
-//			this.onToogleAction,
-//			this
-//		);
+		this.on(
+			'afterrender',
+			this.onafterrender,
+			this
+		);
 	},
 
 	/**
@@ -258,6 +259,16 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 					'{data_var}'
 				)
 		});
+	},
+
+	/**
+	 * Resizes the grid to fit the window
+	 *
+	 * @method onafterrender
+	 * @return void
+	 */
+	onafterrender: function() {
+		this.setHeight(window.innerHeight - 120);
 	}
 	
 //	/**
