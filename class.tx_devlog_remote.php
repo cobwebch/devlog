@@ -87,6 +87,7 @@ class tx_devlog_remote {
 		$fields[] = 'data_var';
 		
 		$records = $TYPO3_DB->exec_SELECTgetRows(implode(',', $fields), 'tx_devlog', $this->getClause(), $groupBy = '', $this->getOrder(), $this->getLimit());
+		
 //		$request = $TYPO3_DB->SELECTquery(implode(',', $fields), 'tx_devlog', $this->getClause(), $groupBy = '', $this->getOrder(), $this->getLimit());
 //		t3lib_div::debug($request, '$datasource');
 		
