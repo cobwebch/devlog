@@ -67,24 +67,13 @@ class tx_devlog_remote {
 	 * Fetches log depending on parameters
 	 * 
 	 * @global t3lib_DB $TYPO3_DB
-	 * @return array
+	 * @return void
 	 */
 	public function indexAction() {
 		global $TYPO3_DB;
 
 		// Defines list of fields
-		$fields = array();
-		$fields[] = 'uid';
-		$fields[] = 'pid';
-		$fields[] = 'crdate';
-		$fields[] = 'crmsec';
-		$fields[] = 'cruser_id';
-		$fields[] = 'severity';
-		$fields[] = 'extkey';
-		$fields[] = 'msg';
-		$fields[] = 'location';
-		$fields[] = 'line';
-		$fields[] = 'data_var';
+		$fields = array('uid', 'pid', 'crdate', 'crmsec', 'cruser_id', 'severity', 'extkey', 'msg', 'location', 'line', 'data_var');
 		
 		$records = $TYPO3_DB->exec_SELECTgetRows(implode(',', $fields), 'tx_devlog', $this->getClause(), $groupBy = '', $this->getOrder(), $this->getLimit());
 		
@@ -92,8 +81,8 @@ class tx_devlog_remote {
 //		t3lib_div::debug($request, '$datasource');
 		
 		foreach ($records as &$record) {
-			$record['cruser_formated'] = $this->formatCruser($record['cruser_id']);
-			$record['pid_formated'] = $this->formatPid($record['pid']);
+			$record['cruser_formatted'] = $this->formatCruser($record['cruser_id']);
+			$record['pid_formatted'] = $this->formatPid($record['pid']);
 			$record['data_var'] = $this->formatDataVar($record['data_var']);
 		}
 
@@ -143,10 +132,10 @@ class tx_devlog_remote {
 	protected function getOrder() {
 		$order = 'uid DESC';
 		if (isset($this->parameters['sort']) && isset($this->parameters['dir'])) {
-			// check wheter the field is formated or not
-			// if yes removed the "_formated" suffix to query the database properly
-			if (strpos($this->parameters['sort'], '_formated') > 1) {
-				$this->parameters['sort'] = str_replace('_formated', '', $this->parameters['sort']);
+			// check wheter the field is formatted or not
+			// if yes removed the "_formatted" suffix to query the database properly
+			if (strpos($this->parameters['sort'], '_formatted') > 1) {
+				$this->parameters['sort'] = str_replace('_formatted', '', $this->parameters['sort']);
 			}
 
 			if ($this->parameters['dir'] == 'ASC' || $this->parameters['dir'] == 'DESC') {
@@ -183,8 +172,8 @@ class tx_devlog_remote {
 		$metaData['successProperty'] = 'success';
 		$metaData['fields'] = array(
 			// Additional fields
-			array('name' => 'cruser_formated', 'type' => 'string'),
-			array('name' => 'pid_formated', 'type' => 'string'),
+			array('name' => 'cruser_formatted', 'type' => 'string'),
+			array('name' => 'pid_formatted', 'type' => 'string'),
 		);
 
 		// merges additiionnal fields with "regular" fields
@@ -221,9 +210,9 @@ class tx_devlog_remote {
 	}
 
 	/**
-     * Returns a a formated data var
+     * Returns a a formatted data var
      *
-     * @param	string		data var to be formated
+     * @param	string		data var to be formatted
      * @return  string		foramted data var
      */
     function formatDataVar($dataVar) {

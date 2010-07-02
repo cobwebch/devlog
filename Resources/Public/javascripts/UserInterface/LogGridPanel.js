@@ -268,14 +268,14 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 			},
 			{
 				id: 'page',
-				dataIndex: 'pid_formated',
+				dataIndex: 'pid_formatted',
 				header: TYPO3.Devlog.Language.pid,
 				width: 50,
 				sortable: true
 			},
 			{
 				id: 'user',
-				dataIndex: 'cruser_formated',
+				dataIndex: 'cruser_formatted',
 				header: TYPO3.Devlog.Language.cruser_id,
 				width: 50,
 				sortable: true

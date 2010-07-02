@@ -188,7 +188,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$message = $this->processParameters();
 
 				// Load Inline CSS
-			$this->loadCSS();
+			$this->loadStylesheets();
 
 				// Load javascript header
 			$this->loadJavascript();
@@ -227,7 +227,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 *
 	 * @return void
 	 */
-	protected function loadCSS() {
+	protected function loadStylesheets() {
 
 		$inlineCSS[] .= <<< EOF
 .x-selectable, .x-selectable * {
@@ -307,12 +307,10 @@ EOF;
 		$readyJavascript = array();
 		$readyJavascript[] .= <<< EOF
 			Ext.ns("TYPO3.Devlog");
-
 			TYPO3.Devlog.Language = $labels;
 			TYPO3.Devlog.Preferences = $preferences;
 
 			Ext.ns("TYPO3.Devlog.Data");
-
 			TYPO3.Devlog.Data.FilterByTime = $filterByTime;
 			TYPO3.Devlog.Data.LogPeriod = $logPeriod;
 
