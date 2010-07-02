@@ -1,21 +1,21 @@
-Ext.ns("TYPO3.Devlog.UserInterface");
+Ext.ns("TYPO3.Devlog.Listing");
 
 /**
  * Button of the rootline menu
- * @class TYPO3.Devlog.UserInterface.FilterByTime
- * @extends Ext.FilterByTime
+ * @class TYPO3.Devlog.Listing.ExtensionList
+ * @extends Ext.ExtensionList
  */
-TYPO3.Devlog.UserInterface.FilterByTime = Ext.extend(Ext.form.ComboBox, {
+TYPO3.Devlog.Listing.ExtensionList = Ext.extend(Ext.form.ComboBox, {
 	
 	/**
 	 * Event triggered after initialization of the main area.
 	 *
-	 * @event TYPO3.Devlog.UserInterface.FilterByTime.afterInit
+	 * @event TYPO3.Devlog.Listing.ExtensionList.afterInit
 	 *
 	 */
 	initComponent: function() {
 		var config = {
-			store: TYPO3.Devlog.FilterByTimeStore,
+			store: TYPO3.Devlog.ExtensionListStore,
 			typeAhead: false,
 			forceSelection: true,
 			triggerAction: 'all',
@@ -28,8 +28,8 @@ TYPO3.Devlog.UserInterface.FilterByTime = Ext.extend(Ext.form.ComboBox, {
 		};
 		
 		Ext.apply(this, config);
-		TYPO3.Devlog.UserInterface.FilterByTime.superclass.initComponent.call(this);
-		TYPO3.Devlog.Application.fireEvent('TYPO3.Devlog.UserInterface.afterInit', this);
+		TYPO3.Devlog.Listing.ExtensionList.superclass.initComponent.call(this);
+		TYPO3.Devlog.Application.fireEvent('TYPO3.Devlog.Listing.afterInit', this);
 
 		this.on(
 			'afterrender',
@@ -64,11 +64,11 @@ TYPO3.Devlog.UserInterface.FilterByTime = Ext.extend(Ext.form.ComboBox, {
 	 */
 	onselect: function() {
 		var value = this.value - 0; // makes sure it is a number
-		TYPO3.Devlog.LogStore.baseParams.limit = value;
-		TYPO3.Devlog.UserInterface.container.gridPanel.pagebrowser.pageSize = value
-		TYPO3.Devlog.LogStore.load();
+		TYPO3.Devlog.Store.LogStore.baseParams.limit = value;
+		TYPO3.Devlog.UserInterface.container.logGrid.pagebrowser.pageSize = value
+		TYPO3.Devlog.Store.LogStore.load();
 	}
 
 });
 
-Ext.reg('TYPO3.Devlog.UserInterface.FilterByTime', TYPO3.Devlog.UserInterface.FilterByTime);
+Ext.reg('TYPO3.Devlog.Listing.ExtensionList', TYPO3.Devlog.Listing.ExtensionList);

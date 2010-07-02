@@ -1,16 +1,16 @@
-Ext.ns("TYPO3.Devlog.UserInterface");
+Ext.ns("TYPO3.Devlog.Listing");
 
 /**
  * Button of the rootline menu
- * @class TYPO3.Devlog.UserInterface.LogGridPanel
- * @extends Ext.LogGridPanel
+ * @class TYPO3.Devlog.Listing.LogGrid
+ * @extends Ext.LogGrid
  */
-TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
+TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 	
 	/**
 	 * Event triggered after initialization of the main area.
 	 *
-	 * @event TYPO3.Devlog.UserInterface.LogGridPanel.afterInit
+	 * @event TYPO3.Devlog.Listing.LogGrid.afterInit
 	 *
 	 */
 	initComponent: function() {
@@ -19,7 +19,7 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 		this._initRowExpander();
 
 		var config = {
-			store: TYPO3.Devlog.LogStore,
+			store: TYPO3.Devlog.Store.LogStore,
 			columns: this._getColumns(),
 			stripeRows: true,
 			columnLines: true,
@@ -49,7 +49,7 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 			// Top Bar
 			tbar: [
 				{
-					xtype: 'TYPO3.Devlog.UserInterface.FilterByTime'
+					xtype: 'TYPO3.Devlog.Listing.TimeList'
 				},
 				'-',
 				{
@@ -72,7 +72,7 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 			// Button Bar
 			bbar: [
 				new Ext.PagingToolbar({
-					store: TYPO3.Devlog.LogStore,       // grid and PagingToolbar using same store
+					store: TYPO3.Devlog.Store.LogStore,       // grid and PagingToolbar using same store
 					displayInfo: true,
 					pageSize: TYPO3.Devlog.Preferences.pageSize,
 					prependButtons: true,
@@ -84,8 +84,8 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 		};
 		
 		Ext.apply(this, config);
-		TYPO3.Devlog.UserInterface.LogGridPanel.superclass.initComponent.call(this);
-		TYPO3.Devlog.Application.fireEvent('TYPO3.Devlog.UserInterface.afterInit', this);
+		TYPO3.Devlog.Listing.LogGrid.superclass.initComponent.call(this);
+		TYPO3.Devlog.Application.fireEvent('TYPO3.Devlog.Listing.afterInit', this);
 
 		// Adds behaviour when grid is refreshed.
 		this.getView().on(
@@ -109,12 +109,12 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 	 * @return void
 	 */
 	onrefresh: function() {
-		var numberOfRows = TYPO3.Devlog.LogStore.getCount();
+		var numberOfRows = TYPO3.Devlog.Store.LogStore.getCount();
 
 		for (index = 0; index < numberOfRows; index++) {
 
 			var row = this.getRow(index);
-			var record = TYPO3.Devlog.LogStore.getAt(index);
+			var record = TYPO3.Devlog.Store.LogStore.getAt(index);
 			if (record.data['data_var'] === '') {
 				// Fetches DOM element
 				var expanderButton = Ext.query('div.x-grid3-row-expander', row)[0];
@@ -134,8 +134,8 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	ontoggleexpand: function(button, pressed){
 
-		var view = TYPO3.Devlog.UserInterface.container.gridPanel.getView();
-		var numberOfRows = TYPO3.Devlog.LogStore.getCount();
+		var view = TYPO3.Devlog.UserInterface.container.logGrid.getView();
+		var numberOfRows = TYPO3.Devlog.Store.LogStore.getCount();
 
 		for (index = 0; index < numberOfRows; index++) {
 			var row = view.getRow(index);
@@ -158,7 +158,7 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 	ontoggleautorefresh: function(button, pressed){
 		var task = {
 			run: function(){
-				TYPO3.Devlog.LogStore.load();
+				TYPO3.Devlog.Store.LogStore.load();
 			},
 			interval: 2000
 		}
@@ -314,93 +314,7 @@ TYPO3.Devlog.UserInterface.LogGridPanel = Ext.extend(Ext.grid.GridPanel, {
 		// 120 is an empiric value... maybe a better way to implement that ;)
 		this.setHeight(window.innerHeight - 120);
 	}
-	
-//	/**
-//	 * @method onToogleAction
-//	 * @param {object} button
-//	 * @param {bool} pressed
-//	 * @return void
-//	 */
-//	onToogleAction: function(button, pressed) {
-//		if (pressed) {
-//			this._onButtonPress(button);
-//		} else {
-//			this._onButtonUnpress(button);
-//		}
-//	},
-
-//	_onButtonPress: function(button) {
-//		button.ownerCt.items.each(function(item) {
-//			if (button.leaf) {
-//				if (item.menuLevel === button.menuLevel && item !== button && item.itemId !== 'F3-arrow') {
-//					item.el.fadeOut({
-//						duration: .4,
-//						endOpacity: .5
-//					});
-//				}
-//			} else {
-//				if (item.menuLevel === button.menuLevel && item !== button && item.itemId !== 'F3-arrow') {
-//					item.el.fadeOut({
-//						duration: .4,
-//						callback: function() {
-//							if (item.pressed) {
-//								item.toggle(false);
-//							}
-//							item.hide();
-//						}
-//					});
-//				}
-//				if (item.menuPath.indexOf(button.menuPath + '-') === 0) {
-//					item.el.fadeIn({
-//						duration: .4,
-//						callback: function() {
-//							item.show();
-//						}
-//					});
-//				}
-//			}
-//		}, this);
-//		button.fireEvent('TYPO3.Devlog.UserInterface.buttonPressed', this);
-//	},
-//
-//	_onButtonUnpress: function(button) {
-//		button.ownerCt.items.each(function(item) {
-//			if (button.leaf) {
-//				if (item.menuLevel === button.menuLevel && item !== button && item.itemId !== 'F3-arrow') {
-//					item.el.fadeIn({
-//						duration: .4,
-//						startOpacity: .5
-//					});
-//				}
-//			} else {
-//				if (item.menuLevel === button.menuLevel && item !== button) {
-//					item.el.fadeIn({
-//						duration: .4,
-//						callback: function() {
-//							item.show();
-//						}
-//					});
-//				}
-//				if (item.menuPath.indexOf(button.menuPath + '-') === 0) {
-//					item.el.fadeOut({
-//						duration: .4,
-//						callback: function() {
-//							if (item.pressed) {
-//								item.toggle(false);
-//							}
-//							item.hide();
-//						}
-//					});
-//				}
-//			}
-//		}, this);
-//		button.fireEvent('TYPO3.Devlog.UserInterface.buttonUnpressed', this);
-//	},
-
-//	getFullPath: function() {
-//		return this.menuId + '-' + this.sectionId + '-' + this.menuPath;
-//	}
 
 });
 
-Ext.reg('TYPO3.Devlog.UserInterface.LogGridPanel', TYPO3.Devlog.UserInterface.LogGridPanel);
+Ext.reg('TYPO3.Devlog.Listing.LogGrid', TYPO3.Devlog.Listing.LogGrid);

@@ -1,6 +1,6 @@
 Ext.ns("TYPO3.Devlog.Store");
 
-TYPO3.Devlog.initLogJsonStore = function() {
+TYPO3.Devlog.Store.initLogJsonStore = function() {
 	return new Ext.data.JsonStore({
 		storeId: 'logStore',
 		autoLoad: true,

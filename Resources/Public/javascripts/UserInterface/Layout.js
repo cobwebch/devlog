@@ -7,8 +7,8 @@ TYPO3.Devlog.UserInterface.Layout = Ext.extend(Ext.Container, {
 			renderTo: 't3-log-grid',
 			items: [
 			{
-				xtype: 'TYPO3.Devlog.UserInterface.LogGridPanel',
-				ref: 'gridPanel',
+				xtype: 'TYPO3.Devlog.Listing.LogGrid',
+				ref: 'logGrid',
 				flex: 0
 			}
 			]

@@ -271,7 +271,6 @@ EOF;
 			// *********************************** //
 			// Defines what files should be loaded and loads them
 		$files = array();
-		$files[] = 'common.js';
 		$files[] = 'Override/GridPanel.js';
 		$files[] = 'Utils.js';
 		$files[] = 'Application.js';
@@ -280,13 +279,18 @@ EOF;
 		$files[] = 'Store/Bootstrap.js';
 //		$files[] = 'Store/LogDirectStore.js';
 		$files[] = 'Store/LogJsonStore.js';
-		$files[] = 'Store/FilterByTimeArrayStore.js';
+		$files[] = 'Store/TimeListStore.js';
 
 		$files[] = 'UserInterface/Bootstrap.js';
 		$files[] = 'UserInterface/Layout.js';
-		$files[] = 'UserInterface/LogGridPanel.js';
 		$files[] = 'UserInterface/RowExpander.js';
-		$files[] = 'UserInterface/FilterByTimeComboBox.js';
+
+		// Listing
+		$files[] = 'Listing/Bootstrap.js';
+		$files[] = 'Listing/ExtensionList.js';
+		$files[] = 'Listing/LogGrid.js';
+		$files[] = 'Listing/TimeList.js';
+
 		foreach ($files as $file) {
 			$this->pageRendererObject->addJsFile($this->javascriptPath . $file, 'text/javascript', FALSE);
 		}
