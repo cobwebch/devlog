@@ -31,4 +31,16 @@ $TCA['tx_devlog'] = array(
 // Add context sensitive help (csh) to the backend module and to the tx_devlog table
 t3lib_extMgm::addLLrefForTCAdescr('_MOD_tools_txdevlogM1', 'EXT:devlog/locallang_csh_txdevlog.xml');
 t3lib_extMgm::addLLrefForTCAdescr('tx_devlog', 'EXT:devlog/locallang_csh_txdevlog.xml');
+
+
+$pathToExtension = t3lib_extMgm::extRelPath('devlog');
+$icons = array(
+	'error' => $pathToExtension . 'Resources/Public/images/icons/error.png',
+	'info' => $pathToExtension . 'Resources/Public/images/icons/information.png',
+	'notification' => $pathToExtension . 'Resources/Public/images/icons/notification.png',
+	'ok' => $pathToExtension . 'Resources/Public/images/icons/ok.png',
+	'warning' => $pathToExtension . 'Resources/Public/images/icons/warning.png',
+);
+
+t3lib_SpriteManager::addSingleIcons($icons, 'devlog');
 ?>

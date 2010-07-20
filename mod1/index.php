@@ -130,7 +130,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	function menuConfig()	{
 
 			// Load the list of values that can be used as filters (filters are used only when all entries are being displayed)
-		$this->getLogFilters();
+//		$this->getLogFilters();
 
 		$this->MOD_MENU = array(
 			'logrun' => array(
@@ -275,21 +275,28 @@ EOF;
 		$files[] = 'Utils.js';
 		$files[] = 'Application.js';
 		$files[] = 'Application/AbstractBootstrap.js';
-		
+
+		// Stores
 		$files[] = 'Store/Bootstrap.js';
 //		$files[] = 'Store/LogDirectStore.js';
 		$files[] = 'Store/LogJsonStore.js';
 		$files[] = 'Store/TimeListStore.js';
+		$files[] = 'Store/SeverityListStore.js';
+		$files[] = 'Store/ExtensionListStore.js';
+		$files[] = 'Store/PageListStore.js';
 
+		// UserInterface
 		$files[] = 'UserInterface/Bootstrap.js';
 		$files[] = 'UserInterface/Layout.js';
 		$files[] = 'UserInterface/RowExpander.js';
 
 		// Listing
 		$files[] = 'Listing/Bootstrap.js';
-		$files[] = 'Listing/ExtensionList.js';
 		$files[] = 'Listing/LogGrid.js';
 		$files[] = 'Listing/TimeList.js';
+		$files[] = 'Listing/SeverityList.js';
+		$files[] = 'Listing/ExtensionList.js';
+		$files[] = 'Listing/PageList.js';
 
 		foreach ($files as $file) {
 			$this->pageRendererObject->addJsFile($this->javascriptPath . $file, 'text/javascript', FALSE);
@@ -303,7 +310,10 @@ EOF;
 		$preferences = json_encode($this->getPreferences());
 
 		// Other datasource
-		$filterByTime = json_encode($this->getFilterByTimeAction());
+		$timeList = json_encode($this->getTimeList());
+		$severityList = json_encode($this->getSeverityList());
+		$extensionList = json_encode($this->getExtensionList());
+		$pageList = json_encode($this->getPageList());
 		$logPeriod = json_encode($this->getLogPeriod());
 
 			// *********************************** //
@@ -315,7 +325,10 @@ EOF;
 			TYPO3.Devlog.Preferences = $preferences;
 
 			Ext.ns("TYPO3.Devlog.Data");
-			TYPO3.Devlog.Data.FilterByTime = $filterByTime;
+			TYPO3.Devlog.Data.TimeList = $timeList;
+			TYPO3.Devlog.Data.ExtensionList = $extensionList;
+			TYPO3.Devlog.Data.SeverityList = $severityList;
+			TYPO3.Devlog.Data.PageList = $pageList;
 			TYPO3.Devlog.Data.LogPeriod = $logPeriod;
 
 
@@ -389,7 +402,6 @@ EOF;
 			else {
 				$content = $LANG->getLL('log_period') . ': '.t3lib_befunc::dateTimeAge($startDate);
 			}
-
 		}
 		
 		return $content;
@@ -402,7 +414,7 @@ EOF;
 	 * @global Language $LANG;
 	 * @return array
 	 */
-	public function getFilterByTimeAction() {
+	public function getTimeList() {
 		global $TYPO3_DB;
 		global $LANG;
 		
@@ -429,6 +441,95 @@ EOF;
 
 		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
 
+		return $records;
+	}
+
+	/**
+	 * Fetches list of severities
+	 *
+	 * @global t3lib_DB $TYPO3_DB
+	 * @global Language $LANG;
+	 * @return array
+	 */
+	public function getSeverityList() {
+		global $TYPO3_DB;
+		global $LANG;
+
+		$records[] = array('', $LANG->getLL('selectseverity'));
+		$dbres = $TYPO3_DB->exec_SELECTquery('DISTINCT severity', 'tx_devlog', '', '', 'crmsec DESC');
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
+			$severityLabel = '';
+			switch ($row['severity']) {
+				case '-1':
+					$severity = 'ok';
+					break;
+				case '0':
+					$severity = 'info';
+					break;
+				case '1':
+					$severity = 'notice';
+					break;
+				case '2':
+					$severity = 'warning';
+					break;
+				case '3':
+					$severity = 'error';
+					break;
+			}
+			$severityLabel = $LANG->getLL('severity_' . $severity);
+			$icon = t3lib_iconWorks::getSpriteIcon('extensions-devlog-' . $severity);
+			$records[] = array($row['severity'], $icon . ' ' . $severityLabel);
+		}
+		return $records;
+	}
+
+	/**
+	 * Fetches list of extensions
+	 *
+	 * @global t3lib_DB $TYPO3_DB
+	 * @global Language $LANG;
+	 * @return array
+	 */
+	public function getExtensionList() {
+		global $TYPO3_DB;
+		global $LANG;
+		global $TYPO3_LOADED_EXT;
+
+		$records[] = array('', $LANG->getLL('selectextentionkey'));
+		$dbres = $TYPO3_DB->exec_SELECTquery('DISTINCT extkey', 'tx_devlog', '', '', 'crmsec DESC');
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
+			$icon = '';
+			if (isset($TYPO3_LOADED_EXT[$row['extkey']]['typo3RelPath'])) {
+				$iconPath = $TYPO3_LOADED_EXT[$row['extkey']]['typo3RelPath'] . 'ext_icon.gif';
+				$icon = '<img src="' . $iconPath . '" alt="" />';
+			}
+			$records[] = array($row['extkey'], $icon . ' ' . $row['extkey']);
+		}
+		return $records;
+	}
+	
+	/**
+	 * Fetches list of pages
+	 *
+	 * @global t3lib_DB $TYPO3_DB
+	 * @global Language $LANG;
+	 * @return array
+	 */
+	public function getPageList() {
+		global $TYPO3_DB;
+		global $LANG;
+
+		$records[] = array('', $LANG->getLL('selectpage'));
+		$dbres = $TYPO3_DB->exec_SELECTquery('DISTINCT pid', 'tx_devlog', '', 'pid ASC');
+
+		$icon = t3lib_iconWorks::getSpriteIconForRecord('pages');
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
+
+				// Retrieve the stored page information
+			$page = t3lib_BEfunc::getRecord('pages', $row['pid']);
+			$elementTitle = t3lib_BEfunc::getRecordTitle('pages', $page, 1);
+			$records[] = array($row['pid'], $icon . $elementTitle . ' (' . $row['pid'] . ')');
+		}
 		return $records;
 	}
 
@@ -713,9 +814,9 @@ EOF;
 			// Add context-sensitive help for header
 		$header .= $this->renderCsh($field);
 			// If turned on and in "all" log view, add filter
-		if ($this->selectedLog == -1 && $addFilter) {
-			$header .= '<br />' . $this->renderFilterMenu($field);
-		}
+//		if ($this->selectedLog == -1 && $addFilter) {
+//			$header .= '<br />' . $this->renderFilterMenu($field);
+//		}
 		return $header;
 	}
 
@@ -811,25 +912,25 @@ EOF;
 	 *
 	 * @see	getLogFilters()
 	 */
-	function renderFilterMenu($filterKey) {
-		if (isset($this->filters[$filterKey])) {
-			$filter = '<form name="filter' . $filterKey . '" action="" method="GET">';
-			$filter .= '<select name="SET[filters][' . $filterKey . ']" onchange="this.form.submit()">';
-			foreach ($this->filters[$filterKey] as $key => $value) {
-				$selected = '';
-				if ((string)$key == (string)$this->selectedFilters[$filterKey]) {
-					$selected = ' selected="selected"';
-				}
-				$filter .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
-			}
-			$filter .= '</select>';
-			$filter .= '</form>';
-			return $filter;
-		}
-		else {
-			return '';
-		}
-	}
+//	function renderFilterMenu($filterKey) {
+//		if (isset($this->filters[$filterKey])) {
+//			$filter = '<form name="filter' . $filterKey . '" action="" method="GET">';
+//			$filter .= '<select name="SET[filters][' . $filterKey . ']" onchange="this.form.submit()">';
+//			foreach ($this->filters[$filterKey] as $key => $value) {
+//				$selected = '';
+//				if ((string)$key == (string)$this->selectedFilters[$filterKey]) {
+//					$selected = ' selected="selected"';
+//				}
+//				$filter .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
+//			}
+//			$filter .= '</select>';
+//			$filter .= '</form>';
+//			return $filter;
+//		}
+//		else {
+//			return '';
+//		}
+//	}
 
 	/**
 	 * Render the CSH icon/box of a given key and return the HTML code
@@ -1079,53 +1180,53 @@ EOF;
 	 *
 	 * @return	void
 	 */
-	function getLogFilters() {
-			// Get list of existing extension keys in the log table
-		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT extkey', 'tx_devlog', '', '', 'extkey ASC');
-		$this->filters['extkey'] = array('*' => '');
-		while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres))) {
-			$this->filters['extkey'][$row['extkey']] = $row['extkey'];
-		}
-		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
-
-			// Get list of pages referenced in the log table
-		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT pid', 'tx_devlog', '');
-		$this->filters['pid'] = array('*' => '');
-		$this->records['pages'] = array();
-		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
-			if (!empty($row['pid'])) {
-				$page = t3lib_BEfunc::getRecord('pages', $row['pid']);
-				$elementTitle = t3lib_BEfunc::getRecordTitle('pages', $page, 1);
-				$page['t3lib_BEfunc::title'] = $elementTitle;
-				$this->records['pages'][$row['pid']] = $page;
-				$this->filters['pid'][$row['pid']] = $elementTitle;
-			}
-		}
-		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
-
-			// Get list of users referenced in the log table
-		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT cruser_id', 'tx_devlog', '');
-		$this->filters['cruser_id'] = array('*' => '');
-		$this->records['be_users'] = array();
-		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
-			if (!empty($row['cruser_id'])) {
-				$record = t3lib_BEfunc::getRecord('be_users', $row['cruser_id']);
-				$elementTitle = t3lib_BEfunc::getRecordTitle('be_users', $record, 1);
-				$record['t3lib_BEfunc::title'] = $elementTitle;
-				$this->records['be_users'][$row['cruser_id']] = $record;
-				$this->filters['cruser_id'][$row['cruser_id']] = $elementTitle;
-			}
-		}
-		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
-
-			// Get list of severities
-		$this->filters['severity']['*'] = '';
-		$this->filters['severity']['-1'] = $GLOBALS['LANG']->getLL('severity_ok');
-		$this->filters['severity']['0'] = $GLOBALS['LANG']->getLL('severity_info');
-		$this->filters['severity']['1'] = $GLOBALS['LANG']->getLL('severity_notice');
-		$this->filters['severity']['2'] = $GLOBALS['LANG']->getLL('severity_warning');
-		$this->filters['severity']['3'] = $GLOBALS['LANG']->getLL('severity_error');
-	}
+//	function getLogFilters() {
+//			// Get list of existing extension keys in the log table
+//		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT extkey', 'tx_devlog', '', '', 'extkey ASC');
+//		$this->filters['extkey'] = array('*' => '');
+//		while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres))) {
+//			$this->filters['extkey'][$row['extkey']] = $row['extkey'];
+//		}
+//		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
+//
+//			// Get list of pages referenced in the log table
+//		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT pid', 'tx_devlog', '');
+//		$this->filters['pid'] = array('*' => '');
+//		$this->records['pages'] = array();
+//		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
+//			if (!empty($row['pid'])) {
+//				$page = t3lib_BEfunc::getRecord('pages', $row['pid']);
+//				$elementTitle = t3lib_BEfunc::getRecordTitle('pages', $page, 1);
+//				$page['t3lib_BEfunc::title'] = $elementTitle;
+//				$this->records['pages'][$row['pid']] = $page;
+//				$this->filters['pid'][$row['pid']] = $elementTitle;
+//			}
+//		}
+//		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
+//
+//			// Get list of users referenced in the log table
+//		$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT cruser_id', 'tx_devlog', '');
+//		$this->filters['cruser_id'] = array('*' => '');
+//		$this->records['be_users'] = array();
+//		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
+//			if (!empty($row['cruser_id'])) {
+//				$record = t3lib_BEfunc::getRecord('be_users', $row['cruser_id']);
+//				$elementTitle = t3lib_BEfunc::getRecordTitle('be_users', $record, 1);
+//				$record['t3lib_BEfunc::title'] = $elementTitle;
+//				$this->records['be_users'][$row['cruser_id']] = $record;
+//				$this->filters['cruser_id'][$row['cruser_id']] = $elementTitle;
+//			}
+//		}
+//		$GLOBALS['TYPO3_DB']->sql_free_result($dbres);
+//
+//			// Get list of severities
+//		$this->filters['severity']['*'] = '';
+//		$this->filters['severity']['-1'] = $GLOBALS['LANG']->getLL('severity_ok');
+//		$this->filters['severity']['0'] = $GLOBALS['LANG']->getLL('severity_info');
+//		$this->filters['severity']['1'] = $GLOBALS['LANG']->getLL('severity_notice');
+//		$this->filters['severity']['2'] = $GLOBALS['LANG']->getLL('severity_warning');
+//		$this->filters['severity']['3'] = $GLOBALS['LANG']->getLL('severity_error');
+//	}
 
 	/**
 	 * This method is used to set the selectedLog flag

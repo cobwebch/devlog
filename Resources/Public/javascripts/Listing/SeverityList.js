@@ -2,20 +2,20 @@ Ext.ns("TYPO3.Devlog.Listing");
 
 /**
  * Button of the rootline menu
- * @class TYPO3.Devlog.Listing.ExtensionList
- * @extends Ext.ExtensionList
+ * @class TYPO3.Devlog.Listing.SeverityList
+ * @extends Ext.SeverityList
  */
-TYPO3.Devlog.Listing.ExtensionList = Ext.extend(Ext.form.ComboBox, {
+TYPO3.Devlog.Listing.SeverityList = Ext.extend(Ext.form.ComboBox, {
 	
 	/**
 	 * Event triggered after initialization of the main area.
 	 *
-	 * @event TYPO3.Devlog.Listing.ExtensionList.afterInit
+	 * @event TYPO3.Devlog.Listing.SeverityList.afterInit
 	 *
 	 */
 	initComponent: function() {
 		var config = {
-			store: TYPO3.Devlog.Store.initExtensionListStore(),
+			store: TYPO3.Devlog.Store.initSeverityListStore(),
 			typeAhead: false,
 			forceSelection: true,
 			triggerAction: 'all',
@@ -28,7 +28,7 @@ TYPO3.Devlog.Listing.ExtensionList = Ext.extend(Ext.form.ComboBox, {
 		};
 		
 		Ext.apply(this, config);
-		TYPO3.Devlog.Listing.ExtensionList.superclass.initComponent.call(this);
+		TYPO3.Devlog.Listing.SeverityList.superclass.initComponent.call(this);
 		TYPO3.Devlog.Application.fireEvent('TYPO3.Devlog.Listing.afterInit', this);
 
 		this.on(
@@ -64,11 +64,12 @@ TYPO3.Devlog.Listing.ExtensionList = Ext.extend(Ext.form.ComboBox, {
 	 */
 	onselect: function() {
 		var value = this.value - 0; // makes sure it is a number
-		TYPO3.Devlog.Store.LogStore.baseParams.limit = value;
-		TYPO3.Devlog.UserInterface.container.logGrid.pagebrowser.pageSize = value
+//		TYPO3.Devlog.Store.LogStore.baseParams.limit = value;
+//		TYPO3.Devlog.UserInterface.container.logGrid.pagebrowser.pageSize = value
+		TYPO3.Devlog.Store.LogStore.baseParams.severity = this.value
 		TYPO3.Devlog.Store.LogStore.load();
 	}
 
 });
 
-Ext.reg('TYPO3.Devlog.Listing.ExtensionList', TYPO3.Devlog.Listing.ExtensionList);
+Ext.reg('TYPO3.Devlog.Listing.SeverityList', TYPO3.Devlog.Listing.SeverityList);

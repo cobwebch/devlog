@@ -51,6 +51,15 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 				{
 					xtype: 'TYPO3.Devlog.Listing.TimeList'
 				},
+				{
+					xtype: 'TYPO3.Devlog.Listing.SeverityList'
+				},
+				{
+					xtype: 'TYPO3.Devlog.Listing.ExtensionList'
+				},
+				{
+					xtype: 'TYPO3.Devlog.Listing.PageList'
+				},
 				'-',
 				{
 					pressed: false,
@@ -183,19 +192,19 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 		var spriteName = '';
 		switch (value) {
 			case -1 : // OK
-				spriteName = 'status-dialog-ok';
+				spriteName = 'extensions-devlog-ok';
 				break;
 			case 0 : // Info
-				spriteName = 'status-dialog-information';
+				spriteName = 'extensions-devlog-information';
 				break;
 			case 1 : // Notice
-				spriteName = 'status-dialog-notification';
+				spriteName = 'extensions-devlog-notification';
 				break;
 			case 2 : // Warning
-				spriteName = 'status-dialog-warning';
+				spriteName = 'extensions-devlog-warning';
 				break;
 			case 3 : // Error
-				spriteName = 'status-dialog-error';
+				spriteName = 'extensions-devlog-error';
 				break;
 		}
 		return String.format((spriteName) ? TYPO3.Devlog.Utils.getSpriteIcon(spriteName) : '');
@@ -249,7 +258,7 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 			},
 			{
 				id: 'extkey',
-				dataIndex: 'extkey',
+				dataIndex: 'extkey_formatted',
 				header: TYPO3.Devlog.Language.extkey,
 				sortable: true
 			},

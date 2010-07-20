@@ -83,6 +83,7 @@ class tx_devlog_remote {
 		foreach ($records as &$record) {
 			$record['cruser_formatted'] = $this->formatCruser($record['cruser_id']);
 			$record['pid_formatted'] = $this->formatPid($record['pid']);
+			$record['extkey_formatted'] = $this->formatExtKey($record['extkey']);
 			$record['data_var'] = $this->formatDataVar($record['data_var']);
 		}
 
@@ -174,6 +175,7 @@ class tx_devlog_remote {
 			// Additional fields
 			array('name' => 'cruser_formatted', 'type' => 'string'),
 			array('name' => 'pid_formatted', 'type' => 'string'),
+			array('name' => 'extkey_formatted', 'type' => 'string'),
 		);
 
 		// merges additiionnal fields with "regular" fields
@@ -210,7 +212,7 @@ class tx_devlog_remote {
 	}
 
 	/**
-     * Returns a a formatted data var
+     * Returns a formatted data var
      *
      * @param	string		data var to be formatted
      * @return  string		foramted data var
@@ -222,6 +224,23 @@ class tx_devlog_remote {
 			$result = t3lib_div::view_array($fullData);
 		}
 		return $result;
+	}
+
+	/**
+     * Returns a formatted extkey
+     *
+	 * @global $TYPO3_LOADED_EXT
+     * @param	string		data var to be formatted
+     * @return  string		foramted data var
+     */
+    function formatExtKey($extKey) {
+		global $TYPO3_LOADED_EXT;
+		$result = '';
+		if (isset($TYPO3_LOADED_EXT[$extKey]['typo3RelPath'])) {
+			$iconPath = $TYPO3_LOADED_EXT[$extKey]['typo3RelPath'] . 'ext_icon.gif';
+			$result = '<img src="' . $iconPath . '" alt="" />';
+		}
+		return $result . ' ' . $extKey;
 	}
 
 	/**
@@ -238,7 +257,7 @@ class tx_devlog_remote {
 		$elementTitle = t3lib_BEfunc::getRecordTitle('pages', $page, 1);
 
 			// Create icon for record
-		$elementIcon = t3lib_iconWorks::getSpriteIcon('apps-pagetree-page-default');
+		$elementIcon = t3lib_iconWorks::getSpriteIconForRecord('pages');
 
 			// Return item with edit link
 		$editOnClick = 'top.loadEditId(' . $uid . ')';
