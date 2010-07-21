@@ -65,8 +65,10 @@ TYPO3.Devlog.Listing.SeverityList = Ext.extend(Ext.form.ComboBox, {
 	 * @return void
 	 */
 	onselect: function() {
-		var value = this.value - 0; // makes sure it is a number
-		TYPO3.Devlog.Store.LogStore.baseParams.severity = value
+		TYPO3.Devlog.Store.LogStore.baseParams.severity = this.value
+		if (this.value == '') {
+			delete TYPO3.Devlog.Store.LogStore.baseParams.severity;
+		}
 		TYPO3.Devlog.Store.LogStore.load();
 	}
 

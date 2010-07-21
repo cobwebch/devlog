@@ -71,3 +71,9 @@ td.x-grid3-td-location div.x-grid3-cell-inner {
 .missing {
 	background-image:url(../../../../../../typo3/sysext/t3skin/images/icons/status/status-icon-missing.png) !important;
 }
+
+.loading {
+	background-image: url(../images/icons/loading.gif);
+	background-repeat: no-repeat;
+	height:18px;
+}

@@ -84,7 +84,8 @@ class tx_devlog_remote {
 			$record['cruser_formatted'] = $this->formatCruser($record['cruser_id']);
 			$record['pid_formatted'] = $this->formatPid($record['pid']);
 			$record['extkey_formatted'] = $this->formatExtKey($record['extkey']);
-			$record['data_var'] = $this->formatDataVar($record['data_var']);
+			$record['has_data_var'] = $record['data_var'] != '' ? TRUE : FALSE;
+			$record['data_var'] = ''; //will be fetched by Ajax later on
 		}
 
 		$datasource['metaData'] = $this->getMetaData($fields);
@@ -189,6 +190,7 @@ class tx_devlog_remote {
 			array('name' => 'cruser_formatted', 'type' => 'string'),
 			array('name' => 'pid_formatted', 'type' => 'string'),
 			array('name' => 'extkey_formatted', 'type' => 'string'),
+			array('name' => 'has_data_var', 'type' => 'boolean'),
 		);
 
 		// merges additiionnal fields with "regular" fields
@@ -222,21 +224,6 @@ class tx_devlog_remote {
 			}
 		}
 		return $fieldsMetaData;
-	}
-
-	/**
-     * Returns a formatted data var
-     *
-     * @param	string		data var to be formatted
-     * @return  string		foramted data var
-     */
-    function formatDataVar($dataVar) {
-		$result = '';
-		if ($dataVar !== '') {
-			$fullData = @unserialize($dataVar);
-			$result = t3lib_div::view_array($fullData);
-		}
-		return $result;
 	}
 
 	/**
@@ -310,6 +297,20 @@ class tx_devlog_remote {
 			$request = $limit . ' OFFSET ' . $start;
 		}
 		return $request;
+	}
+
+	public function getDataVar() {
+		global $TYPO3_DB;
+		$result = '';
+		$uid = filter_input(INPUT_POST, 'uid', FILTER_VALIDATE_INT, array('options'=>array('min_range'=> 0)));
+		if ($uid) {
+			$records = $TYPO3_DB->exec_SELECTgetRows('data_var', 'tx_devlog', 'uid = ' . $uid);
+			if (isset($records[0]['data_var']) && $records[0]['data_var'] != '') {
+				$dataVar = $records[0]['data_var'];
+				$result = t3lib_div::view_array(@unserialize($dataVar));
+			}
+		}
+		echo $result;
 	}
 
 }

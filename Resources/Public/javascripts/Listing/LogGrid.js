@@ -111,7 +111,7 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 	},
 
 	/**
-	 * Hides the "collapse / expand" button when no data_var is defined
+	 * Hides the "collapse / expand" "+"when no data_var is defined
 	 *
 	 * @access public
 	 * @method onrefresh
@@ -124,12 +124,20 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 
 			var row = this.getRow(index);
 			var record = TYPO3.Devlog.Store.LogStore.getAt(index);
-			if (record.data['data_var'] === '') {
+
+			// if no data is found, hide the "+"
+			if (!record.data['has_data_var']) {
 				// Fetches DOM element
 				var expanderButton = Ext.query('div.x-grid3-row-expander', row)[0];
 				Ext.get(expanderButton).removeClass('x-grid3-row-expander')
 			}
 		}
+
+		// Fix a visual bug.
+		// If the "+" has already been hit, it will never come back to "+" again by click on the refreh button
+		Ext.each(Ext.select('.x-grid3-row-expanded').elements, function(element) {
+			Ext.get(element).removeClass('x-grid3-row-expanded').addClass('x-grid3-row-collapse');
+		});
 	},
 
 	/**
@@ -306,11 +314,14 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 	 * @return void
 	 */
 	_initRowExpander: function() {
-		TYPO3.Devlog.UserInterface.expander = new TYPO3.Devlog.UserInterface.RowExpander({
-				tpl : new Ext.Template(
-					'{data_var}'
-				)
-		});
+		TYPO3.Devlog.UserInterface.expander = new TYPO3.Devlog.UserInterface.AjaxRowExpander();
+
+		// Row expander without ajax
+		//TYPO3.Devlog.UserInterface.expander = new TYPO3.Devlog.UserInterface.RowExpander({
+		//		tpl : new Ext.Template(
+		//			'{data_var}'
+		//		)
+		//});
 	},
 
 	/**

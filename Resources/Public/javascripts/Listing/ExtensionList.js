@@ -67,6 +67,9 @@ TYPO3.Devlog.Listing.ExtensionList = Ext.extend(Ext.form.ComboBox, {
 	 */
 	onselect: function() {
 		TYPO3.Devlog.Store.LogStore.baseParams.extKey = this.value
+		if (this.value == '') {
+			delete TYPO3.Devlog.Store.LogStore.baseParams.extKey;
+		}
 		TYPO3.Devlog.Store.LogStore.load();
 	}
 

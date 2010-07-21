@@ -66,8 +66,10 @@ TYPO3.Devlog.Listing.PageList = Ext.extend(Ext.form.ComboBox, {
 	 * @return void
 	 */
 	onselect: function() {
-		var value = this.value - 0; // makes sure it is a number
-		TYPO3.Devlog.Store.LogStore.baseParams.pid = value
+		TYPO3.Devlog.Store.LogStore.baseParams.pid = this.value
+		if (this.value == '') {
+			delete TYPO3.Devlog.Store.LogStore.baseParams.pid;
+		}
 		TYPO3.Devlog.Store.LogStore.load();
 	}
 

@@ -270,6 +270,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$files[] = 'UserInterface/Bootstrap.js';
 		$files[] = 'UserInterface/Layout.js';
 		$files[] = 'UserInterface/RowExpander.js';
+		$files[] = 'UserInterface/AjaxRowExpander.js';
 		$files[] = 'UserInterface/Iconcombo.js';
 
 		// Listing
