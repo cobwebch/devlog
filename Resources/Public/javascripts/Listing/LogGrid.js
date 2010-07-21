@@ -189,22 +189,22 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 	 * @return string
 	 */
 	_renderSeverity: function(value) {
-		var spriteName = '';
+		var spriteName = 'extensions-devlog-';
 		switch (value) {
 			case -1 : // OK
-				spriteName = 'extensions-devlog-ok';
+				spriteName += 'ok';
 				break;
 			case 0 : // Info
-				spriteName = 'extensions-devlog-information';
+				spriteName += 'info';
 				break;
 			case 1 : // Notice
-				spriteName = 'extensions-devlog-notification';
+				spriteName += 'notification';
 				break;
 			case 2 : // Warning
-				spriteName = 'extensions-devlog-warning';
+				spriteName += 'warning';
 				break;
 			case 3 : // Error
-				spriteName = 'extensions-devlog-error';
+				spriteName += 'error';
 				break;
 		}
 		return String.format((spriteName) ? TYPO3.Devlog.Utils.getSpriteIcon(spriteName) : '');

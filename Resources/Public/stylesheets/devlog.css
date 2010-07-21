@@ -1,0 +1,73 @@
+.x-selectable, .x-selectable * {
+		-moz-user-select: text!important;
+		-khtml-user-select: text!important;
+}
+
+/* Makes column msg beeing wrapped */
+td.x-grid3-td-msg {
+	overflow: hidden;
+}
+td.x-grid3-td-msg div.x-grid3-cell-inner {
+	white-space: normal;
+}
+
+td.x-grid3-td-location {
+	overflow: hidden;
+}
+td.x-grid3-td-location div.x-grid3-cell-inner {
+	white-space: normal;
+}
+
+.x-grid3-cell-inner,
+.x-grid3-hd-inner {
+	white-space:normal !important;
+}
+
+/* Icon combobox: styling for the list */
+.ux-icon-combo-item {
+	background-position:3px 50% !important;
+	background-repeat:no-repeat !important;
+	padding-left:24px !important;
+}
+
+/* Icon combobox: styling for the input field */
+.ux-icon-combo-input {
+	padding-left:25px;
+}
+
+.ux-icon-combo-icon {
+	left:5px;
+	top:3px;
+	background-position:0 50%;
+	background-repeat:no-repeat;
+	height:14px;
+	width:18px;
+}
+
+.ok {
+	background-image:url(../images/icons/ok.png) !important;
+}
+
+.info {
+	background-image:url(../images/icons/information.png) !important;
+}
+
+.notice {
+	background-image:url(../images/icons/notice.png) !important;
+}
+
+.warning {
+	background-image:url(../images/icons/warning.png) !important;
+}
+
+.error {
+	background-image:url(../images/icons/error.png) !important;
+}
+
+.page {
+	background-image:url(../../../../../../typo3/sysext/t3skin/images/icons/apps/pagetree-page-default.png) !important;
+}
+
+.missing {
+	background-image:url(../../../../../../typo3/sysext/t3skin/images/icons/status/status-icon-missing.png) !important;
+}

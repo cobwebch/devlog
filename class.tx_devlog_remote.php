@@ -110,13 +110,26 @@ class tx_devlog_remote {
 		global $TYPO3_DB;
 
 		$clauses = array();
+		$severity = filter_input(INPUT_GET, 'severity', FILTER_VALIDATE_INT, array('options'=>array('min_range'=>-1, 'max_range'=>3)));
+		if ($severity !== FALSE && $severity !== NULL) {
+			$clauses[] = 'severity = ' . $severity;
+		}
 
+		$pid = filter_input(INPUT_GET, 'pid', FILTER_VALIDATE_INT, array('options'=>array('min_range'=> 0)));
+		if ($pid !== FALSE && $pid !== NULL) {
+			$clauses[] = 'pid = ' . $pid;
+		}
+
+		$extKey = filter_input(INPUT_GET, 'extKey', FILTER_SANITIZE_STRING);
+		if ($extKey) {
+			$clauses[] = 'extKey = "' . $extKey . '"';
+		}
+		
 		// Add other parameter
 		if (isset($this->parameters['limit']) && $this->parameters['limit'] == '1000') {
 			$records = $TYPO3_DB->exec_SELECTgetRows('MAX(crmsec) AS maximum, MIN(crmsec) AS minimum', 'tx_devlog', '');
 			if (!empty($records)) {
 				$clauses[] = 'crmsec = ' . $records[0]['maximum'];
-				
 			}
 		}
 		elseif (isset($this->parameters['limit']) && (int) $this->parameters['limit'] > 1000) {

@@ -22,9 +22,12 @@ TYPO3.Devlog.Listing.PageList = Ext.extend(Ext.form.ComboBox, {
 			editable: false,
 			selectOnFocus: true,
 			listClass: 'x-combo-list-small',
+			plugins: new TYPO3.Devlog.UserInterface.IconCombo(),
+			width: 'auto',
 			mode: 'local',
 			valueField: 'key',
-			displayField: 'value'
+			displayField: 'value',
+			iconClsField: 'className'
 		};
 		
 		Ext.apply(this, config);
@@ -64,8 +67,7 @@ TYPO3.Devlog.Listing.PageList = Ext.extend(Ext.form.ComboBox, {
 	 */
 	onselect: function() {
 		var value = this.value - 0; // makes sure it is a number
-		TYPO3.Devlog.Store.LogStore.baseParams.limit = value;
-		TYPO3.Devlog.UserInterface.container.logGrid.pagebrowser.pageSize = value
+		TYPO3.Devlog.Store.LogStore.baseParams.pid = value
 		TYPO3.Devlog.Store.LogStore.load();
 	}
 

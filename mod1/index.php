@@ -228,32 +228,13 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 * @return void
 	 */
 	protected function loadStylesheets() {
-
-		$inlineCSS[] .= <<< EOF
-.x-selectable, .x-selectable * {
-		-moz-user-select: text!important;
-		-khtml-user-select: text!important;
-}
-
-/* Makes column msg beeing wrapped */
-td.x-grid3-td-msg {
-    overflow: hidden;
-}
-td.x-grid3-td-msg div.x-grid3-cell-inner {
-    white-space: normal;
-}
-
-td.x-grid3-td-location {
-    overflow: hidden;
-}
-td.x-grid3-td-location div.x-grid3-cell-inner {
-    white-space: normal;
-}
-
- .x-grid3-cell-inner, .x-grid3-hd-inner { white-space:normal !important; }
-
-EOF;
-		$this->pageRendererObject->addCssInlineBlock('Devlog', PHP_EOL . implode("\n", $inlineCSS) . PHP_EOL);
+		$path = t3lib_extMgm::extRelPath('devlog');
+		
+//		$inlineCSS[] .= <<< EOF
+//
+//EOF;
+//		$this->pageRendererObject->addCssInlineBlock('Devlog', PHP_EOL . implode("\n", $inlineCSS) . PHP_EOL);
+		$this->pageRendererObject->addCssFile($path . 'Resources/Public/stylesheets/devlog.css');
 	}
 
 	/**
@@ -289,6 +270,7 @@ EOF;
 		$files[] = 'UserInterface/Bootstrap.js';
 		$files[] = 'UserInterface/Layout.js';
 		$files[] = 'UserInterface/RowExpander.js';
+		$files[] = 'UserInterface/Iconcombo.js';
 
 		// Listing
 		$files[] = 'Listing/Bootstrap.js';
@@ -455,7 +437,7 @@ EOF;
 		global $TYPO3_DB;
 		global $LANG;
 
-		$records[] = array('', $LANG->getLL('selectseverity'));
+		$records[] = array('', $LANG->getLL('selectseverity'), '');
 		$dbres = $TYPO3_DB->exec_SELECTquery('DISTINCT severity', 'tx_devlog', '', '', 'crmsec DESC');
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
 			$severityLabel = '';
@@ -478,7 +460,7 @@ EOF;
 			}
 			$severityLabel = $LANG->getLL('severity_' . $severity);
 			$icon = t3lib_iconWorks::getSpriteIcon('extensions-devlog-' . $severity);
-			$records[] = array($row['severity'], $icon . ' ' . $severityLabel);
+			$records[] = array($row['severity'], $severityLabel, $severity);
 		}
 		return $records;
 	}
@@ -495,16 +477,25 @@ EOF;
 		global $LANG;
 		global $TYPO3_LOADED_EXT;
 
-		$records[] = array('', $LANG->getLL('selectextentionkey'));
+		$records[] = array('', $LANG->getLL('selectextentionkey'), '');
 		$dbres = $TYPO3_DB->exec_SELECTquery('DISTINCT extkey', 'tx_devlog', '', '', 'crmsec DESC');
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
-			$icon = '';
-			if (isset($TYPO3_LOADED_EXT[$row['extkey']]['typo3RelPath'])) {
-				$iconPath = $TYPO3_LOADED_EXT[$row['extkey']]['typo3RelPath'] . 'ext_icon.gif';
-				$icon = '<img src="' . $iconPath . '" alt="" />';
+			$extKey = $row['extkey'];
+			if (isset($TYPO3_LOADED_EXT[$extKey]['typo3RelPath'])) {
+				$className = $extKey;
+				$iconPath = $TYPO3_LOADED_EXT[$extKey]['typo3RelPath'] . 'ext_icon.gif';
+				$inlineCSS[] .= <<< EOF
+					.$extKey {
+						background-image:url(../../../../../../$iconPath) !important;
+					}
+EOF;
 			}
-			$records[] = array($row['extkey'], $icon . ' ' . $row['extkey']);
+			else {
+				$className = 'missing';
+			}
+			$records[] = array($row['extkey'], $row['extkey'], $className);
 		}
+		$this->pageRendererObject->addCssInlineBlock('devlog-class-extension', PHP_EOL . implode("\n", $inlineCSS) . PHP_EOL);
 		return $records;
 	}
 	
@@ -519,16 +510,15 @@ EOF;
 		global $TYPO3_DB;
 		global $LANG;
 
-		$records[] = array('', $LANG->getLL('selectpage'));
+		$records[] = array('', $LANG->getLL('selectpage'), '');
 		$dbres = $TYPO3_DB->exec_SELECTquery('DISTINCT pid', 'tx_devlog', '', 'pid ASC');
 
-		$icon = t3lib_iconWorks::getSpriteIconForRecord('pages');
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
 
 				// Retrieve the stored page information
 			$page = t3lib_BEfunc::getRecord('pages', $row['pid']);
 			$elementTitle = t3lib_BEfunc::getRecordTitle('pages', $page, 1);
-			$records[] = array($row['pid'], $icon . $elementTitle . ' (' . $row['pid'] . ')');
+			$records[] = array($row['pid'], $row['pid'] . ' - ' . $elementTitle, 'page');
 		}
 		return $records;
 	}
