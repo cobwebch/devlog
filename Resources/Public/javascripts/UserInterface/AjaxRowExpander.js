@@ -35,6 +35,7 @@ TYPO3.Devlog.UserInterface.AjaxRowExpander = Ext.extend(TYPO3.Devlog.UserInterfa
 		}
 		return body;
     },
+	
     beforeExpand : function(record, body, rowIndex){
         if(this.fireEvent('beforeexpand', this, record, body, rowIndex) !== false){
             body.innerHTML = this.getBodyContent(record, rowIndex);

@@ -81,7 +81,7 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 			// Button Bar
 			bbar: [
 				new Ext.PagingToolbar({
-					store: TYPO3.Devlog.Store.LogStore,       // grid and PagingToolbar using same store
+					store: TYPO3.Devlog.Store.LogStore,	   // grid and PagingToolbar using same store
 					displayInfo: true,
 					pageSize: TYPO3.Devlog.Preferences.pageSize,
 					prependButtons: true,
@@ -125,7 +125,7 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 			var row = this.getRow(index);
 			var record = TYPO3.Devlog.Store.LogStore.getAt(index);
 
-			// if no data is found, hide the "+"
+			// if no data is found, hides the "+"
 			if (!record.data['has_data_var']) {
 				// Fetches DOM element
 				var expanderButton = Ext.query('div.x-grid3-row-expander', row)[0];
@@ -175,9 +175,21 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 	ontoggleautorefresh: function(button, pressed){
 		var task = {
 			run: function(){
-				TYPO3.Devlog.Store.LogStore.load();
+				// Basic request in Ext
+				Ext.Ajax.request({
+				   url: '/typo3/ajax.php',
+				   params: {
+					   ajaxID: 'LogController::getLastLogTime'
+				   },
+				   success: function(response){
+					   if (TYPO3.Devlog.Data.LastLogTime != response.responseText) {
+							TYPO3.Devlog.Data.LastLogTime = response.responseText;
+							TYPO3.Devlog.Store.LogStore.load();
+					   }
+				   }
+				});
 			},
-			interval: 2000
+			interval: 1500
 		}
 		if (pressed) {
 			Ext.TaskMgr.start(task);

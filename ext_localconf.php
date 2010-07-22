@@ -28,4 +28,5 @@ $TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_div.php']['devLog'][$_EXTKEY] 
 //$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ExtDirect']['TYPO3.Devlog.Remote'] = 'EXT:devlog/class.tx_devlog_remote.php:tx_devlog_remote';
 $TYPO3_CONF_VARS['BE']['AJAX']['LogController::indexAction'] = 'EXT:devlog/class.tx_devlog_remote.php:tx_devlog_remote->indexAction';
 $TYPO3_CONF_VARS['BE']['AJAX']['LogController::getDataVar'] = 'EXT:devlog/class.tx_devlog_remote.php:tx_devlog_remote->getDataVar';
+$TYPO3_CONF_VARS['BE']['AJAX']['LogController::getLastLogTime'] = 'EXT:devlog/class.tx_devlog_remote.php:tx_devlog_remote->getLastLogTime';
 ?>

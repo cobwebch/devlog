@@ -298,6 +298,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$extensionList = json_encode($this->getExtensionList());
 		$pageList = json_encode($this->getPageList());
 		$logPeriod = json_encode($this->getLogPeriod());
+		$lastLogTime = json_encode($this->getLastLogTime());
 
 			// *********************************** //
 			// Defines onready Javascript
@@ -313,6 +314,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			TYPO3.Devlog.Data.SeverityList = $severityList;
 			TYPO3.Devlog.Data.PageList = $pageList;
 			TYPO3.Devlog.Data.LogPeriod = $logPeriod;
+			TYPO3.Devlog.Data.LastLogTime = $lastLogTime;
 
 
 //		for (var api in Ext.app.ExtDirectAPI) {
@@ -390,6 +392,22 @@ EOF;
 		return $content;
 	}
 
+	/**
+	 * Get log period
+	 *
+	 * @global t3lib_DB $TYPO3_DB
+	 * @return string
+	 */
+	public function getLastLogTime() {
+		global $TYPO3_DB;
+		$result = 0;
+		// Fetches interval of time
+		$records = $TYPO3_DB->exec_SELECTgetRows('MAX(crmsec) AS crmsec', 'tx_devlog', '');
+		if (isset($records[0]['crmsec'])) {
+			$result = $records[0]['crmsec'];
+		}
+		return $result;
+	}
 	/**
 	 * Fetches filter by time
 	 *

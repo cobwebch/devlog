@@ -257,7 +257,7 @@ class tx_devlog_remote {
 		$elementTitle = t3lib_BEfunc::getRecordTitle('pages', $page, 1);
 
 			// Create icon for record
-		$elementIcon = t3lib_iconWorks::getSpriteIconForRecord('pages');
+		$elementIcon = t3lib_iconWorks::getSpriteIconForRecord('pages', array());
 
 			// Return item with edit link
 		$editOnClick = 'top.loadEditId(' . $uid . ')';
@@ -299,6 +299,11 @@ class tx_devlog_remote {
 		return $request;
 	}
 
+	/**
+	 * Ajax method. Returns formated data var.
+	 *
+	 * @return string
+	 */
 	public function getDataVar() {
 		global $TYPO3_DB;
 		$result = '';
@@ -313,6 +318,21 @@ class tx_devlog_remote {
 		echo $result;
 	}
 
+	/**
+	 * Ajax method. Returns the very last time stamp.
+	 *
+	 * @return string
+	 */
+	public function getLastLogTime() {
+		global $TYPO3_DB;
+		$result = 0;
+		// Fetches interval of time
+		$records = $TYPO3_DB->exec_SELECTgetRows('MAX(crmsec) AS crmsec', 'tx_devlog', '');
+		if (isset($records[0]['crmsec'])) {
+			$result = $records[0]['crmsec'];
+		}
+		echo $result;
+	}
 }
 
 ?>
