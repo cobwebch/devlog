@@ -210,7 +210,7 @@ class tx_devlog_remote {
 		$fieldsInTable = $TYPO3_DB->admin_get_fields('tx_devlog');
 
 		foreach ($fields as $fieldName) {
-			if ($fieldName == 'crdate' || $fieldName == 'crmsec') {
+			if ($fieldName == 'crdate') { //  || $fieldName == 'crmsec'
 				$fieldsMetaData[] = array('name' => $fieldName, 'type' => 'date', 'dateFormat' => 'timestamp');
 			}
 			elseif (isset($fieldsInTable[$fieldName])) {

@@ -42,6 +42,12 @@ TYPO3.Devlog.Listing.TimeList = Ext.extend(Ext.form.ComboBox, {
 			this.onselect,
 			this
 		);
+
+		this.on(
+			'onclickoncrdatecell',
+			this.onclickoncrdatecell,
+			this
+		);
 	},
 
 	/**
@@ -67,6 +73,17 @@ TYPO3.Devlog.Listing.TimeList = Ext.extend(Ext.form.ComboBox, {
 		TYPO3.Devlog.Store.LogStore.baseParams.limit = value;
 		TYPO3.Devlog.UserInterface.container.logGrid.pagebrowser.pageSize = value
 		TYPO3.Devlog.Store.LogStore.load();
+	},
+
+	/**
+	 * Defines default value
+	 *
+	 * @access public
+	 * @method onafterrender
+	 * @return void
+	 */
+	onclickoncrdatecell: function() {
+		this.setValue(-1);
 	}
 
 });

@@ -49,16 +49,20 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 			// Top Bar
 			tbar: [
 				{
-					xtype: 'TYPO3.Devlog.Listing.TimeList'
+					xtype: 'TYPO3.Devlog.Listing.TimeList',
+					ref: '../timeList'
 				},
 				{
-					xtype: 'TYPO3.Devlog.Listing.SeverityList'
+					xtype: 'TYPO3.Devlog.Listing.SeverityList',
+					ref: '../severityList'
 				},
 				{
-					xtype: 'TYPO3.Devlog.Listing.ExtensionList'
+					xtype: 'TYPO3.Devlog.Listing.ExtensionList',
+					ref: '../extensionList'
 				},
 				{
-					xtype: 'TYPO3.Devlog.Listing.PageList'
+					xtype: 'TYPO3.Devlog.Listing.PageList',
+					ref: '../pageList'
 				},
 				'-',
 				{
@@ -137,6 +141,17 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 		// If the "+" has already been hit, it will never come back to "+" again by click on the refreh button
 		Ext.each(Ext.select('.x-grid3-row-expanded').elements, function(element) {
 			Ext.get(element).removeClass('x-grid3-row-expanded').addClass('x-grid3-row-collapse');
+		});
+
+
+		// Binding an event on crdate link to filter log run at the same time
+		Ext.select('.devlog-link-crdate').on('click', function() {
+			var uid = this.id.replace('devlog-link-generated-', '');
+			var record = TYPO3.Devlog.Store.LogStore.getById(uid);
+			TYPO3.Devlog.Store.LogStore.baseParams.limit = record.data['crmsec'];
+			TYPO3.Devlog.UserInterface.container.logGrid.pagebrowser.pageSize = record.data['crmsec'];
+			TYPO3.Devlog.Store.LogStore.load();
+			TYPO3.Devlog.UserInterface.container.logGrid.timeList.fireEvent('onclickoncrdatecell');
 		});
 	},
 
@@ -245,6 +260,22 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 	},
 
 	/**
+	 * Renders the "crdate" column
+	 *
+	 * @access private
+	 * @method _renderLocation
+	 * @param {string} value
+	 * @param {Object} parent
+	 * @param {Object} record
+	 * @return string
+	 */
+	_renderCrdate: function(value, parent, record) {
+		var format = TYPO3.Devlog.Preferences.dateFormat + ' ' + TYPO3.Devlog.Preferences.timeFormat;
+		var result = Ext.util.Format.date(record.data['crdate'], format);
+		return '<a href="#" class="devlog-link-crdate" id="devlog-link-generated-' + record.id + '" onclick="return false">' + result + '</a>';
+	},
+
+	/**
 	 * Returns the configuration array
 	 *
 	 * @access private
@@ -266,7 +297,7 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 				dataIndex: 'crdate',
 				header: TYPO3.Devlog.Language.crdate,
 				sortable: true,
-				renderer: Ext.util.Format.dateRenderer(TYPO3.Devlog.Preferences.dateFormat + ' ' + TYPO3.Devlog.Preferences.timeFormat)
+				renderer: this._renderCrdate
 			},
 			{
 				id: 'severity',
