@@ -51,32 +51,37 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 				{
 					xtype: 'TYPO3.Devlog.Listing.TimeList',
 					ref: '../timeList'
-				},
-				{
+				}, {
+					xtype: 'tbspacer'
+				}, {
 					xtype: 'TYPO3.Devlog.Listing.SeverityList',
 					ref: '../severityList'
-				},
-				{
+				}, {
+					xtype: 'tbspacer'
+				}, {
 					xtype: 'TYPO3.Devlog.Listing.ExtensionList',
 					ref: '../extensionList'
-				},
-				{
+				}, {
+					xtype: 'tbspacer'
+				}, {
 					xtype: 'TYPO3.Devlog.Listing.PageList',
 					ref: '../pageList'
-				},
-				'-',
-				{
+				}, {
+					xtype: 'tbfill'
+				}, {
 					pressed: false,
 					enableToggle: true,
+					xtype: 'button',
 					text: TYPO3.Devlog.Language.expand_all_extra_data,
-					cls: 'x-btn-text-icon details',
+					cls: 'x-btn-text-icon expandall',
 					toggleHandler: this.ontoggleexpand
-				},
-				{
+				}, {
+					xtype: 'tbspacer'
+				}, {
 					pressed: false,
 					enableToggle: true,
 					text: TYPO3.Devlog.Language.auto_refresh,
-					cls: 'x-btn-text-icon details',
+					cls: 'x-btn-text-icon reload',
 					toggleHandler: this.ontoggleautorefresh
 				}
 
@@ -165,16 +170,23 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 	 * @return void
 	 */
 	ontoggleexpand: function(button, pressed){
+		var expander, row, view, numberOfRows, isCollapsed;
 
-		var view = TYPO3.Devlog.UserInterface.container.logGrid.getView();
-		var numberOfRows = TYPO3.Devlog.Store.LogStore.getCount();
+		view = TYPO3.Devlog.UserInterface.container.logGrid.getView();
+		numberOfRows = TYPO3.Devlog.Store.LogStore.getCount();
 
 		for (index = 0; index < numberOfRows; index++) {
-			var row = view.getRow(index);
-				var expander = Ext.query('div.x-grid3-row-expander', row)[0];
-				if (expander) {
+			row = view.getRow(index);
+			expander = Ext.query('div.x-grid3-row-expander', row)[0];
+			isCollapsed = Ext.get(row).hasClass('x-grid3-row-collapsed');
+			
+			// expander may be null if there is no extra data on the GUI => no arrow
+			if (expander) {
+				if ((pressed && isCollapsed) || (!pressed && !isCollapsed)) {
 					TYPO3.Devlog.Utils.fireEvent('mousedown', expander);
 				}
+				
+			}
 		}
 	},
 
@@ -289,58 +301,52 @@ TYPO3.Devlog.Listing.LogGrid = Ext.extend(Ext.grid.GridPanel, {
 				id: 'uid',
 				dataIndex: 'uid',
 				header: 'UID',
-				width: 30,
+				width: 50,
+				align: 'center',
 				sortable: true
-			},
-			{
+			}, {
 				id: 'crdate',
 				dataIndex: 'crdate',
 				header: TYPO3.Devlog.Language.crdate,
 				sortable: true,
 				renderer: this._renderCrdate
-			},
-			{
+			}, {
 				id: 'severity',
 				dataIndex: 'severity',
 				header: TYPO3.Devlog.Language.severity,
 				renderer: this._renderSeverity,
-				width: 60,
+				width: 80,
+				align: 'center',
 				sortable: true
-			},
-			{
+			}, {
 				id: 'extkey',
 				dataIndex: 'extkey_formatted',
 				header: TYPO3.Devlog.Language.extkey,
 				sortable: true
-			},
-			{
+			}, {
 				id: 'msg',
 				dataIndex: 'msg',
 				header: TYPO3.Devlog.Language.msg,
 				renderer: this._renderMessage
-			},
-			{
+			}, {
 				id: 'location',
 				dataIndex: 'location',
 				header: TYPO3.Devlog.Language.location,
 				width: 200,
 				renderer: this._renderLocation
-			},
-			{
+			}, {
 				id: 'page',
 				dataIndex: 'pid_formatted',
 				header: TYPO3.Devlog.Language.pid,
-				width: 50,
+//				width: 50,
 				sortable: true
-			},
-			{
+			}, {
 				id: 'user',
 				dataIndex: 'cruser_formatted',
 				header: TYPO3.Devlog.Language.cruser_id,
 				width: 50,
 				sortable: true
-			},
-			{
+			}, {
 				id: 'line',
 				dataIndex: 'line',
 				header: TYPO3.Devlog.Language.line,
