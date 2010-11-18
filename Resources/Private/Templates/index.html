@@ -10,9 +10,9 @@
 	<div id="typo3-docheader-row2">
 		<div class="docheader-row2-left">
 			<div class="buttongroup">
-				<form name="options" action="" method="post">
+<!--				<form name="options" action="" method="post">
 					###MENUBAR###
-				</form>
+				</form>-->
 			</div>
 		</div>
 		<div class="docheader-row2-right">
@@ -32,7 +32,14 @@
 		###HEADER###
 		###MESSAGE###
 		<br />
-		
-		###CONTENT###
+		<div id="t3-log-grid"></div>
+<!--###CONTENT###-->
 	</div>
+	<!-- Fields required for history management -->
+	<form id="history-form" class="x-hidden">
+		<input type="hidden" id="x-history-field" />
+
+		<iframe id="x-history-frame"></iframe>
+	</form>
+
 </div>

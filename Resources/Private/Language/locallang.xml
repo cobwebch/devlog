@@ -25,7 +25,7 @@
             <label index="latest_50">latest 50 entries</label>
             <label index="latest_100">latest 100 entries</label>
             <label index="all_entries">all entries</label>
-            <label index="auto_refresh">Auto refresh</label>
+            <label index="auto_refresh">Auto reload when new data</label>
             <label index="log_time">Log time</label>
             <label index="log_period">Log period</label>
             <label index="refresh">Refresh</label>
@@ -40,6 +40,7 @@
             <label index="no_entries_found">No entries found. Try to relax your filter and search criteria.</label>
             <label index="open_view">Open new window</label>
             <label index="line_call">%s, line %d</label>
+            <label index="line">line</label>
             <label index="extra_data_error">Error reading extra data</label>
             <label index="tx_devlog_error.toolong">The extra data exceeded the maximum size. It was not stored.</label>
             <label index="tx_devlog_error.invalid">The extra data was not an array. It was not stored.</label>
@@ -71,6 +72,10 @@
 			<label index="1year">1 year</label>
 			<label index="no_entries">There are currently no log entries in the Developer Log.</label>
 			<label index="xx_entries">There are currently %d log entries in the Developer Log.</label>
+			<label index="loading">Loading...</label>
+			<label index="selectextentionkey">Select an extension key</label>
+			<label index="selectseverity">Select severity</label>
+			<label index="selectpage">Select page</label>
         </languageKey>
     </data>
 </T3locallang>
