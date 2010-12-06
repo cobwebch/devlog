@@ -20,31 +20,40 @@
 *  GNU General Public License for more details.
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
-*
-*  $Id$
 ***************************************************************/
 
 
 /**
- * Interface that must be implemented for all classes that want to write devLog entries to some output system
+ * This class writes log entries to the database table "tx_devlog"
  *
  * @author		Francois Suter <typo3@cobweb.ch>
  * @package		TYPO3
  * @subpackage	tx_devlog
+ *
+ *  $Id$
  */
 class tx_devlog_writers_Database implements tx_devlog_LogWriter {
 	/**
-	 * This method is used to write a devLog entry to some support (database, file, etc.) or output
+	 * This method is used to write a devLog entry to the database
 	 *
-	 * @abstract
-	 * @param	string	$message: the main message to log
-	 * @param	string	$key: some key that identifies in which context the log entry way issued (e.g. an extension key)
-	 * @param	int		$severity: the severity of the log entry
-	 * @param	array	$additionalData: addition information related to the log entry
+	 * @param	array	$logEntry: addition information related to the log entry
 	 * @return void
 	 */
-	public function writeEntry($message, $key, $severity = 0, array $additionalData = array()) {
-
+	public function writeEntry($logEntry) {
+		$insertFields = array(
+			'pid' => $logEntry['pid'],
+			'crmsec' => $logEntry['microtime'],
+			'crdate' => $GLOBALS['EXEC_TIME'],
+			'cruser_id' => $logEntry['user'],
+			'ip' => $logEntry['ip'],
+			'severity' => $logEntry['severity'],
+			'extkey' => $logEntry['key'],
+			'msg' => $logEntry['message'],
+			'location' => $logEntry['location'],
+			'line' => $logEntry['line'],
+			'data_var' => $logEntry['data']
+		);
+		$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_devlog', $insertFields);
 	}
 }
 ?>

@@ -20,8 +20,6 @@
 *  GNU General Public License for more details.
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
-*
-*  $Id$
 ***************************************************************/
 
 
@@ -31,18 +29,30 @@
  * @author		Francois Suter <typo3@cobweb.ch>
  * @package		TYPO3
  * @subpackage	tx_devlog
+ *
+ *  $Id$
  */
 interface tx_devlog_LogWriter {
 	/**
 	 * This method is used to write a devLog entry to some support (database, file, etc.) or output
+	 * It receives an array with the following information:
+	 *
+	 * pid =>		page where the call happened (if relevant, may be empty)
+	 * severity =>	severity of the log entry
+	 * message =>	main message of the log entry
+	 * key =>		some key to identify the origin of the log entry (e.g. an extension's key)
+	 * microtime =>	the microtime at which the entry happened (microtime is used to make sure we have different times for near-concurrent entries)
+	 * location =>	the file where the call was triggered
+	 * line =>		the line at which the call was triggered
+	 * user =>		the BE user who was logged in at the time where the entry was written (may be empty)
+	 * date =>		the timestamp at which the entry happened (less precise, but more usable than the microtime)
+	 * ip =>		the IP address of the client machine which was making the request that triggered the entry
+	 * data =>		additional information related to the entry, as a PHP array
 	 *
 	 * @abstract
-	 * @param	string	$message: the main message to log
-	 * @param	string	$key: some key that identifies in which context the log entry way issued (e.g. an extension key)
-	 * @param	int		$severity: the severity of the log entry
-	 * @param	array	$additionalData: addition information related to the log entry
+	 * @param	array	$logEntry: addition information related to the log entry
 	 * @return void
 	 */
-	public function writeEntry($message, $key, $severity = 0, array $additionalData = array());
+	public function writeEntry($logEntry);
 }
 ?>

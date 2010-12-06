@@ -1,55 +1,50 @@
 <?php
 /***************************************************************
 *  Copyright notice
-*  
+*
 *  (c) 2004 Rene Fritz (r.fritz@colorcube.de)
-*  (c) 2009 Francois Suter (typo3@cobweb.ch)
+*  (c) 2010 Francois Suter (typo3@cobweb.ch)
 *  All rights reserved
 *
-*  This script is part of the TYPO3 project. The TYPO3 project is 
+*  This script is part of the TYPO3 project. The TYPO3 project is
 *  free software; you can redistribute it and/or modify
 *  it under the terms of the GNU General Public License as published by
 *  the Free Software Foundation; either version 2 of the License, or
 *  (at your option) any later version.
-* 
+*
 *  The GNU General Public License can be found at
 *  http://www.gnu.org/copyleft/gpl.html.
-* 
+*
 *  This script is distributed in the hope that it will be useful,
 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
 *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 *  GNU General Public License for more details.
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
-*
-*  $Id$
 ***************************************************************/
 
 
-/** 
+/**
  * devlog function for the 'devlog' extension.
  *
- * @author	Rene Fritz <r.fritz@colorcube.de>
- * @author	Francois Suter <typo3@cobweb.ch>
+ * @author		Rene Fritz <r.fritz@colorcube.de>
+ * @author		Francois Suter <typo3@cobweb.ch>
+ * @package		TYPO3
+ * @subpackage	tx_devlog
+ *
+ *  $Id$
  */
 class tx_devlog {
-	var $extKey = 'devlog';	// The extension key
-	var $extConf = array(); // The extension configuration
-	var $rowCount; // The number of rows in the devlog table
+	public $extKey = 'devlog';	// The extension key
+	public $extConf = array(); // The extension configuration
+	protected $rowCount; // The number of rows in the devlog table
 
 	/**
 	 * Constructor
 	 * The constructor just reads the extension configuration and stores it in a member variable
 	 */
-	function __construct() {
+	public function __construct() {
 		$this->extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]);
-	}
-
-	/**
-	 * PHP 4 wrapper for the constructor method
-	 */
-	function tx_devlog() {
-		$this->__construct();
 	}
 
 	/**
@@ -60,11 +55,11 @@ class tx_devlog {
 	 * 'extKey'		string		Extension key (from which extension you are calling the log)
 	 * 'severity'	integer		Severity: 0 is info, 1 is notice, 2 is warning, 3 is fatal error, -1 is "OK" message
 	 * 'dataVar'	array		Additional data you want to pass to the logger.
-	 * 
+	 *
 	 * @param	array		$logArr: log data array
-	 * @return	void	 
+	 * @return	void
 	 */
-	function devLog($logArr) {
+	public function devLog($logArr) {
 			// If the DB object is not yet instantiated or not connected to the DB, abort writing to the log
 		if (!isset($GLOBALS['TYPO3_DB']) || !is_object($GLOBALS['TYPO3_DB']) || !$GLOBALS['TYPO3_DB']->link) {
 			return;
@@ -93,61 +88,60 @@ class tx_devlog {
 			$this->checkRowLimit();
 		}
 
-		$insertFields = array();
-			// Try to get a pid that makes sense
+		$logEntry = array();
+			// Try to get a page id that makes sense
 		$pid = 0;
 			// In the FE context, this is obviously the current page
-		if (isset($GLOBALS['TSFE'])) {
+		if (TYPO3_MODE == 'FE') {
 			$pid = $GLOBALS['TSFE']->id;
 
 			// In other contexts, a global variable may be set with a relevant pid
 		} elseif (isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['debugData']['pid'])) {
 			$pid = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['debugData']['pid'];
 		}
-		$insertFields['pid'] = $pid;
-		$insertFields['crdate'] = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['tstamp'];
-		$insertFields['crmsec'] = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['mstamp'];
-		$insertFields['cruser_id'] = $GLOBALS['BE_USER']->user['uid'];
-			// Clean up the message before insertion into the database
-			// If possible use RemoveXSS (TYPO3 4.2+), otherwise strip all tags
-		$message = '';
-		if (method_exists('t3lib_div', 'removeXSS')) {
-			$message = t3lib_div::removeXSS($logArr['msg']);
-		} else {
-			$message = strip_tags($logArr['msg']);
-		}
-		$insertFields['msg'] = $message;
-			// There's no reason to have any markup in the extension key
-		$insertFields['extkey'] = strip_tags($logArr['extKey']);
-			// Severity can only be a number
-		$insertFields['severity'] = intval($logArr['severity']);
+		$logEntry['pid'] = $pid;
+//		$logEntry['crdate'] = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['tstamp'];
+		$logEntry['microtime'] = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['mstamp'];
+		$logEntry['user'] = $GLOBALS['BE_USER']->user['uid'];
+		$logEntry['ip'] = t3lib_div::getIndpEnv('REMOTE_ADDR');
 
-			// Try to get information about the place where this method was called from
-		if (function_exists('debug_backtrace')) {
-			$callPlaceInfo = $this->getCallPlaceInfo(debug_backtrace());
-			$insertFields['location'] = $callPlaceInfo['basename'];
-			$insertFields['line'] = $callPlaceInfo['line'];
-		}
+			// Clean up the message
+		$logEntry['message'] = t3lib_div::removeXSS($logArr['msg']);
+			// There's no reason to have any markup in the extension key
+		$logEntry['key'] = strip_tags($logArr['extKey']);
+			// Severity can only be a number
+		$logEntry['severity'] = intval($logArr['severity']);
+
+			// Get information about the place where this method was called from
+		$callPlaceInfo = $this->getCallPlaceInfo(debug_backtrace());
+		$logEntry['location'] = $callPlaceInfo['basename'];
+		$logEntry['line'] = $callPlaceInfo['line'];
 
 		if (!empty($logArr['dataVar'])) {
+			$extraData = $logArr['dataVar'];
 			if (is_array($logArr['dataVar'])) {
-				$serializedData = serialize($logArr['dataVar']);
-				if (!isset($this->extConf['dumpSize']) || strlen($serializedData) <= $this->extConf['dumpSize']) {
-					$insertFields['data_var'] = $serializedData;
-				} else {
-					$insertFields['data_var'] = serialize(array('tx_devlog_error' => 'toolong'));
-				}
+				$extraData = array($logArr['dataVar']);
+			}
+			$serializedData = serialize($extraData);
+			if (!isset($this->extConf['dumpSize']) || strlen($serializedData) <= $this->extConf['dumpSize']) {
+				$logEntry['data'] = $serializedData;
 			} else {
-				$insertFields['data_var'] = serialize(array('tx_devlog_error' => 'invalid'));
+				$logEntry['data'] = serialize(array('tx_devlog_error' => 'toolong'));
 			}
 		}
 
-		$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_devlog', $insertFields);
+		foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['writers'] as $class) {
+			/** @var $writerObject tx_devlog_LogWriter */
+			$writerObject = t3lib_div::makeInstance($class);
+			if ($writerObject instanceof tx_devlog_LogWriter) {
+				$writerObject->writeEntry($logEntry);
+			}
+		}
 
 			// Increase the (cached) number of rows
 		$this->numRows++;
 	}
-	
+
 	/**
 	 * Given a backtrace, this method tries to find the place where a "devLog" function was called
 	 * and return info about the place
@@ -156,7 +150,7 @@ class tx_devlog {
 	 *
 	 * @return	array	information about the call place
 	 */
-	function getCallPlaceInfo($backTrace) {
+	protected function getCallPlaceInfo($backTrace) {
 		foreach ($backTrace as $entry) {
 			if ($entry['class'] !== 'tx_devlog' && $entry['function'] === 'devLog') {
 				$pathInfo = pathinfo($entry['file']);
@@ -170,10 +164,10 @@ class tx_devlog {
 	/**
 	 * This method checks whether the number of rows in the devlog table exceeds the limit
 	 * If yes, 10% of that amount is deleted, with older records going first
-	 * 
+	 *
 	 * @return	void
 	 */
-	function checkRowLimit() {
+	protected function checkRowLimit() {
 			// Get the total number of rows, if not already defined
 		if (!isset($this->numRows)) {
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('COUNT(uid)', 'tx_devlog', '');
