@@ -1,20 +1,20 @@
 <?php
 /***************************************************************
 *  Copyright notice
-*  
+*
 *  (c) 2004 Rene Fritz (r.fritz@colorcube.de)
 *  (c) 2009 Francois Suter (typo3@cobweb.ch)
 *  All rights reserved
 *
-*  This script is part of the TYPO3 project. The TYPO3 project is 
+*  This script is part of the TYPO3 project. The TYPO3 project is
 *  free software; you can redistribute it and/or modify
 *  it under the terms of the GNU General Public License as published by
 *  the Free Software Foundation; either version 2 of the License, or
 *  (at your option) any later version.
-* 
+*
 *  The GNU General Public License can be found at
 *  http://www.gnu.org/copyleft/gpl.html.
-* 
+*
 *  This script is distributed in the hope that it will be useful,
 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
 *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -25,7 +25,7 @@
 *  $Id$
 ***************************************************************/
 
-/** 
+/**
  * BE module for the 'devlog' extension.
  *
  * @author	Rene Fritz <r.fritz@colorcube.de>
@@ -36,7 +36,7 @@
 $EXTCONF['devlog']['nolog'] = TRUE;
 
 	// DEFAULT initialization of a module [BEGIN]
-unset($MCONF);	
+unset($MCONF);
 require('conf.php');
 require($BACK_PATH . 'init.php');
 
@@ -78,11 +78,11 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 			// Get log run list
 		$this->getLogRuns();
-		
+
 			// Clean up excess logs (if activated)
 		if ($this->extConf['autoCleanup']) $this->logGC();
 
-			// Get and store the GET and POST variables		
+			// Get and store the GET and POST variables
 		$this->setVars = t3lib_div::_GP('SET');
 
 		parent::init();
@@ -156,10 +156,10 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 */
 	function main()	{
 		global $BACK_PATH;
-		
+
 		// Access check! Allow only admin user to view this content
 		if ($GLOBALS['BE_USER']->user['admin'])	{
-	
+
 				// Draw the header.
 			$this->doc = t3lib_div::makeInstance('template');
 			$this->doc->backPath = $BACK_PATH;
@@ -206,14 +206,14 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				// JavaScript for automatic reloading of log window
 			$this->doc->JScodeArray[] = '
 				var reloadTimer = null;
-				
+
 				window.onload = function() {
 				  if(window.name=="devlog") {
 					document.getElementById("openview").style.visibility = "hidden";
 				  }
 				  setReloadTime('.($this->MOD_SETTINGS['autorefresh'] ? $this->extConf['refreshFrequency'] : '0').');
 				}
-				
+
 				function setReloadTime(secs) {
 				  if (arguments.length == 1) {
 				    if (reloadTimer) clearTimeout(reloadTimer);
@@ -224,7 +224,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				    document.options.submit();
 				  }
 				}
-				
+
 				function toggleReload(autorefresh) {
 					if(autorefresh){
 						setReloadTime(2);
@@ -232,7 +232,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 						setReloadTime(0);
 					};
 				}';
-				
+
 
 
 			$headerSection ='';
@@ -258,10 +258,10 @@ class tx_devlog_module1 extends t3lib_SCbase {
 						array('', $optMenu['autorefresh']),
 						array('',$optMenu['expandAllExtraData'])
 					)
-				);			
+				);
 			}
-			
-			
+
+
 			$this->content .= $this->doc->startPage($GLOBALS['LANG']->getLL('title'));
 			$this->content .= $this->doc->header($GLOBALS['LANG']->getLL('title'));
 			$this->content .= $this->doc->spacer(5);
@@ -270,20 +270,20 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 			// Render content:
 			$this->moduleContent();
-			
+
 			// ShortCut
 			if ($GLOBALS['BE_USER']->mayMakeShortcut())	{
 				$this->content .= $this->doc->spacer(20).$this->doc->section('',$this->doc->makeShortcutIcon('id',implode(',',array_keys($this->MOD_MENU)),$this->MCONF['name']));
 			}
-		
+
 			$this->content .= $this->doc->spacer(10);
 		}
 		else {
 				// If no access
-		
+
 			$this->doc = t3lib_div::makeInstance('mediumDoc');
 			$this->doc->backPath = $BACK_PATH;
-		
+
 			$this->content .= $this->doc->startPage($GLOBALS['LANG']->getLL('title'));
 			$this->content .= $this->doc->header($GLOBALS['LANG']->getLL('title'));
 			$this->content .= $this->doc->spacer(5);
@@ -301,7 +301,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		$this->content = $this->doc->insertStylesAndJS($this->content);
 		echo $this->content;
 	}
-	
+
 	/**
 	 * Generates the module content
 	 *
@@ -311,7 +311,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 		switch((string)$this->MOD_SETTINGS['function'])	{
 			case 'showlog':
-				if(count($this->logRuns)) {					
+				if(count($this->logRuns)) {
 					$content = $this->getLogTable();
 					$this->content .= $this->doc->section($GLOBALS['LANG']->getLL('log_entries').':', $content, 0, 1);
 				}
@@ -320,15 +320,15 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				$content = $this->cleanupScreen();
 				$this->content .= $this->doc->section($GLOBALS['LANG']->getLL('clearlog').':', $content, 0, 1);
 			break;
-		} 
+		}
 	}
-	
-	
+
+
 	/**
 	 * Creates the log entry table
-	 * 
+	 *
 	 * @return	string 	rendered HTML table
-	 */	
+	 */
 	function getLogTable()	{
 		global $BACK_PATH;
 		$content = '';
@@ -348,7 +348,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 		$table = array();
 		$tr = 0;
-		
+
 			// Header row
 		$table[$tr][] = $this->renderHeader('crdate');
 		$table[$tr][] = $this->renderHeader('severity', true);
@@ -370,13 +370,13 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		else {
 			$endDate = 0;
 			while (($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres))) {
-	
+
 					// Memorise start and end date of selected entries
 				if (empty($endDate)) {
 					$endDate = $row['crdate'];
 				}
 				$startDate = $row['crdate'];
-				
+
 					// Severity: 0 is info, 1 is notice, 2 is warning, 3 is fatal error, -1 is "OK" message
 				switch ($row['severity']) {
 					case 0:
@@ -392,7 +392,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 						$severity = $row['severity'];
 						break;
 				}
-				
+
 					// Add a row to the table
 				$tr++;
 
@@ -430,7 +430,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 						$dataVar = '<a href="javascript:toggleExtraData(\'' . $row['uid'] . '\')" id="debug-link-' . $row['uid'] . '" title="' . $label . '">';
 						$dataVar .= $icon;
 						$dataVar .= '</a>';
-						$dataVar .= '<div id="debug-row-' . $row['uid'] . '"' . $style . '>' . t3lib_div::view_array($fullData) . '</div>';
+						$dataVar .= '<div id="debug-row-' . $row['uid'] . '"' . $style . '>' . $this->debugArray($fullData) . '</div>';
 					}
 				}
 				$table[$tr][] = $dataVar;
@@ -530,7 +530,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		return $header;
 	}
 
-	/** 
+	/**
 	 * This method assembles links to navigate between pages of log entries
 	 *
 	 * @return	string	list of pages with links
@@ -551,7 +551,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		return '<p>' . $GLOBALS['LANG']->getLL('entries') . ': ' . $navigation . '</p>';
 	}
 
-	/** 
+	/**
 	 * This method assemble links to navigate between previous and next log runs
 	 *
 	 * @return	string	list of pages with links
@@ -752,7 +752,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 *
 	 * DB stuff
 	 *
-	 *******************************************/	
+	 *******************************************/
 
 	/**
 	 * This method gets the list of all the log runs
@@ -918,7 +918,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			// Otherwise just take the logrun value as is
 		else {
 			$this->selectedLog = $this->setVars['logrun'];
-		} 
+		}
 	}
 
 	/**
@@ -932,8 +932,8 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$logRun = $keys[$this->extConf['maxLogRuns'] - 1];
 			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', 'crmsec < ' . $logRun);
 		}
-	}	
-	
+	}
+
 	/**
 	 * This method prepares the link for opening the devlog in a new window
 	 *
@@ -942,22 +942,22 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	function openNewView() {
 		global $BACK_PATH;
 
-		$url = t3lib_div::getIndpEnv('TYPO3_REQUEST_SCRIPT');		
+		$url = t3lib_div::getIndpEnv('TYPO3_REQUEST_SCRIPT');
 		$onClick = "devlogWin=window.open('" . $url . "','devlog','width=790,status=0,menubar=1,resizable=1,location=0,scrollbars=1,toolbar=0');devlogWin.focus();return false;";
 		$content = '<a id="openview" href="#" onclick="' . htmlspecialchars($onClick).'">' .
 					'<img' . t3lib_iconWorks::skinImg($BACK_PATH,'gfx/open_in_new_window.gif', 'width="19" height="14"') . ' title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.openInNewWindow', 1) . '" class="absmiddle" alt="" />' .
 					'</a>';
-		return $content;						
-	}	
+		return $content;
+	}
 
 	/**
 	 * Assemble the link to select a single log run
 	 *
 	 * @return	string
 	 */
-	function linkLogRun($str, $logRun) {		
+	function linkLogRun($str, $logRun) {
 		$content = '<a href="?SET[logrun]=' . $logRun . '">' . $str . '</a>';
-		return $content;						
+		return $content;
 	}
 
     /**
@@ -976,10 +976,10 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				// (pages were already fetched in getLogFilters)
 			$row = $this->records['pages'][$uid];
 			$iconAltText = t3lib_BEfunc::getRecordIconAltText($row, 'pages');
-	
+
 				// Create icon for record
 			$elementIcon = t3lib_iconworks::getIconImage('pages', $row, $BACK_PATH, 'class="c-recicon" title="' . $iconAltText . '"');
-	
+
 				// Return item with edit link
 			$editOnClick = 'top.loadEditId(' . $uid . ')';
 			$string = '<a href="#" onclick="' . htmlspecialchars($editOnClick) . '">' . $elementIcon . $row['t3lib_BEfunc::title'] . '</a>';
@@ -1012,6 +1012,22 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			return $elementIcon.$elementTitle;
 		}
 	}
+
+	/**
+	 * Prints the debug output of an array
+	 *
+	 * Compatibility wrapper for obsolete Core methods
+	 *
+	 * @param array $array Array to output
+	 * @return string
+	 */
+	protected function debugArray($array) {
+		if (class_exists('t3lib_utility_Debug')) {
+			return t3lib_utility_Debug::viewArray($array);
+		} else {
+			t3lib_div::view_array($array);
+		}
+	}
 }
 
 
@@ -1023,7 +1039,8 @@ if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/devlog/
 
 
 
-// Make instance:
+	// Make instance:
+	/** @var $SOBE tx_devlog_module1 */
 $SOBE = t3lib_div::makeInstance('tx_devlog_module1');
 $SOBE->init();
 $SOBE->main();

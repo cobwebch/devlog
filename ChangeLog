@@ -1,3 +1,7 @@
+2012-05-10 Francois Suter <typo3@cobweb.ch>
+
+	* Updated for compatibility with TYPO3 4.7, resolves #36957
+
 2009-12-21 Francois Suter <typo3@cobweb.ch>
 
 	* Added protection against possible XSS attacks
