@@ -40,7 +40,7 @@ class tx_devlog_tceforms {
 	 * HTML should be display as is
 	 *
 	 * @param	array			$PA: information related to the field
-	 * @param	t3lib_tceform	$fobj: reference to calling TCEforms object
+	 * @param	t3lib_tceforms	$fobj: reference to calling TCEforms object
 	 *
 	 * @return	string	The HTML for the form field
 	 */
@@ -52,7 +52,7 @@ class tx_devlog_tceforms {
 	 * This method returns the severity of the entry using TYPO3's icon and labels
 	 *
 	 * @param	array			$PA: information related to the field
-	 * @param	t3lib_tceform	$fobj: reference to calling TCEforms object
+	 * @param	t3lib_tceforms	$fobj: reference to calling TCEforms object
 	 *
 	 * @return	string	The HTML for the form field
 	 */
@@ -68,7 +68,7 @@ class tx_devlog_tceforms {
 		else {
 			$html .= $this->doc->icons($severity);
 		}
-		
+
 			// Change severity for the label
 		if ($severity == -1) {
 			$severity = 4;
@@ -84,7 +84,7 @@ class tx_devlog_tceforms {
 	 * This method returns the additional data's content as HTML structure
 	 *
 	 * @param	array			$PA: information related to the field
-	 * @param	t3lib_tceform	$fobj: reference to calling TCEforms object
+	 * @param	t3lib_tceforms	$fobj: reference to calling TCEforms object
 	 *
 	 * @return	string	The HTML for the form field
 	 */
@@ -94,11 +94,27 @@ class tx_devlog_tceforms {
 		}
 		else {
 			$data = unserialize($PA['row']['data_var']);
-			$html = t3lib_div::view_array($data);
+			$html = $this->debugArray($data);
 		}
 		return $html;
 	}
 
+
+	/**
+	 * Prints the debug output of an array
+	 *
+	 * Compatibility wrapper for obsolete Core methods
+	 *
+	 * @param array $array Array to output
+	 * @return string
+	 */
+	protected function debugArray($array) {
+		if (class_exists('t3lib_utility_Debug')) {
+			return t3lib_utility_Debug::viewArray($array);
+		} else {
+			t3lib_div::view_array($array);
+		}
+	}
 
 }
 

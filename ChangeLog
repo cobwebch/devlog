@@ -1,5 +1,7 @@
 2012-05-10 Francois Suter <typo3@cobweb.ch>
 
+	* Fixed one forgotten compatibility issue, resolves #36957
+	* Released to TER as version 2.9.4
 	* Updated for compatibility with TYPO3 4.7, resolves #36957
 	* Released to TER as version 2.9.3
 
