@@ -5,6 +5,7 @@
 	* Fixed clearing of search and filter
 	* Fixed filtering on namespaced keys
 	* Fixed display of page icons, resolves #48605
+	* Released to TER as version 2.10.0
 
 2012-05-10 Francois Suter <typo3@cobweb.ch>
 
