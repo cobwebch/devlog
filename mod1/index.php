@@ -483,10 +483,12 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 */
 	function renderSearchForm() {
 		$content = '<p>'.$GLOBALS['LANG']->getLL('search_data').': ';
+		$content .= '<form name="search" action="" method="GET">';
 		$content .= '<input type="text" id="sword" name="SET[sword]" value="'.$this->MOD_SETTINGS['sword'].'" /> ';
 		$content .= '<input type="submit" name="search" value="'.$GLOBALS['LANG']->getLL('search').'" /> ';
 		$content .= '<input type="button" name="clear_search" value="'.$GLOBALS['LANG']->getLL('clear_search').'" onclick="this.form.sword.value=\'\';this.form.submit();" />';
 		$content .= '<input type="submit" name="SET[clear]" value="'.$GLOBALS['LANG']->getLL('clear_filters').'" onclick="this.form.sword.value=\'\';" style="margin-left: 20px;" />';
+		$content .= '</form>';
 		$content .= '</p>';
 		return $content;
 	}
@@ -799,7 +801,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				foreach ($this->selectedFilters as $key => $value) {
 					if ($value  != '*') {
 						if (!empty($whereClause)) $whereClause .= ' AND ';
-						$whereClause .= $key." = '".$value."'";
+						$whereClause .= $key . " = " . $GLOBALS['TYPO3_DB']->fullQuoteStr($value, 'tx_devlog');
 					}
 				}
 			}
@@ -978,7 +980,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$iconAltText = t3lib_BEfunc::getRecordIconAltText($row, 'pages');
 
 				// Create icon for record
-			$elementIcon = t3lib_iconworks::getIconImage('pages', $row, $BACK_PATH, 'class="c-recicon" title="' . $iconAltText . '"');
+			$elementIcon = t3lib_iconWorks::getSpriteIconForRecord('pages', $row, array('title' => $iconAltText));
 
 				// Return item with edit link
 			$editOnClick = 'top.loadEditId(' . $uid . ')';

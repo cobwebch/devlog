@@ -1,20 +1,20 @@
 <?php
 /***************************************************************
 *  Copyright notice
-*  
+*
 *  (c) 2004 Rene Fritz (r.fritz@colorcube.de)
 *  (c) 2009 Francois Suter (typo3@cobweb.ch)
 *  All rights reserved
 *
-*  This script is part of the TYPO3 project. The TYPO3 project is 
+*  This script is part of the TYPO3 project. The TYPO3 project is
 *  free software; you can redistribute it and/or modify
 *  it under the terms of the GNU General Public License as published by
 *  the Free Software Foundation; either version 2 of the License, or
 *  (at your option) any later version.
-* 
+*
 *  The GNU General Public License can be found at
 *  http://www.gnu.org/copyleft/gpl.html.
-* 
+*
 *  This script is distributed in the hope that it will be useful,
 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
 *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -26,7 +26,7 @@
 ***************************************************************/
 
 
-/** 
+/**
  * devlog function for the 'devlog' extension.
  *
  * @author	Rene Fritz <r.fritz@colorcube.de>
@@ -60,13 +60,13 @@ class tx_devlog {
 	 * 'extKey'		string		Extension key (from which extension you are calling the log)
 	 * 'severity'	integer		Severity: 0 is info, 1 is notice, 2 is warning, 3 is fatal error, -1 is "OK" message
 	 * 'dataVar'	array		Additional data you want to pass to the logger.
-	 * 
+	 *
 	 * @param	array		$logArr: log data array
-	 * @return	void	 
+	 * @return	void
 	 */
 	function devLog($logArr) {
 			// If the DB object is not yet instantiated or not connected to the DB, abort writing to the log
-		if (!isset($GLOBALS['TYPO3_DB']) || !is_object($GLOBALS['TYPO3_DB']) || !$GLOBALS['TYPO3_DB']->link) {
+		if (!isset($GLOBALS['TYPO3_DB']) || !is_object($GLOBALS['TYPO3_DB'])) {
 			return;
 		}
 
@@ -147,7 +147,7 @@ class tx_devlog {
 			// Increase the (cached) number of rows
 		$this->numRows++;
 	}
-	
+
 	/**
 	 * Given a backtrace, this method tries to find the place where a "devLog" function was called
 	 * and return info about the place
@@ -170,7 +170,7 @@ class tx_devlog {
 	/**
 	 * This method checks whether the number of rows in the devlog table exceeds the limit
 	 * If yes, 10% of that amount is deleted, with older records going first
-	 * 
+	 *
 	 * @return	void
 	 */
 	function checkRowLimit() {
