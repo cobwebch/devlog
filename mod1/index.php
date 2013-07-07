@@ -42,6 +42,9 @@ require($BACK_PATH . 'init.php');
 
 $TYPO3_CONF_VARS['EXTCONF']['devlog']['nolog'] = TRUE;
 
+if (strpos(TYPO3_version, '6') === FALSE) {
+	require($BACK_PATH . 'template.php');
+}
 $GLOBALS['LANG']->includeLLFile('EXT:devlog/mod1/locallang.xml');
 $BE_USER->modAccess($MCONF, 1);	// This checks permissions and exits if the users has no permission for entry.
 	// DEFAULT initialization of a module [END]
