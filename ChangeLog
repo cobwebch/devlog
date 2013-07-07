@@ -1,3 +1,7 @@
+2013-07-07 Francois Suter <typo3@cobweb.ch>
+
+	* Removed old required files, resolves #49751 (thanks to Loek Hilgersom)
+
 2013-05-28 Francois Suter <typo3@cobweb.ch>
 
 	* Changed compatibility range to TYPO3 4.5-6.1
