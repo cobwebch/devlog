@@ -12,7 +12,7 @@ CREATE TABLE tx_devlog (
 	msg text NOT NULL,
 	location varchar(255) DEFAULT '' NOT NULL,
 	line int(11) DEFAULT '0' NOT NULL,
-	data_var mediumtext NOT NULL,
+	data_var mediumtext,
 
 	PRIMARY KEY (uid),
 	KEY parent (pid),

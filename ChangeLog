@@ -1,3 +1,7 @@
+2014-03-22 Francois Suter <typo3@cobweb.ch>
+
+	* Dropped NOT NULL constraint from data_var field definition, resolves #54702
+
 2013-07-07 Francois Suter <typo3@cobweb.ch>
 
 	* Removed old required files, resolves #49751 (thanks to Loek Hilgersom)
