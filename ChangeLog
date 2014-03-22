@@ -3,6 +3,7 @@
 	* Dropped NOT NULL constraint from data_var field definition, resolves #54702
 	* Use dispatch mechanism for BE module
 	* Add CSRF protection to all BE module forms and links, resolves #57194
+	* Released to TER as version 2.11.0
 
 2013-07-07 Francois Suter <typo3@cobweb.ch>
 
