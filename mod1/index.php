@@ -38,13 +38,9 @@ $EXTCONF['devlog']['nolog'] = TRUE;
 	// DEFAULT initialization of a module [BEGIN]
 unset($MCONF);
 require('conf.php');
-require($BACK_PATH . 'init.php');
 
 $TYPO3_CONF_VARS['EXTCONF']['devlog']['nolog'] = TRUE;
 
-if (strpos(TYPO3_version, '6') === FALSE) {
-	require($BACK_PATH . 'template.php');
-}
 $GLOBALS['LANG']->includeLLFile('EXT:devlog/mod1/locallang.xml');
 $BE_USER->modAccess($MCONF, 1);	// This checks permissions and exits if the users has no permission for entry.
 	// DEFAULT initialization of a module [END]
@@ -64,6 +60,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	var $defaultEntriesPerPage = 25; // Default value for number of entries per page configuration parameter
 	var $cshKey; // Key of the CSH file
 	var $cleanupPeriods = array('1hour' => '-1 hour', '1week' => '-1 week', '1month' => '-1 month', '3months' => '-3 months', '6months' => '-6 months', '1year' => '-1 year'); // List of possible periods for cleaning up log entries
+	protected $baseUrl;
 
 	/**
 	 * Initialise the plugin
@@ -92,6 +89,10 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 			// Set key for CSH
 		$this->cshKey = '_MOD_'.$MCONF['name'];
+		// Assemble a base URL, without parameters, but with CSRF token
+		$this->baseUrl = t3lib_BEfunc::getModuleUrl(
+			$GLOBALS['MCONF']['name']
+		);
 	}
 
 	/**
@@ -266,7 +267,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$this->content .= $this->doc->startPage($GLOBALS['LANG']->getLL('title'));
 			$this->content .= $this->doc->header($GLOBALS['LANG']->getLL('title'));
 			$this->content .= $this->doc->spacer(5);
-			$this->content .= '<form name="options" action="" method="POST">'.$this->doc->section('', $this->doc->funcMenu($headerSection, t3lib_BEfunc::getFuncMenu($this->id,'SET[function]',$this->MOD_SETTINGS['function'], $this->MOD_MENU['function']).'&nbsp;&nbsp;&nbsp;'.$this->openNewView())).'</form>';
+			$this->content .= '<form name="options" action="' . $this->baseUrl . '" method="POST">'.$this->doc->section('', $this->doc->funcMenu($headerSection, t3lib_BEfunc::getFuncMenu($this->id,'SET[function]',$this->MOD_SETTINGS['function'], $this->MOD_MENU['function']).'&nbsp;&nbsp;&nbsp;'.$this->openNewView())).'</form>';
 			$this->content .= $this->doc->divider(5);
 
 			// Render content:
@@ -484,7 +485,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 */
 	function renderSearchForm() {
 		$content = '<p>'.$GLOBALS['LANG']->getLL('search_data').': ';
-		$content .= '<form name="search" action="" method="GET">';
+		$content .= '<form name="search" action="' . $this->baseUrl . '" method="POST">';
 		$content .= '<input type="text" id="sword" name="SET[sword]" value="'.$this->MOD_SETTINGS['sword'].'" /> ';
 		$content .= '<input type="submit" name="search" value="'.$GLOBALS['LANG']->getLL('search').'" /> ';
 		$content .= '<input type="button" name="clear_search" value="'.$GLOBALS['LANG']->getLL('clear_search').'" onclick="this.form.sword.value=\'\';this.form.submit();" />';
@@ -547,7 +548,15 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			if ($i == $this->MOD_SETTINGS['page']) {
 				$item = '<strong>' . $text . '</strong>';
 			} else {
-				$item = '<a href="?SET[page]=' . $i . '">' . $text . '</a>';
+				$url = t3lib_BEfunc::getModuleUrl(
+					$GLOBALS['MCONF']['name'],
+					array(
+						'SET' => array(
+							'page' => $i
+						)
+					)
+				);
+				$item = '<a href="' . $url . '">' . $text . '</a>';
 			}
 			$navigation .= $item.' ';
 		}
@@ -627,7 +636,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	 */
 	function renderFilterMenu($filterKey) {
 		if (isset($this->filters[$filterKey])) {
-			$filter = '<form name="filter' . $filterKey . '" action="" method="GET">';
+			$filter = '<form name="filter' . $filterKey . '" action="' . $this->baseUrl. '" method="POST">';
 			$filter .= '<select name="SET[filters][' . $filterKey . ']" onchange="this.form.submit()">';
 			foreach ($this->filters[$filterKey] as $key => $value) {
 				$selected = '';
@@ -694,7 +703,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('DISTINCT extkey', 'tx_devlog', '', '', 'extkey ASC');
 				// Display form for deleting log entries per extension
 			$content .= '<p>'.$GLOBALS['LANG']->getLL('cleanup_for_extension').'</p>';
-			$content .= '<form name="cleanExt" action="" method="POST">';
+			$content .= '<form name="cleanExt" action="' . $this->baseUrl . '" method="POST">';
 			$content .= '<p><select name="clear[extension]">';
 			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($dbres)) {
 				$content .= '<option value="'.$row['extkey'].'">'.$row['extkey'].'</option>';
@@ -707,7 +716,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 				// Display form for deleting log entries per period
 			$content .= '<p>'.$GLOBALS['LANG']->getLL('cleanup_for_period').'</p>';
-			$content .= '<form name="cleanPeriod" action="" method="POST">';
+			$content .= '<form name="cleanPeriod" action="' . $this->baseUrl . '" method="POST">';
 			$content .= '<p><select name="clear[period]">';
 			foreach ($this->cleanupPeriods as $key => $period) {
 				$date = strtotime($period);
@@ -720,7 +729,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 				// Display form for deleting all log entries
 			$content .= '<p><strong>'.$GLOBALS['LANG']->getLL('cleanup_all').'</strong></p>';
-			$content .= '<form name="cleanAll" action="" method="POST">';
+			$content .= '<form name="cleanAll" action="' . $this->baseUrl . '" method="POST">';
 			$content .= '<p><input type="submit" name="clear[cmd]" value="'.$GLOBALS['LANG']->getLL('clearalllog').'"></p>';
 			$content .= '</form>';
 		}
@@ -729,11 +738,11 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 	/**
 	 * This method wraps a given string with some styling depending on the type of message
-	 * (success, wraning or error)
+	 * (success, warning or error)
 	 * This wrapper makes it easier to change the kind of styling (e.g. when it will be easier to load custom CSS in a BE module)
 	 *
 	 * @param	string	$string: the message to wrap
-	 * @param	string	$type: the type of message (success, wraning or error)
+	 * @param	string	$type: the type of message (success, warning or error)
 	 * @return	string	The wrapped string
 	 */
 	function wrapMessage($string, $type = 'error') {
@@ -945,8 +954,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	function openNewView() {
 		global $BACK_PATH;
 
-		$url = t3lib_div::getIndpEnv('TYPO3_REQUEST_SCRIPT');
-		$onClick = "devlogWin=window.open('" . $url . "','devlog','width=790,status=0,menubar=1,resizable=1,location=0,scrollbars=1,toolbar=0');devlogWin.focus();return false;";
+		$onClick = "devlogWin=window.open('" . $this->baseUrl . "','devlog','width=790,status=0,menubar=1,resizable=1,location=0,scrollbars=1,toolbar=0');devlogWin.focus();return false;";
 		$content = '<a id="openview" href="#" onclick="' . htmlspecialchars($onClick).'">' .
 					'<img' . t3lib_iconWorks::skinImg($BACK_PATH,'gfx/open_in_new_window.gif', 'width="19" height="14"') . ' title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.openInNewWindow', 1) . '" class="absmiddle" alt="" />' .
 					'</a>';
@@ -956,10 +964,20 @@ class tx_devlog_module1 extends t3lib_SCbase {
 	/**
 	 * Assemble the link to select a single log run
 	 *
-	 * @return	string
+	 * @param string $str Link text
+	 * @param integer $logRun Id of the log run (microtime)
+	 * @return    string
 	 */
 	function linkLogRun($str, $logRun) {
-		$content = '<a href="?SET[logrun]=' . $logRun . '">' . $str . '</a>';
+		$url = t3lib_BEfunc::getModuleUrl(
+			$GLOBALS['MCONF']['name'],
+			array(
+				'SET' => array(
+					'logrun' => $logRun
+				)
+			)
+		);
+		$content = '<a href="' . $url . '">' . $str . '</a>';
 		return $content;
 	}
 
