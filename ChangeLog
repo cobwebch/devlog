@@ -1,6 +1,7 @@
 2014-03-24 Francois Suter <typo3@cobweb.ch>
 
 	* Added check for empty BE user, resolves #57218
+	* Released to TER as version 2.11.1
 
 2014-03-22 Francois Suter <typo3@cobweb.ch>
 
