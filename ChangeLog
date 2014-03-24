@@ -1,3 +1,7 @@
+2014-03-24 Francois Suter <typo3@cobweb.ch>
+
+	* Added check for empty BE user, resolves #57218
+
 2014-03-22 Francois Suter <typo3@cobweb.ch>
 
 	* Dropped NOT NULL constraint from data_var field definition, resolves #54702

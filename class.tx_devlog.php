@@ -107,7 +107,7 @@ class tx_devlog {
 		$insertFields['pid'] = $pid;
 		$insertFields['crdate'] = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['tstamp'];
 		$insertFields['crmsec'] = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$this->extKey]['mstamp'];
-		$insertFields['cruser_id'] = $GLOBALS['BE_USER']->user['uid'];
+		$insertFields['cruser_id'] = empty($GLOBALS['BE_USER']->user['uid']) ? 0 : $GLOBALS['BE_USER']->user['uid'];
 			// Clean up the message before insertion into the database
 			// If possible use RemoveXSS (TYPO3 4.2+), otherwise strip all tags
 		$message = '';
