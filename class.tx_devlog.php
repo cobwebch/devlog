@@ -96,9 +96,9 @@ class tx_devlog {
 		$insertFields = array();
 			// Try to get a pid that makes sense
 		$pid = 0;
-			// In the FE context, this is obviously the current page
-		if (isset($GLOBALS['TSFE'])) {
-			$pid = $GLOBALS['TSFE']->id;
+			// In the FE context, this is obviously the current page, but it may not yet be defined
+		if (TYPO3_MODE == 'FE') {
+			$pid = empty($GLOBALS['TSFE']->id) ? 0 : $GLOBALS['TSFE']->id;
 
 			// In other contexts, a global variable may be set with a relevant pid
 		} elseif (isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['debugData']['pid'])) {

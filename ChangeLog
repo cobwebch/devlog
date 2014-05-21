@@ -1,3 +1,7 @@
+2014-05-21 Francois Suter <typo3@cobweb.ch>
+
+	* Improved page id detection in FE context, resolves #58536
+
 2014-03-24 Francois Suter <typo3@cobweb.ch>
 
 	* Added check for empty BE user, resolves #57218
