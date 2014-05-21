@@ -1,6 +1,7 @@
 2014-05-21 Francois Suter <typo3@cobweb.ch>
 
 	* Improved page id detection in FE context, resolves #58536
+	* Released to TER as version 2.11.2
 
 2014-03-24 Francois Suter <typo3@cobweb.ch>
 
