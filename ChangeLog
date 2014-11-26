@@ -1,6 +1,7 @@
 2014-11-26 Francois Suter <typo3@cobweb.ch>
 
 	* Corrected display bug in Firefox and Opera, resolves #63151
+	* Released to TER as version 2.11.3
 
 2014-05-21 Francois Suter <typo3@cobweb.ch>
 
