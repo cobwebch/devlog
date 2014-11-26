@@ -1,3 +1,7 @@
+2014-11-26 Francois Suter <typo3@cobweb.ch>
+
+	* Corrected display bug in Firefox and Opera, resolves #63151
+
 2014-05-21 Francois Suter <typo3@cobweb.ch>
 
 	* Improved page id detection in FE context, resolves #58536

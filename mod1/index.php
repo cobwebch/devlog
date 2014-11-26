@@ -643,7 +643,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				if ((string)$key == (string)$this->selectedFilters[$filterKey]) {
 					$selected = ' selected="selected"';
 				}
-				$filter .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
+				$filter .= '<option value="' . $key . '"' . $selected . ' style="color: #000">' . $value . '</option>';
 			}
 			$filter .= '</select>';
 			$filter .= '</form>';
