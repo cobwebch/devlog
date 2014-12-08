@@ -1,43 +1,31 @@
-# customsubcategory=limits=LLL:EXT:devlog/locallang.xml:limits
-# customsubcategory=filtering=LLL:EXT:devlog/locallang.xml:filtering
-# customsubcategory=display=LLL:EXT:devlog/locallang.xml:display
-# customsubcategory=deprecated=LLL:EXT:devlog/locallang.xml:deprecated
+# customcategory=general=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:general
+# customcategory=dbwriter=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:db_writer
+# customcategory=filewriter=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:file_writer
 
-# cat=basic/limits/; type=integer; label=Maximum number of log runs: Set the maximum number of log runs you want to display in the menu of log runs
-maxLogRuns = 15
+# customsubcategory=limits=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:limits
+# customsubcategory=filtering=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:filtering
+# customsubcategory=display=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:display
 
-# cat=basic/limits/; type=integer; label=Number of entries per page: Set the number of log entries to display per page, when viewing all log entries
-entriesPerPage = 25
+# cat=general/filtering/; type=options[LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:status_ok=-1,LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:status_information=0,LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:status_notice=1,LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:status_warning=2,LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:status_error=3]; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:minimum_level
+minimumLogLevel = -1
 
-# cat=basic/limits/; type=integer; label=Maximum number of rows: Maximum number of rows that should be stored in the log table
-maxRows = 1000
-
-# cat=basic/limits/; type=boolean; label=Optimize devlog table: Run OPTIMIZE on the tx_devlog table after records are purged to reduce the overhead. Note that this will work only with MySQL databases.
-optimize = 0
-
-# cat=basic/limits/; type=integer; label=Maximum size of extra data: The extra data field accepts an array containing any number of data. However when that array becomes too large, writing it to the database may actually crash you server. It is recommended to set a limit (in number of characters).
-dumpSize = 1000000
-
-# cat=basic/filtering/; type=options[-1,0,1,2,3]; label=Minimum level for logging: Minimum message level required for actually writing to the log table
-minLogLevel = -1
-
-# cat=basic/filtering/; type=string; label=Exclude keys: Comma-separated list of (extension) keys that should not be logged into the Developer Log
+# cat=general/filtering/; type=string; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:excluded_keys
 excludeKeys =
 
-# cat=basic/display/; type=string; label=Highlight style: Style used for highlighting search keywords. Use proper CSS properties as this goes into a style="" attribute
-highlightStyle = padding: 2px; background-color: #fc3; border: 1px solid #666
-
-# cat=basic/display/; type=integer; label=Autorefresh frequency: Set the number of seconds between each refresh, when using the autorefresh feature
+# cat=general/display/; type=integer; label=Autorefresh frequency: Set the number of seconds between each refresh, when using the autorefresh feature
 refreshFrequency = 2
 
-# cat=basic/xxx/; type=string; label=Path to Prototype: If you are using TYPO3 4.0 or less, download the Prototype JavaScript library, put it somewhere in fileadmin or inside some extension and indicate the path here
-prototypePath = 
+# cat=general/display/; type=integer; label=Number of entries per page: Set the number of log entries to display per page, when viewing all log entries
+entriesPerPage = 25
 
-# cat=basic/deprecated/; type=boolean; label=Automatic clean up: Check this box if you want to automatically clean up log runs in excess of maxLogRuns when entering the BE module (this setting may be dropped in the future, use maxRows instead)
-autoCleanup = 0
+# cat=dbwriter/limits/; type=integer; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:maximum_rows
+maximumRows = 1000
 
-TSConstantEditor.basic {
-  description = <span style="background:red; padding:1px 2px; color:#fff; font-weight:bold;">1</span> TYPO3 and its extensions may write a very large number of information in the log table. This may actually overload your database in a worst-case scenario. Using this feature you can limit the number of logs stored in the database. Every time this limit is passed, a number of the oldest records (10% of maxRows) will be deleted.<br />If you don't want this automatic clean up, set maxRows to 0.<br /><br /><span style="background:red; padding:1px 2px; color:#fff; font-weight:bold;">2</span> All messages come with a level. -1 = information, 0 = ok, 1 = notice, 2 = warning, 3 = error. Set this variable to the minimum level of logging that you want. Setting to -1 will log all messages. Setting to 2, for example, will only log warnings and errors, thus reducing the number of records stored in the database.
-  1=maxRows
-  2=minLogLevel
-}
+# cat=dbwriter/limits/; type=boolean; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:optimize
+optimizeTable = 1
+
+# cat=dbwriter/limits/; type=integer; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:maximum_extra_data_size
+maximumExtraDataSize = 1000000
+
+# cat=filewriter//; type=string; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:log_file_path
+logFilePath =

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2014-11-12T18:04:07Z" product-name="devlog-old">
+		<header/>
+		<body>
+			<trans-unit id=".alttitle" xml:space="preserve">
+				<source>Developer Log</source>
+			</trans-unit>
+			<trans-unit id=".description" xml:space="preserve">
+				<source>The Developer's Log extension (devlog) provides logging functionality. It hooks into \TYPO3\CMS\Core\Utility\GeneralUtility::devlog() to catch devlog events. A BE module gives an overview of the logged events. For more information read the extension manual, which can be found on docs.typo3.org.</source>
+			</trans-unit>
+			<trans-unit id=".syntax" xml:space="preserve">
+				<source>
+					If you want to make use of the devlog in your extension, simply call the following helper function with the appropriate parameters:
+					\TYPO3\CMS\Core\Utility\GeneralUtility::devlog($msg, $extKey, $severity = 0, $dataVar = FALSE);
+
+					The parameters are:
+					$msg: Main log message (string)
+					$extKey: Extension key (from which extension you are calling the log) (string)
+					$severity: Severity: 0 is info, 1 is notice, 2 is warning, 3 is fatal error, -1 is &quot;OK&quot; message (integer)
+					$dataVar: Additional data you want to pass to the logger (array)
+				</source>
+			</trans-unit>
+			<trans-unit id="cruser_id.alttitle" xml:space="preserve">
+				<source>Relevant BE user</source>
+			</trans-unit>
+			<trans-unit id="cruser_id.description" xml:space="preserve">
+				<source>Indicates which backend user was logged in when the entry was logged. May be undefined.</source>
+			</trans-unit>
+			<trans-unit id="crdate.alttitle" xml:space="preserve">
+				<source>Log run time</source>
+			</trans-unit>
+			<trans-unit id="crdate.description" xml:space="preserve">
+				<source>This is the date and time at which the log entry was created.</source>
+			</trans-unit>
+			<trans-unit id="crdate.details" xml:space="preserve">
+				<source>
+					All entries corresponding to a single log run are marked with the same date and time.
+				</source>
+			</trans-unit>
+			<trans-unit id="message.alttitle" xml:space="preserve">
+				<source>Log message</source>
+			</trans-unit>
+			<trans-unit id="message.description" xml:space="preserve">
+				<source>The main message of the log entry.</source>
+			</trans-unit>
+			<trans-unit id="severity.alttitle" xml:space="preserve">
+				<source>Severity</source>
+			</trans-unit>
+			<trans-unit id="severity.description" xml:space="preserve">
+				<source>The severity gives you an impression of how serious the logged event is.</source>
+			</trans-unit>
+			<trans-unit id="severity.details" xml:space="preserve">
+				<source>
+					There are five levels of severity, the higher the number, the more serious the event:
+					Ok: These events indicate that everything went fine, no error occurred (at least up to that point where the event was created). No action needs to be taken.
+					Info: These events are purely informational. They are normally used for debugging purposes only and require no special action.
+					Notice: Abnormal condition, but not blocking. Notices are meant to raise attention. Processes have been completed, but things are not running as smoothly as they could and the condition should be investigated.
+					Warning: These events are used to notify significant problems. Processes have been completed, but parts of them may be missing, wrong or corrupted. Warnings should not be ignored and action should definitely be taken.
+					Error: These events signal that something went fatally wrong. Processes were not completed and action is definitely needed. Alternately this level may be used to point to a failed event, but in a process where failure can be expected, e.g. a login attempt with the wrong password.
+				</source>
+			</trans-unit>
+			<trans-unit id="extkey.alttitle" xml:space="preserve">
+				<source>Extension</source>
+			</trans-unit>
+			<trans-unit id="extkey.description" xml:space="preserve">
+				<source>The component which triggered the event</source>
+			</trans-unit>
+			<trans-unit id="extkey.details" xml:space="preserve">
+					<source>
+					The value is either an extension key or a reference to the core itself or some part of it. It depends on the logging implementation of the component which has triggered the event.
+					One hint about excluded keys: There's an option in the extension manager to exclude some keys from being logged. Notice that if there were events registered with that key before you excluded it, those events will still be visible in the list.
+				</source>
+			</trans-unit>
+			<trans-unit id="location.alttitle" xml:space="preserve">
+				<source>Call location (class)</source>
+			</trans-unit>
+			<trans-unit id="location.description" xml:space="preserve">
+				<source>The class from which the devLog() call was made.</source>
+			</trans-unit>
+			<trans-unit id="line.alttitle" xml:space="preserve">
+				<source>Call location (line)</source>
+			</trans-unit>
+			<trans-unit id="line.description" xml:space="preserve">
+				<source>The line at which devLog() call was made (in the class indicated in the "location" field).</source>
+			</trans-unit>
+			<trans-unit id="ip.alttitle" xml:space="preserve">
+				<source>Referrer</source>
+			</trans-unit>
+			<trans-unit id="ip.description" xml:space="preserve">
+				<source>IP address of the referring request.</source>
+			</trans-unit>
+			<trans-unit id="cruser_id.alttitle" xml:space="preserve">
+				<source>User</source>
+			</trans-unit>
+			<trans-unit id="cruser_id.description" xml:space="preserve">
+				<source>The BE user which was logged in the backend and triggered the event (if any).</source>
+			</trans-unit>
+			<trans-unit id="cruser_id.details" xml:space="preserve">
+				<source>This field is useful, if multiple BE users are triggering events at the same time, on the same pages or with the same components.</source>
+			</trans-unit>
+			<trans-unit id="extra_data.alttitle" xml:space="preserve">
+				<source>Extra data</source>
+			</trans-unit>
+			<trans-unit id="extra_data.description" xml:space="preserve">
+				<source>Extra data can provide an array with detailed information about the circumstances of the event.</source>
+			</trans-unit>
+			<trans-unit id="extra_data.details" xml:space="preserve">
+				<source>
+					There are almost no boundaries for this field, except that it is an array. In many cases, this field can contain the processed data, when the event has been triggered. For example, you could get the full stack debug trace when there is an SQL error. Another showcase would be to deliver be the relevant TS setup parts or any other configuration array.
+					The value depends on the logging implementation of the component which has triggered the event.
+				</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2014-10-15T16:49:33Z" product-name="devlog">
+		<header/>
+		<body>
+			<trans-unit id="general">
+				<source>General</source>
+			</trans-unit>
+			<trans-unit id="db_writer">
+				<source>Database Writer</source>
+			</trans-unit>
+			<trans-unit id="file_writer">
+				<source>File Writer</source>
+			</trans-unit>
+			<trans-unit id="limits">
+				<source>Limits</source>
+			</trans-unit>
+			<trans-unit id="filtering">
+				<source>Filtering</source>
+			</trans-unit>
+			<trans-unit id="display">
+				<source>Display</source>
+			</trans-unit>
+			<trans-unit id="minimum_level">
+				<source>Minimum level for logging: Minimum message level required for actually writing to the logs.</source>
+			</trans-unit>
+			<trans-unit id="excluded_keys">
+				<source>Excluded keys: Comma-separated list of (extension) keys whose entries should not be written to the logs.</source>
+			</trans-unit>
+			<trans-unit id="log_file_path">
+				<source>Path: Full path to the log file (may be relative to the web root, or use the EXT: syntax).</source>
+			</trans-unit>
+			<trans-unit id="maximum_rows">
+				<source>Maximum number of rows: Maximum number of rows that should be stored in the log table</source>
+			</trans-unit>
+			<trans-unit id="optimize">
+				<source>Optimize devlog table: Run OPTIMIZE on the tx_devlog_domain_model_entry table after records are purged to reduce the overhead. Note that this will work only with MySQL databases.</source>
+			</trans-unit>
+			<trans-unit id="maximum_extra_data_size">
+				<source>Maximum size of extra data: The extra data field accepts an array containing any number of data. However when that array becomes too large, writing it to the database may actually crash you server. It is recommended to set a limit (in number of bytes).</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

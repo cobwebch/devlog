@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2014-10-15T16:49:33Z" product-name="devlog">
+		<header/>
+		<body>
+			<trans-unit id="tx_devlog_domain_model_entry">
+				<source>Developer's Log Entry</source>
+			</trans-unit>
+			<trans-unit id="tx_devlog_domain_model_entry.crdate">
+				<source>Log date</source>
+			</trans-unit>
+			<trans-unit id="tx_devlog_domain_model_entry.cruser_id">
+				<source>BE User</source>
+			</trans-unit>
+			<trans-unit id="tx_devlog_domain_model_entry.severity">
+				<source>Severity</source>
+			</trans-unit>
+			<trans-unit id="tx_devlog_domain_model_entry.extkey">
+				<source>Extkey</source>
+			</trans-unit>
+			<trans-unit id="tx_devlog_domain_model_entry.message">
+				<source>Message</source>
+			</trans-unit>
+			<trans-unit id="tx_devlog_domain_model_entry.location">
+				<source>Location</source>
+			</trans-unit>
+			<trans-unit id="tx_devlog_domain_model_entry.ip">
+				<source>Ip</source>
+			</trans-unit>
+			<trans-unit id="tx_devlog_domain_model_entry.line">
+				<source>Line</source>
+			</trans-unit>
+			<trans-unit id="tx_devlog_domain_model_entry.extra_data">
+				<source>Extra data</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

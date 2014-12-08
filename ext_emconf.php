@@ -11,11 +11,11 @@
 ########################################################################
 
 $EM_CONF[$_EXTKEY] = array(
-	'title' => 'Developer Log',
+	'title' => 'Developer\'s Log',
 	'description' => 'The Developer log extension provides development logging/debugging functionality for usage of t3lib_div::devlog() and a BE module to browse the logs.',
 	'category' => 'misc',
-	'shy' => 0,
-	'dependencies' => 'cms',
+	'shy' => FALSE,
+	'dependencies' => '',
 	'conflicts' => '',
 	'priority' => '',
 	'loadOrder' => '',
@@ -26,17 +26,15 @@ $EM_CONF[$_EXTKEY] = array(
 	'modify_tables' => '',
 	'clearCacheOnLoad' => 1,
 	'lockType' => '',
-	'author' => 'Rene Fritz, Francois Suter',
+	'author' => 'Francois Suter',
 	'author_email' => 'typo3@cobweb.ch',
 	'author_company' => '',
 	'CGLcompliance' => '',
 	'CGLcompliance_note' => '',
-	'version' => '2.9.2',
+	'version' => '3.0-dev',
 	'constraints' => array(
 		'depends' => array(
-			'typo3' => '3.5.0-0.0.0',
-			'php' => '3.0.0-0.0.0',
-			'cms' => '',
+			'typo3' => '6.2.0-6.2.99',
 		),
 		'conflicts' => array(
 		),

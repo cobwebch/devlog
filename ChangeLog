@@ -1,3 +1,45 @@
+2014-12-08 Francois Suter <typo3@cobweb.ch>
+
+	* New table structure, new logging utility, database and file writer, resolves #63689
+	* Labels for severity levels in extension configuration, resolves #31414
+
+2014-05-21 Francois Suter <typo3@cobweb.ch>
+
+	* Improved page id detection in FE context, resolves #58536
+	* Released to TER as version 2.11.2
+
+2014-03-24 Francois Suter <typo3@cobweb.ch>
+
+	* Added check for empty BE user, resolves #57218
+	* Released to TER as version 2.11.1
+
+2014-03-22 Francois Suter <typo3@cobweb.ch>
+
+	* Dropped NOT NULL constraint from data_var field definition, resolves #54702
+	* Use dispatch mechanism for BE module
+	* Add CSRF protection to all BE module forms and links, resolves #57194
+	* Released to TER as version 2.11.0
+
+2013-07-07 Francois Suter <typo3@cobweb.ch>
+
+	* Removed old required files, resolves #49751 (thanks to Loek Hilgersom)
+
+2013-05-28 Francois Suter <typo3@cobweb.ch>
+
+	* Changed compatibility range to TYPO3 4.5-6.1
+	* Fixed test of TYPO3_DB member variable
+	* Fixed clearing of search and filter
+	* Fixed filtering on namespaced keys
+	* Fixed display of page icons, resolves #48605
+	* Released to TER as version 2.10.0
+
+2012-05-10 Francois Suter <typo3@cobweb.ch>
+
+	* Fixed one forgotten compatibility issue, resolves #36957
+	* Released to TER as version 2.9.4
+	* Updated for compatibility with TYPO3 4.7, resolves #36957
+	* Released to TER as version 2.9.3
+
 2009-12-21 Francois Suter <typo3@cobweb.ch>
 
 	* Added protection against possible XSS attacks

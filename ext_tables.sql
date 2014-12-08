@@ -1,22 +1,24 @@
 #
-# Table structure for table 'tx_devlog'
+# Table structure for table 'tx_devlog_domain_model_entry'
 #
-CREATE TABLE tx_devlog (
-	uid int(11) unsigned DEFAULT '0' NOT NULL auto_increment,
-	pid int(11) unsigned DEFAULT '0' NOT NULL,
-	crdate int(11) unsigned DEFAULT '0' NOT NULL,
-	crmsec bigint(11) unsigned DEFAULT '0' NOT NULL,
-	cruser_id int(11) unsigned DEFAULT '0' NOT NULL,
+CREATE TABLE tx_devlog_domain_model_entry (
+
+	uid int(11) NOT NULL auto_increment,
+	pid int(11) DEFAULT '0' NOT NULL,
+
+	run_id varchar(50) DEFAULT '' NOT NULL,
 	severity int(11) DEFAULT '0' NOT NULL,
-	extkey varchar(40) DEFAULT '' NOT NULL,
-	msg text NOT NULL,
+	extkey varchar(255) DEFAULT '' NOT NULL,
+	message text NOT NULL,
 	location varchar(255) DEFAULT '' NOT NULL,
-	ip varchar(50) DEFAULT '' NOT NULL,
+	ip varchar(255) DEFAULT '' NOT NULL,
 	line int(11) DEFAULT '0' NOT NULL,
-	data_var mediumtext NOT NULL,
-	
+	extra_data blob,
+
+	crdate int(11) unsigned DEFAULT '0' NOT NULL,
+	cruser_id int(11) unsigned DEFAULT '0' NOT NULL,
+
 	PRIMARY KEY (uid),
-	KEY parent (pid),
-	KEY crdate (crdate),
-	KEY crmsec (crmsec)
-) ENGINE = InnoDB;
+	KEY parent (pid)
+
+);
