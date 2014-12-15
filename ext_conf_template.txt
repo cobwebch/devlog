@@ -12,6 +12,9 @@ minimumLogLevel = -1
 # cat=general/filtering/; type=string; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:excluded_keys
 excludeKeys =
 
+# cat=general/filtering/; type=string; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:ip_filter
+ipFilter =
+
 # cat=general/display/; type=integer; label=Autorefresh frequency: Set the number of seconds between each refresh, when using the autorefresh feature
 refreshFrequency = 2
 

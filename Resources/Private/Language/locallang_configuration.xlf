@@ -27,6 +27,9 @@
 			<trans-unit id="excluded_keys">
 				<source>Excluded keys: Comma-separated list of (extension) keys whose entries should not be written to the logs.</source>
 			</trans-unit>
+			<trans-unit id="ip_filter">
+				<source>Restricted IP addresses: Only requests coming from the given IP addresses will be logged. An empty value will block everything, a "*" will allow everything. Use "devIPmask" (not case-sensitive) to reuse devIPmask value.</source>
+			</trans-unit>
 			<trans-unit id="log_file_path">
 				<source>Path: Full path to the log file (may be relative to the web root, or use the EXT: syntax).</source>
 			</trans-unit>

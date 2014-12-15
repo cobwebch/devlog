@@ -87,6 +87,8 @@ class Logger implements \TYPO3\CMS\Core\SingletonInterface {
 		if (!$this->isLoggingEnabled) {
 			return;
 		}
+		// Add IP address for validation
+		$logData['ip'] = GeneralUtility::getIndpEnv('REMOTE_ADDR');
 		// If the log entry doesn't pass the basic filters, exit early doing nothing
 		if (!$this->isEntryAccepted($logData)) {
 			return;
@@ -128,7 +130,7 @@ class Logger implements \TYPO3\CMS\Core\SingletonInterface {
 			(isset($GLOBALS['BE_USER']->user['uid'])) ? $GLOBALS['BE_USER']->user['uid'] : 0
 		);
 		$entry->setIp(
-			GeneralUtility::getIndpEnv('REMOTE_ADDR')
+			$logData['ip']
 		);
 
 		// Get information about the place where this method was called from
@@ -156,16 +158,34 @@ class Logger implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return bool
 	 */
 	public function isEntryAccepted($logData) {
-		$accepted = TRUE;
 		// Skip entry if severity is below minimum level
 		if ($logData['severity'] < $this->extensionConfiguration['minimumLogLevel']) {
-			$accepted = FALSE;
+			return FALSE;
 		}
 		// Skip entry if key is in excluded list
 		if (GeneralUtility::inList($this->extensionConfiguration['excludeKeys'], $logData['extKey'])) {
-			$accepted = FALSE;
+			return FALSE;
 		}
-		return $accepted;
+		// Skip entry if referrer does not match IP mask
+		if (!$this->isIpAddressAccepted($logData['ip'])) {
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+	/**
+	 * Checks if given IP address is acceptable.
+	 *
+	 * @param string $ipAddress IP address to check
+	 * @return bool
+	 */
+	public function isIpAddressAccepted($ipAddress) {
+		$ipFilter = $this->extensionConfiguration['ipFilter'];
+		// Re-use global IP mask if so defined
+		if (strtolower($ipFilter) === 'devipmask') {
+			$ipFilter = $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'];
+		}
+		return GeneralUtility::cmpIP($ipAddress, $ipFilter);
 	}
 
 	/**

@@ -1,3 +1,7 @@
+2014-12-15 Francois Suter <typo3@cobweb.ch>
+
+	* Allow for IP filtering, resolves #2859
+
 2014-12-08 Francois Suter <typo3@cobweb.ch>
 
 	* New table structure, new logging utility, database and file writer, resolves #63689
