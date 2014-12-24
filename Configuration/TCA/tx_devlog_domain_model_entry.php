@@ -10,7 +10,7 @@ return array(
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
 		'cruser_id' => 'cruser_id',
-		'default_sortby' => 'ORDER BY crdate DESC',
+		'default_sortby' => 'ORDER BY crdate DESC, sorting ASC',
 		'dividers2tabs' => TRUE,
 		'searchFields' => 'severity,extkey,message,location,ip,line,extra_data',
 		'typeicon_column' => 'severity',

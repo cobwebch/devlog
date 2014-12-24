@@ -40,13 +40,18 @@ class EntryRepository implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
 	 * Returns all available records in the log table.
 	 *
+	 * By default records are sorted by descending creation date and
+	 * ascending order.
+	 *
 	 * @return array|NULL
 	 */
 	public function findAll() {
 		$entries = $this->getDatabaseConnection()->exec_SELECTgetRows(
 			'*',
 			$this->databaseTable,
-			''
+			'',
+			'',
+			'crdate DESC, sorting ASC'
 		);
 		$numEntries = count($entries);
 		for ($i = 0; $i < $numEntries; $i++) {
@@ -63,6 +68,7 @@ class EntryRepository implements \TYPO3\CMS\Core\SingletonInterface {
 	public function add($entry) {
 		$fields = array(
 			'run_id' => $entry->getRunId(),
+			'sorting' => $entry->getSorting(),
 			'severity' => $entry->getSeverity(),
 			'extkey' => $entry->getExtkey(),
 			'message' => $entry->getMessage(),
@@ -90,7 +96,6 @@ class EntryRepository implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
 	 * Enforces the limits set in the extension configuration to avoid that the DB tables gets out of hand.
 	 *
-	 * @param array $configuration Extension configuration
 	 * @return void
 	 */
 	public function cleanUp() {

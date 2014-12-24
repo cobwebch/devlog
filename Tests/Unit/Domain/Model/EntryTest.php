@@ -63,6 +63,31 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @covers \Devlog\Devlog\Domain\Model\Entry::getSorting
+	 */
+	public function getSortingReturnsInitialValueForInteger() {
+		$this->assertSame(
+			0,
+			$this->subject->getSorting()
+		);
+	}
+
+	/**
+	 * @test
+	 * @covers \Devlog\Devlog\Domain\Model\Entry::setSorting
+	 */
+	public function setSortingForIntegerSetsSorting() {
+		$this->subject->setSorting(12);
+
+		$this->assertAttributeEquals(
+			12,
+			'sorting',
+			$this->subject
+		);
+	}
+
+	/**
+	 * @test
 	 * @covers \Devlog\Devlog\Domain\Model\Entry::getCrdate
 	 */
 	public function getCrdateReturnsInitialValueForInteger() {

@@ -45,6 +45,11 @@ class Logger implements \TYPO3\CMS\Core\SingletonInterface {
 	 */
 	protected $runId;
 
+	/**
+	 * @var int Counter for entries within the current run
+	 */
+	protected $counter = 0;
+
 	public function __construct() {
 		// Read the extension configuration
 		$this->extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['devlog']);
@@ -102,6 +107,10 @@ class Logger implements \TYPO3\CMS\Core\SingletonInterface {
 		$entry->setRunId(
 			$this->runId
 		);
+		$entry->setSorting(
+			$this->counter
+		);
+		$this->counter++;
 		$entry->setCrdate($GLOBALS['EXEC_TIME']);
 		$entry->setMessage(
 			GeneralUtility::removeXSS($logData['msg'])

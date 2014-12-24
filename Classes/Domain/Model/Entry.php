@@ -28,6 +28,13 @@ class Entry extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	protected $runId = '';
 
 	/**
+	 * Entry order within the log run.
+	 *
+	 * @var int
+	 */
+	protected $sorting = 0;
+
+	/**
 	 * Timestamp of the log run.
 	 *
 	 * @var integer
@@ -113,6 +120,24 @@ class Entry extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	 */
 	public function setRunId($runId) {
 		$this->runId = $runId;
+	}
+
+	/**
+	 * Returns the sorting.
+	 *
+	 * @return int
+	 */
+	public function getSorting() {
+		return $this->sorting;
+	}
+
+	/**
+	 * Sets the sorting.
+	 *
+	 * @param int $sorting
+	 */
+	public function setSorting($sorting) {
+		$this->sorting = $sorting;
 	}
 
 	/**

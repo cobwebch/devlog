@@ -1,3 +1,7 @@
+2014-12-24 Francois Suter <typo3@cobweb.ch>
+
+	* Add sorting field, resolves #64037
+
 2014-12-15 Francois Suter <typo3@cobweb.ch>
 
 	* Allow for IP filtering, resolves #2859
