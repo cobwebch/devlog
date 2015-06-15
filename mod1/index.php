@@ -678,9 +678,12 @@ class tx_devlog_module1 extends t3lib_SCbase {
 		if (($clearParameters = t3lib_div::_GP('clear'))) {
 			$where = '';
 			if (isset($clearParameters['extension'])) {
-				$where = "extkey = '".$clearParameters['extension']."'";
+				$where = 'extkey = ' . $GLOBALS['TYPO3_DB']->fullQuoteStr(
+					$clearParameters['extension'],
+					'tx_devlog'
+				);
 			} elseif (isset($clearParameters['period'])) {
-				$where = "crdate <= '".$clearParameters['period']."'";
+				$where = 'crdate <= ' . intval($clearParameters['period']);
 			}
 			$GLOBALS['TYPO3_DB']->exec_DELETEquery('tx_devlog', $where);
 			$affectedRows = $GLOBALS['TYPO3_DB']->sql_affected_rows();
@@ -799,7 +802,7 @@ class tx_devlog_module1 extends t3lib_SCbase {
 
 			// Select only the logs from a single run
 		if ($this->selectedLog > 1000) {
-			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_devlog', 'crmsec = '.$this->selectedLog, $groupBy='', $orderBy='uid', $limit='');
+			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_devlog', 'crmsec = ' . intval($this->selectedLog), $groupBy='', $orderBy='uid', $limit='');
 		}
 			// Select all log entries, but taking pagination into account
 		elseif ($this->selectedLog == -1) {
@@ -832,13 +835,15 @@ class tx_devlog_module1 extends t3lib_SCbase {
 				// Calculate start page
 				// If start is larger than entries count, revert to first page (0)
 			$start = $page * $this->extConf['entriesPerPage'];
-			if ($start > $this->totalLogEntries) $start = 0;
-			$limit = $start.','.$this->extConf['entriesPerPage'];
+			if ($start > $this->totalLogEntries) {
+				$start = 0;
+			}
+			$limit = intval($start) . ',' . intval($this->extConf['entriesPerPage']);
 			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_devlog', $whereClause, $groupBy='', $orderBy='uid DESC', $limit);
 		}
 			// Select the latest log entries up to the selected limit
 		else {
-			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_devlog', '', $groupBy='', $orderBy='uid DESC', $limit=$this->selectedLog);
+			$dbres = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_devlog', '', $groupBy='', $orderBy='uid DESC', intval($this->selectedLog));
 		}
 		return $dbres;
 	}
