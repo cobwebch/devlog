@@ -1,7 +1,6 @@
 <?php
 namespace Devlog\Devlog\Writer;
 
-
 /***************************************************************
  *
  *  Copyright notice
@@ -30,12 +29,13 @@ namespace Devlog\Devlog\Writer;
 /**
  * API definition for log writers
  */
-interface WriterInterface {
-	/**
-	 * Writes the entry to the relevant storage.
-	 *
-	 * @param \Devlog\Devlog\Domain\Model\Entry $entry
-	 * @return mixed
-	 */
-	public function write($entry);
+interface WriterInterface
+{
+    /**
+     * Writes the entry to the relevant storage.
+     *
+     * @param \Devlog\Devlog\Domain\Model\Entry $entry
+     * @return mixed
+     */
+    public function write($entry);
 }

@@ -31,83 +31,97 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * Writes log entries to a given file
  */
-class FileWriter extends AbstractWriter {
-	/**
-	 * Handle to the log file.
-	 *
-	 * @var resource
-	 */
-	protected $fileHandle;
+class FileWriter extends AbstractWriter
+{
+    /**
+     * Handle to the log file.
+     *
+     * @var resource
+     */
+    protected $fileHandle;
 
-	public function __construct($logger) {
-		parent::__construct($logger);
-		$configuration = $this->logger->getExtensionConfiguration();
-		$absoluteFilePath = GeneralUtility::getFileAbsFileName(
-			$configuration['logFilePath']
-		);
-		// If the file path is not valid, throw an exception
-		if (empty($absoluteFilePath)) {
-			throw new \Exception(
-				sprintf(
-					'Path to log file %s is invalid.',
-					$configuration['logFilePath']
-				),
-				1416486859
-			);
-		}
-		// If the file path is valid, try opening the file
-		$this->fileHandle = @fopen(
-			$absoluteFilePath,
-			'a'
-		);
-		// Throw an exception if log file could not be opened properly
-		if (!$this->fileHandle) {
-			throw new \Exception(
-				sprintf(
-					'Log file %s could not be opened.',
-					$configuration['logFilePath']
-				),
-				1416486470
-			);
-		}
-	}
+    /**
+     * FileWriter constructor.
+     *
+     * @param \Devlog\Devlog\Utility\Logger $logger
+     *
+     * @throws \Exception
+     */
+    public function __construct($logger)
+    {
+        parent::__construct($logger);
+        $configuration = $this->logger->getExtensionConfiguration();
+        $absoluteFilePath = GeneralUtility::getFileAbsFileName(
+            $configuration['logFilePath']
+        );
+        // If the file path is not valid, throw an exception
+        if (empty($absoluteFilePath)) {
+            throw new \Exception(
+                sprintf(
+                    'Path to log file %s is invalid.',
+                    $configuration['logFilePath']
+                ),
+                1416486859
+            );
+        }
+        // If the file path is valid, try opening the file
+        $this->fileHandle = @fopen(
+            $absoluteFilePath,
+            'a'
+        );
+        // Throw an exception if log file could not be opened properly
+        if (!$this->fileHandle) {
+            throw new \Exception(
+                sprintf(
+                    'Log file %s could not be opened.',
+                    $configuration['logFilePath']
+                ),
+                1416486470
+            );
+        }
+    }
 
-	public function __destruct() {
-		@fclose($this->fileHandle);
-	}
+    /**
+     * Destructor
+     */
+    public function __destruct()
+    {
+        @fclose($this->fileHandle);
+    }
 
-	/**
-	 * Writes the entry to the log file.
-	 *
-	 * @param \Devlog\Devlog\Domain\Model\Entry $entry
-	 * @return void
-	 */
-	public function write($entry) {
-		$logLine = '';
-		$logLine .= date('c', $entry->getCrdate());
-		switch ($entry->getSeverity()) {
-			case 0:
-				$severity = 'INFO';
-				break;
-			case 1:
-				$severity = 'NOTICE';
-				break;
-			case 2:
-				$severity = 'WARNING';
-				break;
-			case 3:
-				$severity = 'ERROR';
-				break;
-			default:
-				$severity = 'OK';
-		}
-		$logLine .= ' [' . $severity . ']';
-		$logLine .= ' ' . $entry->getMessage();
-		$logLine .= ' (' . $entry->getLocation() . ' ' . $entry->getLine() . ')';
-		$logLine .= "\n";
-		@fwrite(
-			$this->fileHandle,
-			$logLine
-		);
-	}
+    /**
+     * Writes the entry to the log file.
+     *
+     * @param \Devlog\Devlog\Domain\Model\Entry $entry
+     * @return void
+     */
+    public function write($entry)
+    {
+        $logLine = '';
+        $logLine .= date('c', $entry->getCrdate());
+        switch ($entry->getSeverity()) {
+            case 0:
+                $severity = 'INFO';
+                break;
+            case 1:
+                $severity = 'NOTICE';
+                break;
+            case 2:
+                $severity = 'WARNING';
+                break;
+            case 3:
+                $severity = 'ERROR';
+                break;
+            default:
+                $severity = 'OK';
+        }
+        $logLine .= ' [' . $severity . ']';
+        $logLine .= ' ' . $entry->getMessage();
+        $logLine .= ' (' . $entry->getLocation() . ' ' . $entry->getLine() . ')';
+        $logLine .= "\n";
+        @fwrite(
+            $this->fileHandle,
+            $logLine
+        );
+    }
 }

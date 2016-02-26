@@ -1,7 +1,6 @@
 <?php
 namespace Devlog\Devlog\Writer;
 
-
 /***************************************************************
  *
  *  Copyright notice
@@ -30,18 +29,20 @@ namespace Devlog\Devlog\Writer;
 /**
  * Abstract base class for all Writers.
  */
-abstract class AbstractWriter implements WriterInterface {
-	/**
-	 * @var \Devlog\Devlog\Utility\Logger Back-reference to the logger class
-	 */
-	protected $logger;
+abstract class AbstractWriter implements WriterInterface
+{
+    /**
+     * @var \Devlog\Devlog\Utility\Logger Back-reference to the logger class
+     */
+    protected $logger;
 
-	/**
-	 * Base constructor sets the Logger reference.
-	 *
-	 * @param \Devlog\Devlog\Utility\Logger $logger
-	 */
-	public function __construct($logger) {
-		$this->logger = $logger;
-	}
+    /**
+     * Base constructor sets the Logger reference.
+     *
+     * @param \Devlog\Devlog\Utility\Logger $logger
+     */
+    public function __construct($logger)
+    {
+        $this->logger = $logger;
+    }
 }

@@ -1,6 +1,6 @@
 <?php
 if (!defined ('TYPO3_MODE')) {
-	die ('Access denied.');
+    die ('Access denied.');
 }
 
 // Register the logging method with the appropriate hook

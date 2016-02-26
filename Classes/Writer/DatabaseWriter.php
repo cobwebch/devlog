@@ -30,28 +30,36 @@ namespace Devlog\Devlog\Writer;
 /**
  * Writes log entries to a database table.
  */
-class DatabaseWriter extends AbstractWriter {
-	/**
-	 * @var \Devlog\Devlog\Domain\Repository\EntryRepository
-	 */
-	protected $entryRepository;
+class DatabaseWriter extends AbstractWriter
+{
+    /**
+     * @var \Devlog\Devlog\Domain\Repository\EntryRepository
+     */
+    protected $entryRepository;
 
-	public function __construct($logger) {
-		parent::__construct($logger);
-		$this->entryRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Devlog\\Devlog\\Domain\\Repository\\EntryRepository');
-		$this->entryRepository->setExtensionConfiguration(
-			$this->logger->getExtensionConfiguration()
-		);
-	}
+    /**
+     * DatabaseWriter constructor.
+     *
+     * @param \Devlog\Devlog\Utility\Logger $logger
+     */
+    public function __construct($logger)
+    {
+        parent::__construct($logger);
+        $this->entryRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Devlog\\Devlog\\Domain\\Repository\\EntryRepository');
+        $this->entryRepository->setExtensionConfiguration(
+            $this->logger->getExtensionConfiguration()
+        );
+    }
 
-	/**
-	 * Writes the entry to the DB storage.
-	 *
-	 * @param \Devlog\Devlog\Domain\Model\Entry $entry
-	 * @return void
-	 */
-	public function write($entry) {
-		$this->entryRepository->add($entry);
-		$this->entryRepository->cleanUp();
-	}
+    /**
+     * Writes the entry to the DB storage.
+     *
+     * @param \Devlog\Devlog\Domain\Model\Entry $entry
+     * @return void
+     */
+    public function write($entry)
+    {
+        $this->entryRepository->add($entry);
+        $this->entryRepository->cleanUp();
+    }
 }

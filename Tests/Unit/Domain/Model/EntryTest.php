@@ -22,316 +22,343 @@ use Devlog\Devlog\Domain\Model\Entry;
  *
  * @author François Suter <typo3@cobweb.ch>
  */
-class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
-	/**
-	 * @var Entry
-	 */
-	protected $subject = NULL;
+class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+{
+    /**
+     * @var Entry
+     */
+    protected $subject = NULL;
 
-	protected function setUp() {
-		$this->subject = new Entry();
-	}
+    protected function setUp()
+    {
+        $this->subject = new Entry();
+    }
 
-	protected function tearDown() {
-		unset($this->subject);
-	}
+    protected function tearDown()
+    {
+        unset($this->subject);
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::getRunId
-	 */
-	public function getRunIdReturnsInitialValueForString() {
-		$this->assertSame(
-			'',
-			$this->subject->getRunId()
-		);
-	}
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::getRunId
+     */
+    public function getRunIdReturnsInitialValueForString()
+    {
+        $this->assertSame(
+            '',
+            $this->subject->getRunId()
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::setRunId
-	 */
-	public function setRunIdForStringSetsExtkey() {
-		$this->subject->setRunId('12345678987.65432100');
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::setRunId
+     */
+    public function setRunIdForStringSetsExtkey()
+    {
+        $this->subject->setRunId('12345678987.65432100');
 
-		$this->assertAttributeEquals(
-			'12345678987.65432100',
-			'runId',
-			$this->subject
-		);
-	}
+        $this->assertAttributeEquals(
+            '12345678987.65432100',
+            'runId',
+            $this->subject
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::getSorting
-	 */
-	public function getSortingReturnsInitialValueForInteger() {
-		$this->assertSame(
-			0,
-			$this->subject->getSorting()
-		);
-	}
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::getSorting
+     */
+    public function getSortingReturnsInitialValueForInteger()
+    {
+        $this->assertSame(
+            0,
+            $this->subject->getSorting()
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::setSorting
-	 */
-	public function setSortingForIntegerSetsSorting() {
-		$this->subject->setSorting(12);
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::setSorting
+     */
+    public function setSortingForIntegerSetsSorting()
+    {
+        $this->subject->setSorting(12);
 
-		$this->assertAttributeEquals(
-			12,
-			'sorting',
-			$this->subject
-		);
-	}
+        $this->assertAttributeEquals(
+            12,
+            'sorting',
+            $this->subject
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::getCrdate
-	 */
-	public function getCrdateReturnsInitialValueForInteger() {
-		$this->assertSame(
-			0,
-			$this->subject->getCrdate()
-		);
-	}
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::getCrdate
+     */
+    public function getCrdateReturnsInitialValueForInteger()
+    {
+        $this->assertSame(
+            0,
+            $this->subject->getCrdate()
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::setCrdate
-	 */
-	public function setCrdateForIntegerSetsSeverity() {
-		$this->subject->setCrdate(1417705263);
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::setCrdate
+     */
+    public function setCrdateForIntegerSetsSeverity()
+    {
+        $this->subject->setCrdate(1417705263);
 
-		$this->assertAttributeEquals(
-			1417705263,
-			'crdate',
-			$this->subject
-		);
-	}
+        $this->assertAttributeEquals(
+            1417705263,
+            'crdate',
+            $this->subject
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::getSeverity
-	 */
-	public function getSeverityReturnsInitialValueForInteger() {
-		$this->assertSame(
-			0,
-			$this->subject->getSeverity()
-		);
-	}
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::getSeverity
+     */
+    public function getSeverityReturnsInitialValueForInteger()
+    {
+        $this->assertSame(
+            0,
+            $this->subject->getSeverity()
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::setSeverity
-	 */
-	public function setSeverityForIntegerSetsSeverity() {
-		$this->subject->setSeverity(2);
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::setSeverity
+     */
+    public function setSeverityForIntegerSetsSeverity()
+    {
+        $this->subject->setSeverity(2);
 
-		$this->assertAttributeEquals(
-			2,
-			'severity',
-			$this->subject
-		);
-	}
+        $this->assertAttributeEquals(
+            2,
+            'severity',
+            $this->subject
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::getExtkey
-	 */
-	public function getExtkeyReturnsInitialValueForString() {
-		$this->assertSame(
-			'',
-			$this->subject->getExtkey()
-		);
-	}
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::getExtkey
+     */
+    public function getExtkeyReturnsInitialValueForString()
+    {
+        $this->assertSame(
+            '',
+            $this->subject->getExtkey()
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::setExtkey
-	 */
-	public function setExtkeyForStringSetsExtkey() {
-		$this->subject->setExtkey('devlog');
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::setExtkey
+     */
+    public function setExtkeyForStringSetsExtkey()
+    {
+        $this->subject->setExtkey('devlog');
 
-		$this->assertAttributeEquals(
-			'devlog',
-			'extkey',
-			$this->subject
-		);
-	}
+        $this->assertAttributeEquals(
+            'devlog',
+            'extkey',
+            $this->subject
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::getMessage
-	 */
-	public function getMessageReturnsInitialValueForString() {
-		$this->assertSame(
-			'',
-			$this->subject->getMessage()
-		);
-	}
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::getMessage
+     */
+    public function getMessageReturnsInitialValueForString()
+    {
+        $this->assertSame(
+            '',
+            $this->subject->getMessage()
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::setMessage
-	 */
-	public function setMessageForStringSetsMessage() {
-		$this->subject->setMessage('This is a message');
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::setMessage
+     */
+    public function setMessageForStringSetsMessage()
+    {
+        $this->subject->setMessage('This is a message');
 
-		$this->assertAttributeEquals(
-			'This is a message',
-			'message',
-			$this->subject
-		);
-	}
+        $this->assertAttributeEquals(
+            'This is a message',
+            'message',
+            $this->subject
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::getLocation
-	 */
-	public function getLocationReturnsInitialValueForString() {
-		$this->assertSame(
-			'',
-			$this->subject->getLocation()
-		);
-	}
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::getLocation
+     */
+    public function getLocationReturnsInitialValueForString()
+    {
+        $this->assertSame(
+            '',
+            $this->subject->getLocation()
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::setLocation
-	 */
-	public function setLocationForStringSetsLocation() {
-		$this->subject->setLocation('Entry.php');
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::setLocation
+     */
+    public function setLocationForStringSetsLocation()
+    {
+        $this->subject->setLocation('Entry.php');
 
-		$this->assertAttributeEquals(
-			'Entry.php',
-			'location',
-			$this->subject
-		);
-	}
+        $this->assertAttributeEquals(
+            'Entry.php',
+            'location',
+            $this->subject
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::getLine
-	 */
-	public function getLineReturnsInitialValueForInteger() {
-		$this->assertSame(
-			0,
-			$this->subject->getLine()
-		);
-	}
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::getLine
+     */
+    public function getLineReturnsInitialValueForInteger()
+    {
+        $this->assertSame(
+            0,
+            $this->subject->getLine()
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::setLine
-	 */
-	public function setLineForIntegerSetsLine() {
-		$this->subject->setLine(42);
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::setLine
+     */
+    public function setLineForIntegerSetsLine()
+    {
+        $this->subject->setLine(42);
 
-		$this->assertAttributeEquals(
-			42,
-			'line',
-			$this->subject
-		);
-	}
+        $this->assertAttributeEquals(
+            42,
+            'line',
+            $this->subject
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::getIp
-	 */
-	public function getIpReturnsInitialValueForString() {
-		$this->assertSame(
-			'',
-			$this->subject->getIp()
-		);
-	}
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::getIp
+     */
+    public function getIpReturnsInitialValueForString()
+    {
+        $this->assertSame(
+            '',
+            $this->subject->getIp()
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::setIp
-	 */
-	public function setIpForStringSetsIp() {
-		$this->subject->setIp('127.0.0.1');
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::setIp
+     */
+    public function setIpForStringSetsIp()
+    {
+        $this->subject->setIp('127.0.0.1');
 
-		$this->assertAttributeEquals(
-			'127.0.0.1',
-			'ip',
-			$this->subject
-		);
-	}
+        $this->assertAttributeEquals(
+            '127.0.0.1',
+            'ip',
+            $this->subject
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::getCruserId
-	 */
-	public function getCruserIdReturnsInitialValueForInteger() {
-		$this->assertSame(
-			0,
-			$this->subject->getCruserId()
-		);
-	}
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::getCruserId
+     */
+    public function getCruserIdReturnsInitialValueForInteger()
+    {
+        $this->assertSame(
+            0,
+            $this->subject->getCruserId()
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::setCruserId
-	 */
-	public function setCruserIdForIntegerSetsSeverity() {
-		$this->subject->setCruserId(5);
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::setCruserId
+     */
+    public function setCruserIdForIntegerSetsSeverity()
+    {
+        $this->subject->setCruserId(5);
 
-		$this->assertAttributeEquals(
-			5,
-			'cruserId',
-			$this->subject
-		);
-	}
+        $this->assertAttributeEquals(
+            5,
+            'cruserId',
+            $this->subject
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::getPid
-	 */
-	public function getPidReturnsInitialValueForInteger() {
-		$this->assertSame(
-			0,
-			$this->subject->getPid()
-		);
-	}
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::getPid
+     */
+    public function getPidReturnsInitialValueForInteger()
+    {
+        $this->assertSame(
+            0,
+            $this->subject->getPid()
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::setPid
-	 */
-	public function setPidForIntegerSetsSeverity() {
-		$this->subject->setPid(17);
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::setPid
+     */
+    public function setPidForIntegerSetsSeverity()
+    {
+        $this->subject->setPid(17);
 
-		$this->assertAttributeEquals(
-			17,
-			'pid',
-			$this->subject
-		);
-	}
+        $this->assertAttributeEquals(
+            17,
+            'pid',
+            $this->subject
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::getExtraData
-	 */
-	public function getExtraDataReturnsInitialValueForString() {
-		$this->assertNull(
-			$this->subject->getExtraData()
-		);
-	}
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::getExtraData
+     */
+    public function getExtraDataReturnsInitialValueForString()
+    {
+        $this->assertNull(
+            $this->subject->getExtraData()
+        );
+    }
 
-	/**
-	 * @test
-	 * @covers \Devlog\Devlog\Domain\Model\Entry::setExtraData
-	 */
-	public function setExtraDataForStringSetsExtraData() {
-		$this->subject->setExtraData('SomeBlob');
+    /**
+     * @test
+     * @covers \Devlog\Devlog\Domain\Model\Entry::setExtraData
+     */
+    public function setExtraDataForStringSetsExtraData()
+    {
+        $this->subject->setExtraData('SomeBlob');
 
-		$this->assertAttributeEquals(
-			'SomeBlob',
-			'extraData',
-			$this->subject
-		);
-	}
+        $this->assertAttributeEquals(
+            'SomeBlob',
+            'extraData',
+            $this->subject
+        );
+    }
 }
