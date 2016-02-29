@@ -1,31 +1,23 @@
 <?php
 namespace Devlog\Devlog\Writer;
 
+/**
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
 
-/***************************************************************
- *
- *  Copyright notice
- *
- *  (c) 2014 François Suter <typo3@cobweb.ch>, Cobweb Development Sarl
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+use Devlog\Devlog\Domain\Model\Entry;
+use Devlog\Devlog\Domain\Repository\EntryRepository;
+use Devlog\Devlog\Utility\Logger;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Writes log entries to a database table.
@@ -33,28 +25,28 @@ namespace Devlog\Devlog\Writer;
 class DatabaseWriter extends AbstractWriter
 {
     /**
-     * @var \Devlog\Devlog\Domain\Repository\EntryRepository
+     * @var EntryRepository
      */
     protected $entryRepository;
 
     /**
      * DatabaseWriter constructor.
      *
-     * @param \Devlog\Devlog\Utility\Logger $logger
+     * @param Logger $logger
      */
     public function __construct($logger)
     {
         parent::__construct($logger);
-        $this->entryRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Devlog\\Devlog\\Domain\\Repository\\EntryRepository');
+        $this->entryRepository = GeneralUtility::makeInstance(EntryRepository::class);
         $this->entryRepository->setExtensionConfiguration(
-            $this->logger->getExtensionConfiguration()
+                $this->logger->getExtensionConfiguration()
         );
     }
 
     /**
      * Writes the entry to the DB storage.
      *
-     * @param \Devlog\Devlog\Domain\Model\Entry $entry
+     * @param Entry $entry
      * @return void
      */
     public function write($entry)

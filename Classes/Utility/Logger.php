@@ -14,6 +14,8 @@ namespace Devlog\Devlog\Utility;
  * The TYPO3 project - inspiring people to share!
  */
 
+use Devlog\Devlog\Domain\Model\Entry;
+use Devlog\Devlog\Domain\Model\ExtensionConfiguration;
 use Devlog\Devlog\Writer\WriterInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -28,9 +30,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class Logger implements SingletonInterface
 {
     /**
-     * @var array Devlog extension configuration
+     * Devlog extension configuration
+     *
+     * @var ExtensionConfiguration
      */
-    protected $extensionConfiguration = array();
+    protected $extensionConfiguration = null;
 
     /**
      * @var array List of instances of each available log writer
@@ -40,7 +44,7 @@ class Logger implements SingletonInterface
     /**
      * @var bool Flag used to turn logging off
      */
-    protected $isLoggingEnabled = TRUE;
+    protected $isLoggingEnabled = true;
 
     /**
      * @var string Unique ID of the current run
@@ -55,7 +59,7 @@ class Logger implements SingletonInterface
     public function __construct()
     {
         // Read the extension configuration
-        $this->extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['devlog']);
+        $this->extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class);
 
         // Use microtime as unique ID (in format "sec.msec")
         $microtimeParts = explode(' ', microtime());
@@ -65,14 +69,13 @@ class Logger implements SingletonInterface
         foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['devlog']['writers'] as $logWriterClass) {
             try {
                 $logWriter = GeneralUtility::makeInstance(
-                    $logWriterClass,
-                    $this
+                        $logWriterClass,
+                        $this
                 );
                 if ($logWriter instanceof WriterInterface) {
                     $this->logWriters[] = $logWriter;
                 }
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 // TODO: report somewhere that writer could not be instantiated (sys_log?)
             }
         }
@@ -82,10 +85,10 @@ class Logger implements SingletonInterface
      * Logs calls passed to \TYPO3\CMS\Core\Utility\GeneralUtility::devLog().
      *
      * $logData = array('msg'=>$msg, 'extKey'=>$extKey, 'severity'=>$severity, 'dataVar'=>$dataVar);
-     *		'msg'		string		Message (in english).
-     *		'extKey'	string		Extension key (from which extension you are calling the log)
-     *		'severity'	integer		Severity: 0 is info, 1 is notice, 2 is warning, 3 is fatal error, -1 is "OK" message
-     *		'dataVar'	array		Additional data you want to pass to the logger.
+     *        'msg'        string        Message (in english).
+     *        'extKey'    string        Extension key (from which extension you are calling the log)
+     *        'severity'    integer        Severity: 0 is info, 1 is notice, 2 is warning, 3 is fatal error, -1 is "OK" message
+     *        'dataVar'    array        Additional data you want to pass to the logger.
      *
      * @param array $logData Log data
      * @return void
@@ -103,34 +106,34 @@ class Logger implements SingletonInterface
             return;
         }
         // Disable logging while inside the devlog, to avoid recursive calls
-        $this->isLoggingEnabled = FALSE;
+        $this->isLoggingEnabled = false;
 
         // Create an entry and fill it with data
-        /** @var \Devlog\Devlog\Domain\Model\Entry $entry */
-        $entry = GeneralUtility::makeInstance('Devlog\\Devlog\\Domain\\Model\\Entry');
+        /** @var Entry $entry */
+        $entry = GeneralUtility::makeInstance(Entry::class);
         $entry->setRunId(
-            $this->runId
+                $this->runId
         );
         $entry->setSorting(
-            $this->counter
+                $this->counter
         );
         $this->counter++;
         $entry->setCrdate($GLOBALS['EXEC_TIME']);
         $entry->setMessage(
-            GeneralUtility::removeXSS($logData['msg'])
+                GeneralUtility::removeXSS($logData['msg'])
         );
         $entry->setExtkey(
-            strip_tags($logData['extKey'])
+                strip_tags($logData['extKey'])
         );
         $entry->setSeverity(
-            intval($logData['severity'])
+                (int)$logData['severity']
         );
         $entry->setExtraData($logData['dataVar']);
 
         // Try to get a page id that makes sense
         $pid = 0;
         // In the FE context, this is obviously the current page
-        if (TYPO3_MODE == 'FE') {
+        if (TYPO3_MODE === 'FE') {
             $pid = $GLOBALS['TSFE']->id;
 
         // In other contexts, a global variable may be set with a relevant pid
@@ -140,19 +143,18 @@ class Logger implements SingletonInterface
         $entry->setPid($pid);
 
         $entry->setCruserId(
-            (isset($GLOBALS['BE_USER']->user['uid'])) ? $GLOBALS['BE_USER']->user['uid'] : 0
+                (isset($GLOBALS['BE_USER']->user['uid'])) ? $GLOBALS['BE_USER']->user['uid'] : 0
         );
         $entry->setIp(
-            $logData['ip']
+                $logData['ip']
         );
 
         // Get information about the place where this method was called from
         try {
-            $callPlaceInfo = $this->getCallPlaceInfo(debug_backtrace());
+            $callPlaceInfo = $this->getCallPlaceInfo();
             $entry->setLocation($callPlaceInfo['basename']);
             $entry->setLine($callPlaceInfo['line']);
-        }
-        catch (\OutOfBoundsException $e) {
+        } catch (\OutOfBoundsException $e) {
             // Do nothing
         }
 
@@ -161,7 +163,7 @@ class Logger implements SingletonInterface
         foreach ($this->logWriters as $logWriter) {
             $logWriter->write($entry);
         }
-        $this->isLoggingEnabled = TRUE;
+        $this->isLoggingEnabled = true;
     }
 
     /**
@@ -173,18 +175,18 @@ class Logger implements SingletonInterface
     public function isEntryAccepted($logData)
     {
         // Skip entry if severity is below minimum level
-        if ($logData['severity'] < $this->extensionConfiguration['minimumLogLevel']) {
-            return FALSE;
+        if ($logData['severity'] < $this->extensionConfiguration->getMinimumLogLevel()) {
+            return false;
         }
         // Skip entry if key is in excluded list
-        if (GeneralUtility::inList($this->extensionConfiguration['excludeKeys'], $logData['extKey'])) {
-            return FALSE;
+        if (GeneralUtility::inList($this->extensionConfiguration->getExcludeKeys(), $logData['extKey'])) {
+            return false;
         }
         // Skip entry if referrer does not match IP mask
         if (!$this->isIpAddressAccepted($logData['ip'])) {
-            return FALSE;
+            return false;
         }
-        return TRUE;
+        return true;
     }
 
     /**
@@ -195,7 +197,7 @@ class Logger implements SingletonInterface
      */
     public function isIpAddressAccepted($ipAddress)
     {
-        $ipFilter = $this->extensionConfiguration['ipFilter'];
+        $ipFilter = $this->extensionConfiguration->getIpFilter();
         // Re-use global IP mask if so defined
         if (strtolower($ipFilter) === 'devipmask') {
             $ipFilter = $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'];
@@ -207,7 +209,7 @@ class Logger implements SingletonInterface
      * Given a backtrace, this method tries to find the place where a "devLog" function was called
      * and returns info about that place.
      *
-     * @return	array	information about the call place
+     * @return    array    information about the call place
      */
     protected function getCallPlaceInfo()
     {
@@ -220,15 +222,15 @@ class Logger implements SingletonInterface
             }
         }
         throw new \OutOfBoundsException(
-            'No devLog() call found withing debug stack.',
-            1414338781
+                'No devLog() call found withing debug stack.',
+                1414338781
         );
     }
 
     /**
      * Returns the extension's configuration.
      *
-     * @return array
+     * @return ExtensionConfiguration
      */
     public function getExtensionConfiguration()
     {
@@ -240,7 +242,7 @@ class Logger implements SingletonInterface
      *
      * This should normally not be used. It is designed for unit testing.
      *
-     * @param array $extensionConfiguration
+     * @param ExtensionConfiguration $extensionConfiguration
      * @return void
      */
     public function setExtensionConfiguration($extensionConfiguration)

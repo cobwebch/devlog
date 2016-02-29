@@ -14,6 +14,7 @@ namespace Devlog\Devlog\Domain\Repository;
  * The TYPO3 project - inspiring people to share!
  */
 
+use Devlog\Devlog\Domain\Model\ExtensionConfiguration;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /**
@@ -32,7 +33,7 @@ class EntryRepository implements SingletonInterface
     protected $databaseTable = 'tx_devlog_domain_model_entry';
 
     /**
-     * @var array Extension configuration
+     * @var ExtensionConfiguration Extension configuration
      */
     protected $extensionConfiguration = null;
 
@@ -47,7 +48,7 @@ class EntryRepository implements SingletonInterface
      * By default records are sorted by descending creation date and
      * ascending order.
      *
-     * @return array|NULL
+     * @return array|null
      */
     public function findAll()
     {
@@ -93,7 +94,7 @@ class EntryRepository implements SingletonInterface
         // Handle extra data
         $fields['extra_data'] = gzcompress(serialize($entry->getExtraData()));
         $extraDataSize = strlen($fields['extra_data']);
-        $maximumExtraDataSize = $this->extensionConfiguration['maximumExtraDataSize'];
+        $maximumExtraDataSize = $this->extensionConfiguration->getMaximumExtraDataSize();
         // If the entry's extra data is above the limit, replace it with a warning
         if (!empty($maximumExtraDataSize) && $extraDataSize > $maximumExtraDataSize) {
             $fields['extra_data'] = gzcompress(serialize('Extra data too large, not saved.'));
@@ -119,12 +120,12 @@ class EntryRepository implements SingletonInterface
             );
         }
         // Check if number of rows is above the limit and clean up if necessary
-        if ($this->numberOfRows > $this->extensionConfiguration['maximumRows']) {
+        if ($this->numberOfRows > $this->extensionConfiguration->getMaximumRows()) {
             // Select the row from which to start cleaning up
             // To achieve this, order by creation date (so oldest comes first)
             // then offset by 10% of maximumRows and get the next record
             // This will return a timestamp that is used as a cut-off date
-            $numberOfRowsToRemove = round(0.1 * $this->extensionConfiguration['maximumRows']);
+            $numberOfRowsToRemove = round(0.1 * $this->extensionConfiguration->getMaximumRows());
             $cutOffRow = $this->getDatabaseConnection()->exec_SELECTgetRows(
                     'crdate',
                     'tx_devlog_domain_model_entry',
@@ -145,7 +146,7 @@ class EntryRepository implements SingletonInterface
             // Update (cached) number of rows
             $this->numberOfRows -= $numberOfRemovedRows;
             // Optimize the table (if option is active)
-            if ($this->extensionConfiguration['optimize']) {
+            if ($this->extensionConfiguration->getOptimizeTable()) {
                 $this->getDatabaseConnection()->sql_query('OPTIMIZE table tx_devlog_domain_model_entry');
             }
         }
@@ -157,7 +158,7 @@ class EntryRepository implements SingletonInterface
      *
      * Used to pass the "devlog" configuration down to the entry repository.
      *
-     * @param array $configuration
+     * @param ExtensionConfiguration $configuration
      */
     public function setExtensionConfiguration($configuration)
     {

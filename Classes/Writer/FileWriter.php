@@ -1,31 +1,20 @@
 <?php
 namespace Devlog\Devlog\Writer;
 
+/**
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
 
-/***************************************************************
- *
- *  Copyright notice
- *
- *  (c) 2014 François Suter <typo3@cobweb.ch>, Cobweb Development Sarl
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+use Devlog\Devlog\Utility\Logger;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -43,40 +32,30 @@ class FileWriter extends AbstractWriter
     /**
      * FileWriter constructor.
      *
-     * @param \Devlog\Devlog\Utility\Logger $logger
+     * @param Logger $logger
      *
-     * @throws \Exception
+     * @throws \UnexpectedValueException
      */
     public function __construct($logger)
     {
         parent::__construct($logger);
         $configuration = $this->logger->getExtensionConfiguration();
         $absoluteFilePath = GeneralUtility::getFileAbsFileName(
-            $configuration['logFilePath']
+                $configuration->getLogFilePath()
         );
-        // If the file path is not valid, throw an exception
-        if (empty($absoluteFilePath)) {
-            throw new \Exception(
-                sprintf(
-                    'Path to log file %s is invalid.',
-                    $configuration['logFilePath']
-                ),
-                1416486859
-            );
-        }
         // If the file path is valid, try opening the file
         $this->fileHandle = @fopen(
-            $absoluteFilePath,
-            'a'
+                $absoluteFilePath,
+                'a'
         );
         // Throw an exception if log file could not be opened properly
         if (!$this->fileHandle) {
-            throw new \Exception(
-                sprintf(
-                    'Log file %s could not be opened.',
-                    $configuration['logFilePath']
-                ),
-                1416486470
+            throw new \UnexpectedValueException(
+                    sprintf(
+                            'Log file %s could not be opened.',
+                            $configuration->getLogFilePath()
+                    ),
+                    1416486470
             );
         }
     }
@@ -120,8 +99,8 @@ class FileWriter extends AbstractWriter
         $logLine .= ' (' . $entry->getLocation() . ' ' . $entry->getLine() . ')';
         $logLine .= "\n";
         @fwrite(
-            $this->fileHandle,
-            $logLine
+                $this->fileHandle,
+                $logLine
         );
     }
 }

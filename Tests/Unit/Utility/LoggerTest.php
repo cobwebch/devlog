@@ -14,14 +14,17 @@ namespace Devlog\Devlog\Tests\Unit\Utility;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+use Devlog\Devlog\Domain\Model\ExtensionConfiguration;
 use Devlog\Devlog\Utility\Logger;
+use TYPO3\CMS\Core\Tests\UnitTestCase;
 
 /**
  * Test case for class \Devlog\Devlog\Logger.
  *
  * @author François Suter <typo3@cobweb.ch>
  */
-class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+class LoggerTest extends UnitTestCase
 {
     /**
      * @var array List of globals to exclude (contain closures which cannot be serialized)
@@ -34,23 +37,22 @@ class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     protected $subject = null;
 
     /**
-     * @var array Test extension configuration
+     * @var ExtensionConfiguration
      */
-    protected $testConfiguration = array(
-            'minimumLogLevel' => 1,
-            'excludeKeys' => 'foo,bar',
-            'ipFilter' => '127.0.0.1,::1'
-    );
+    protected $extensionConfiguration = null;
 
     /**
      * Set up
      */
     protected function setUp()
     {
+        $this->extensionConfiguration = new ExtensionConfiguration();
+        $this->extensionConfiguration->setMinimumLogLevel(1);
+        $this->extensionConfiguration->setExcludeKeys('foo,bar');
+        $this->extensionConfiguration->setIpFilter('127.0.0.1,::1');
+
         $this->subject = new Logger();
-        $this->subject->setExtensionConfiguration(
-                $this->testConfiguration
-        );
+        $this->subject->setExtensionConfiguration($this->extensionConfiguration);
     }
 
     /**
@@ -58,7 +60,7 @@ class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     protected function tearDown()
     {
-        unset($this->subject);
+        unset($this->extensionConfiguration, $this->subject);
     }
 
     /**
@@ -166,7 +168,7 @@ class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      * @param string $testValue IP address to test
      * @param string $configurationOverride Override IP filter in extension configuration
      * @param string $devIpMask Value for overriding $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']
-     * @param boolean $result TRUE or FALSE, depending on IP address validity
+     * @param boolean $result true or false, depending on IP address validity
      * @test
      * @dataProvider ipAddressesProvider
      * @covers       \Devlog\Devlog\Utility\Logger::isIpAddressAccepted
@@ -180,11 +182,9 @@ class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
         }
         // Override extension configuration
         if (!empty($configurationOverride)) {
-            $specialConfiguration = $this->testConfiguration;
-            $specialConfiguration['ipFilter'] = $configurationOverride;
-            $this->subject->setExtensionConfiguration(
-                    $specialConfiguration
-            );
+            $specialConfiguration = clone $this->extensionConfiguration;
+            $specialConfiguration->setIpFilter($configurationOverride);
+            $this->subject->setExtensionConfiguration($specialConfiguration);
         }
         // Perform the actual test
         self::assertSame(
@@ -194,9 +194,7 @@ class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
                 )
         );
         // Restore extension configuration
-        $this->subject->setExtensionConfiguration(
-                $this->testConfiguration
-        );
+        $this->subject->setExtensionConfiguration($this->extensionConfiguration);
         // Restore devIPmask
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'] = $savedIpMask;
     }
@@ -209,8 +207,8 @@ class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     public function getConfigurationReturnsTestValue()
     {
         self::assertSame(
-                $this->subject->getExtensionConfiguration(),
-                $this->testConfiguration
+            $this->subject->getExtensionConfiguration(),
+            $this->extensionConfiguration
         );
     }
 
@@ -235,9 +233,9 @@ class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
         $this->subject->setIsLoggingEnabled(false);
 
         self::assertAttributeEquals(
-                false,
-                'isLoggingEnabled',
-                $this->subject
+            false,
+            'isLoggingEnabled',
+            $this->subject
         );
     }
 }

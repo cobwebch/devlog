@@ -16,13 +16,14 @@ namespace Devlog\Devlog\Tests\Unit\Domain\Model;
  */
 
 use Devlog\Devlog\Domain\Model\Entry;
+use TYPO3\CMS\Core\Tests\UnitTestCase;
 
 /**
  * Test case for class \Devlog\Devlog\Domain\Model\Entry.
  *
  * @author François Suter <typo3@cobweb.ch>
  */
-class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+class EntryTest extends UnitTestCase
 {
     /**
      * @var array List of globals to exclude (contain closures which cannot be serialized)
