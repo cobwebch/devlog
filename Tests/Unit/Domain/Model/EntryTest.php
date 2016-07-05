@@ -25,9 +25,14 @@ use Devlog\Devlog\Domain\Model\Entry;
 class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
 {
     /**
+     * @var array List of globals to exclude (contain closures which cannot be serialized)
+     */
+    protected $backupGlobalsBlacklist = array('TYPO3_LOADED_EXT', 'TYPO3_CONF_VARS');
+
+    /**
      * @var Entry
      */
-    protected $subject = NULL;
+    protected $subject = null;
 
     protected function setUp()
     {
@@ -45,9 +50,9 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function getRunIdReturnsInitialValueForString()
     {
-        $this->assertSame(
-            '',
-            $this->subject->getRunId()
+        self::assertSame(
+                '',
+                $this->subject->getRunId()
         );
     }
 
@@ -59,10 +64,10 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     {
         $this->subject->setRunId('12345678987.65432100');
 
-        $this->assertAttributeEquals(
-            '12345678987.65432100',
-            'runId',
-            $this->subject
+        self::assertAttributeEquals(
+                '12345678987.65432100',
+                'runId',
+                $this->subject
         );
     }
 
@@ -72,9 +77,9 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function getSortingReturnsInitialValueForInteger()
     {
-        $this->assertSame(
-            0,
-            $this->subject->getSorting()
+        self::assertSame(
+                0,
+                $this->subject->getSorting()
         );
     }
 
@@ -86,10 +91,10 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     {
         $this->subject->setSorting(12);
 
-        $this->assertAttributeEquals(
-            12,
-            'sorting',
-            $this->subject
+        self::assertAttributeEquals(
+                12,
+                'sorting',
+                $this->subject
         );
     }
 
@@ -99,9 +104,9 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function getCrdateReturnsInitialValueForInteger()
     {
-        $this->assertSame(
-            0,
-            $this->subject->getCrdate()
+        self::assertSame(
+                0,
+                $this->subject->getCrdate()
         );
     }
 
@@ -113,10 +118,10 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     {
         $this->subject->setCrdate(1417705263);
 
-        $this->assertAttributeEquals(
-            1417705263,
-            'crdate',
-            $this->subject
+        self::assertAttributeEquals(
+                1417705263,
+                'crdate',
+                $this->subject
         );
     }
 
@@ -126,9 +131,9 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function getSeverityReturnsInitialValueForInteger()
     {
-        $this->assertSame(
-            0,
-            $this->subject->getSeverity()
+        self::assertSame(
+                0,
+                $this->subject->getSeverity()
         );
     }
 
@@ -140,10 +145,10 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     {
         $this->subject->setSeverity(2);
 
-        $this->assertAttributeEquals(
-            2,
-            'severity',
-            $this->subject
+        self::assertAttributeEquals(
+                2,
+                'severity',
+                $this->subject
         );
     }
 
@@ -153,9 +158,9 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function getExtkeyReturnsInitialValueForString()
     {
-        $this->assertSame(
-            '',
-            $this->subject->getExtkey()
+        self::assertSame(
+                '',
+                $this->subject->getExtkey()
         );
     }
 
@@ -167,10 +172,10 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     {
         $this->subject->setExtkey('devlog');
 
-        $this->assertAttributeEquals(
-            'devlog',
-            'extkey',
-            $this->subject
+        self::assertAttributeEquals(
+                'devlog',
+                'extkey',
+                $this->subject
         );
     }
 
@@ -180,9 +185,9 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function getMessageReturnsInitialValueForString()
     {
-        $this->assertSame(
-            '',
-            $this->subject->getMessage()
+        self::assertSame(
+                '',
+                $this->subject->getMessage()
         );
     }
 
@@ -194,10 +199,10 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     {
         $this->subject->setMessage('This is a message');
 
-        $this->assertAttributeEquals(
-            'This is a message',
-            'message',
-            $this->subject
+        self::assertAttributeEquals(
+                'This is a message',
+                'message',
+                $this->subject
         );
     }
 
@@ -207,9 +212,9 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function getLocationReturnsInitialValueForString()
     {
-        $this->assertSame(
-            '',
-            $this->subject->getLocation()
+        self::assertSame(
+                '',
+                $this->subject->getLocation()
         );
     }
 
@@ -221,10 +226,10 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     {
         $this->subject->setLocation('Entry.php');
 
-        $this->assertAttributeEquals(
-            'Entry.php',
-            'location',
-            $this->subject
+        self::assertAttributeEquals(
+                'Entry.php',
+                'location',
+                $this->subject
         );
     }
 
@@ -234,9 +239,9 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function getLineReturnsInitialValueForInteger()
     {
-        $this->assertSame(
-            0,
-            $this->subject->getLine()
+        self::assertSame(
+                0,
+                $this->subject->getLine()
         );
     }
 
@@ -248,10 +253,10 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     {
         $this->subject->setLine(42);
 
-        $this->assertAttributeEquals(
-            42,
-            'line',
-            $this->subject
+        self::assertAttributeEquals(
+                42,
+                'line',
+                $this->subject
         );
     }
 
@@ -261,9 +266,9 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function getIpReturnsInitialValueForString()
     {
-        $this->assertSame(
-            '',
-            $this->subject->getIp()
+        self::assertSame(
+                '',
+                $this->subject->getIp()
         );
     }
 
@@ -275,10 +280,10 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     {
         $this->subject->setIp('127.0.0.1');
 
-        $this->assertAttributeEquals(
-            '127.0.0.1',
-            'ip',
-            $this->subject
+        self::assertAttributeEquals(
+                '127.0.0.1',
+                'ip',
+                $this->subject
         );
     }
 
@@ -288,9 +293,9 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function getCruserIdReturnsInitialValueForInteger()
     {
-        $this->assertSame(
-            0,
-            $this->subject->getCruserId()
+        self::assertSame(
+                0,
+                $this->subject->getCruserId()
         );
     }
 
@@ -302,10 +307,10 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     {
         $this->subject->setCruserId(5);
 
-        $this->assertAttributeEquals(
-            5,
-            'cruserId',
-            $this->subject
+        self::assertAttributeEquals(
+                5,
+                'cruserId',
+                $this->subject
         );
     }
 
@@ -315,9 +320,9 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function getPidReturnsInitialValueForInteger()
     {
-        $this->assertSame(
-            0,
-            $this->subject->getPid()
+        self::assertSame(
+                0,
+                $this->subject->getPid()
         );
     }
 
@@ -329,10 +334,10 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     {
         $this->subject->setPid(17);
 
-        $this->assertAttributeEquals(
-            17,
-            'pid',
-            $this->subject
+        self::assertAttributeEquals(
+                17,
+                'pid',
+                $this->subject
         );
     }
 
@@ -342,8 +347,8 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function getExtraDataReturnsInitialValueForString()
     {
-        $this->assertNull(
-            $this->subject->getExtraData()
+        self::assertNull(
+                $this->subject->getExtraData()
         );
     }
 
@@ -355,10 +360,10 @@ class EntryTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     {
         $this->subject->setExtraData('SomeBlob');
 
-        $this->assertAttributeEquals(
-            'SomeBlob',
-            'extraData',
-            $this->subject
+        self::assertAttributeEquals(
+                'SomeBlob',
+                'extraData',
+                $this->subject
         );
     }
 }

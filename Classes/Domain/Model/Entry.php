@@ -13,12 +13,15 @@ namespace Devlog\Devlog\Domain\Model;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+
 /**
  * Entry model class.
  *
  * @author Francois Suter <typo3@cobweb.ch>
  */
-class Entry extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class Entry extends AbstractEntity
 {
 
     /**
@@ -103,7 +106,7 @@ class Entry extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      *
      * @var mixed
      */
-    protected $extraData = NULL;
+    protected $extraData = null;
 
     /**
      * Gets the run ID.

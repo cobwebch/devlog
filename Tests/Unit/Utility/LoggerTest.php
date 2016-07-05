@@ -24,17 +24,22 @@ use Devlog\Devlog\Utility\Logger;
 class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
 {
     /**
+     * @var array List of globals to exclude (contain closures which cannot be serialized)
+     */
+    protected $backupGlobalsBlacklist = array('TYPO3_LOADED_EXT', 'TYPO3_CONF_VARS');
+
+    /**
      * @var Logger
      */
-    protected $subject = NULL;
+    protected $subject = null;
 
     /**
      * @var array Test extension configuration
      */
     protected $testConfiguration = array(
-        'minimumLogLevel' => 1,
-        'excludeKeys' => 'foo,bar',
-        'ipFilter' => '127.0.0.1,::1'
+            'minimumLogLevel' => 1,
+            'excludeKeys' => 'foo,bar',
+            'ipFilter' => '127.0.0.1,::1'
     );
 
     /**
@@ -44,7 +49,7 @@ class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
     {
         $this->subject = new Logger();
         $this->subject->setExtensionConfiguration(
-            $this->testConfiguration
+                $this->testConfiguration
         );
     }
 
@@ -62,41 +67,41 @@ class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function entryIsAccepted()
     {
-        $this->assertTrue(
-            $this->subject->isEntryAccepted(
-                array(
-                    'severity' => 2,
-                    'extKey' => 'whatever',
-                    'ip' => '127.0.0.1'
+        self::assertTrue(
+                $this->subject->isEntryAccepted(
+                        array(
+                                'severity' => 2,
+                                'extKey' => 'whatever',
+                                'ip' => '127.0.0.1'
+                        )
                 )
-            )
         );
     }
 
     public function validEntriesProvider()
     {
         return array(
-            'Severity too low' => array(
-                array(
-                    'severity' => 0,
-                    'extKey' => 'whatever',
-                    'ip' => '127.0.0.1'
+                'Severity too low' => array(
+                        array(
+                                'severity' => 0,
+                                'extKey' => 'whatever',
+                                'ip' => '127.0.0.1'
+                        )
+                ),
+                'Excluded extension key' => array(
+                        array(
+                                'severity' => 3,
+                                'extKey' => 'foo',
+                                'ip' => '127.0.0.1'
+                        )
+                ),
+                'IP does not match' => array(
+                        array(
+                                'severity' => 3,
+                                'extKey' => 'whatever',
+                                'ip' => '192.168.1.1'
+                        )
                 )
-            ),
-            'Excluded extension key' => array(
-                array(
-                    'severity' => 3,
-                    'extKey' => 'foo',
-                    'ip' => '127.0.0.1'
-                )
-            ),
-            'IP does not match' => array(
-                array(
-                    'severity' => 3,
-                    'extKey' => 'whatever',
-                    'ip' => '192.168.1.1'
-                )
-            )
         );
     }
 
@@ -108,52 +113,52 @@ class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function entryIsRefused($entry)
     {
-        $this->assertFalse(
-            $this->subject->isEntryAccepted(
-                $entry
-            )
+        self::assertFalse(
+                $this->subject->isEntryAccepted(
+                        $entry
+                )
         );
     }
 
     public function ipAddressesProvider()
     {
         return array(
-            'Valid IP v4' => array(
-                '127.0.0.1',
-                '',
-                '',
-                TRUE
-            ),
-            'Valid IP v6' => array(
-                '::1',
-                '',
-                '',
-                TRUE
-            ),
-            'Valid with devIPMask' => array(
-                '192.168.1.67',
-                'devIPMask',
-                '192.168.1.*',
-                TRUE
-            ),
-            'IP v4' => array(
-                '192.168.1.1',
-                '',
-                '',
-                FALSE
-            ),
-            'IP v6' => array(
-                '2001:db8::ff00:42:8329',
-                '',
-                '',
-                FALSE
-            ),
-            'devIPMask' => array(
-                '80.58.212.14',
-                'devIPMask',
-                '192.168.1.*',
-                FALSE
-            )
+                'Valid IP v4' => array(
+                        '127.0.0.1',
+                        '',
+                        '',
+                        true
+                ),
+                'Valid IP v6' => array(
+                        '::1',
+                        '',
+                        '',
+                        true
+                ),
+                'Valid with devIPMask' => array(
+                        '192.168.1.67',
+                        'devIPMask',
+                        '192.168.1.*',
+                        true
+                ),
+                'IP v4' => array(
+                        '192.168.1.1',
+                        '',
+                        '',
+                        false
+                ),
+                'IP v6' => array(
+                        '2001:db8::ff00:42:8329',
+                        '',
+                        '',
+                        false
+                ),
+                'devIPMask' => array(
+                        '80.58.212.14',
+                        'devIPMask',
+                        '192.168.1.*',
+                        false
+                )
         );
     }
 
@@ -164,7 +169,7 @@ class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      * @param boolean $result TRUE or FALSE, depending on IP address validity
      * @test
      * @dataProvider ipAddressesProvider
-     * @covers \Devlog\Devlog\Utility\Logger::isIpAddressAccepted
+     * @covers       \Devlog\Devlog\Utility\Logger::isIpAddressAccepted
      */
     public function isIpAddressValid($testValue, $configurationOverride, $devIpMask, $result)
     {
@@ -178,19 +183,19 @@ class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
             $specialConfiguration = $this->testConfiguration;
             $specialConfiguration['ipFilter'] = $configurationOverride;
             $this->subject->setExtensionConfiguration(
-                $specialConfiguration
+                    $specialConfiguration
             );
         }
         // Perform the actual test
-        $this->assertSame(
-            $result,
-            $this->subject->isIpAddressAccepted(
-                $testValue
-            )
+        self::assertSame(
+                $result,
+                $this->subject->isIpAddressAccepted(
+                        $testValue
+                )
         );
         // Restore extension configuration
         $this->subject->setExtensionConfiguration(
-            $this->testConfiguration
+                $this->testConfiguration
         );
         // Restore devIPmask
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'] = $savedIpMask;
@@ -203,9 +208,9 @@ class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function getConfigurationReturnsTestValue()
     {
-        $this->assertSame(
-            $this->subject->getExtensionConfiguration(),
-            $this->testConfiguration
+        self::assertSame(
+                $this->subject->getExtensionConfiguration(),
+                $this->testConfiguration
         );
     }
 
@@ -216,8 +221,8 @@ class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function getIsLoggingEnabledReturnsInitialValueForBoolean()
     {
-        $this->assertTrue(
-            $this->subject->isLoggingEnabled()
+        self::assertTrue(
+                $this->subject->isLoggingEnabled()
         );
     }
 
@@ -227,12 +232,12 @@ class LoggerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function setIsLoggingEnabledForBooleanSetsIsLoggingEnabled()
     {
-        $this->subject->setIsLoggingEnabled(FALSE);
+        $this->subject->setIsLoggingEnabled(false);
 
-        $this->assertAttributeEquals(
-            FALSE,
-            'isLoggingEnabled',
-            $this->subject
+        self::assertAttributeEquals(
+                false,
+                'isLoggingEnabled',
+                $this->subject
         );
     }
 }
