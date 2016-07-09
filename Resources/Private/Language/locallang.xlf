@@ -4,7 +4,7 @@
 		<header/>
 		<body>
 			<trans-unit id="title" xml:space="preserve">
-				<source>Developer Log</source>
+				<source>Developer's Log</source>
 			</trans-unit>
 			<trans-unit id="showlog" xml:space="preserve">
 				<source>Show Log</source>
@@ -51,8 +51,11 @@
 			<trans-unit id="all_entries" xml:space="preserve">
 				<source>all entries</source>
 			</trans-unit>
-			<trans-unit id="auto_refresh" xml:space="preserve">
-				<source>Auto reload when new data</source>
+			<trans-unit id="reload" xml:space="preserve">
+				<source>Reload</source>
+			</trans-unit>
+			<trans-unit id="autoReload" xml:space="preserve">
+				<source>Automatic reload</source>
 			</trans-unit>
 			<trans-unit id="log_time" xml:space="preserve">
 				<source>Log time</source>
@@ -63,28 +66,31 @@
 			<trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
 			</trans-unit>
-			<trans-unit id="crdate" xml:space="preserve">
+			<trans-unit id="date" xml:space="preserve">
 				<source>Date</source>
 			</trans-unit>
 			<trans-unit id="severity" xml:space="preserve">
 				<source>Severity</source>
 			</trans-unit>
-			<trans-unit id="extkey" xml:space="preserve">
-				<source>Extension</source>
+			<trans-unit id="extensionKey" xml:space="preserve">
+				<source>Key (extension, class, ...)</source>
 			</trans-unit>
-			<trans-unit id="msg" xml:space="preserve">
+			<trans-unit id="message" xml:space="preserve">
 				<source>Message</source>
 			</trans-unit>
 			<trans-unit id="location" xml:space="preserve">
 				<source>Called from</source>
 			</trans-unit>
-			<trans-unit id="pid" xml:space="preserve">
+			<trans-unit id="ipAddress" xml:space="preserve">
+				<source>IP address</source>
+			</trans-unit>
+			<trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
 			</trans-unit>
-			<trans-unit id="cruser_id" xml:space="preserve">
+			<trans-unit id="user" xml:space="preserve">
 				<source>User</source>
 			</trans-unit>
-			<trans-unit id="data_var" xml:space="preserve">
+			<trans-unit id="extraData" xml:space="preserve">
 				<source>Extra data</source>
 			</trans-unit>
 			<trans-unit id="no_entries_found" xml:space="preserve">

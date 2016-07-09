@@ -1,0 +1,73 @@
+<html data-namespace-typo3-fluid="true"
+	  xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers">
+	<f:flashMessages />
+
+	<h1><f:translate id="title" /></h1>
+
+	<div id="tx_devlog_list_wrapper" class="hidden">
+		<form name="reload" class="form-inline">
+			<div class="form-row">
+				<div class="form-group">
+					<button type="button" name="reload" id="tx_devlog_reload" class="btn btn-default">
+						<f:translate id="reload" />
+					</button>
+				</div>
+				<div class="form-group">
+					<div class="checkbox">
+						<label>
+							<input type="checkbox" name="autoreload" id="tx_devlog_autoreload" value="autoreload">
+							<f:translate id="autoReload" />
+						</label>
+					</div>
+				</div>
+			</div>
+		</form>
+		<div class="clearfix"></div>
+		<form name="searchAndFilter">
+			<div class="form-group">
+				<f:form.textfield name="devlog-searchfield" placeholder="{f:translate(key:'search')}"
+								  id="tx_devlog_search"
+								  class="form-control t3js-devlog-searchfield"/>
+			</div>
+		</form>
+		<table class="table table-striped table-hover" id="tx_devlog_list">
+			<thead>
+				<tr>
+					<th class="entry-date">
+						<f:translate id="date" />
+					</th>
+					<th class="entry-severity">
+						<f:translate id="severity" />
+					</th>
+					<th class="entry-extension">
+						<f:translate id="extensionKey" />
+					</th>
+					<th class="entry-message">
+						<f:translate id="message" />
+					</th>
+					<th class="entry-location">
+						<f:translate id="location" />
+					</th>
+					<th class="entry-ip">
+						<f:translate id="ipAddress" />
+					</th>
+					<th class="entry-page">
+						<f:translate id="page" />
+					</th>
+					<th class="entry-user">
+						<f:translate id="user" />
+					</th>
+					<th class="entry-data" id="tx_devlog_expand_all">
+						<f:translate id="extraData" />
+						<span id="tx_devlog_expand_all_icon"><core:icon identifier="actions-view-list-expand" /></span>
+					</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+	<!-- Loading mask -->
+	<div id="tx_devlog_list_loader">
+		<core:icon identifier="provider-fontawesome-spinner" size="default" />
+	</div>
+</html>

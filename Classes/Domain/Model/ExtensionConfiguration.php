@@ -21,11 +21,18 @@ use TYPO3\CMS\Core\SingletonInterface;
  * Object containing the extension configuration.
  *
  * NOTE: this is not a true Extbase object.
- * 
+ *
  * @author Stefan Froemken <froemken@gmail.com>
  */
 class ExtensionConfiguration implements SingletonInterface
 {
+    /**
+     * Raw configuration
+     *
+     * @var array
+     */
+    protected $configurationArray = array();
+
     /**
      * Minimum log level
      *
@@ -97,16 +104,26 @@ class ExtensionConfiguration implements SingletonInterface
     public function __construct()
     {
         // Get global configuration
-        $extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['devlog']);
-        if (is_array($extensionConfiguration)) {
+        $this->configurationArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['devlog']);
+        if (is_array($this->configurationArray)) {
             // Call setter method foreach configuration entry
-            foreach ($extensionConfiguration as $key => $value) {
+            foreach ($this->configurationArray as $key => $value) {
                 $methodName = 'set' . ucfirst($key);
                 if (method_exists($this, $methodName)) {
                     $this->$methodName($value);
                 }
             }
         }
+    }
+
+    /**
+     * Returns the extension configuration as array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->configurationArray;
     }
 
     /**

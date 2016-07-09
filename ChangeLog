@@ -1,3 +1,11 @@
+2016-07-09 Francois Suter <typo3@cobweb.ch>
+
+	* New backend module, resolves #76970
+
+2016-07-06 Stefan Froemken <froemken@gmail.com>
+
+	* Move extension configuration to domain model, resolves #73691
+
 2014-12-24 Francois Suter <typo3@cobweb.ch>
 
 	* Add sorting field, resolves #64037

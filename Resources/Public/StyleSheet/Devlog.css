@@ -1,0 +1,41 @@
+/* Styles for the BE module */
+
+.sorting,
+.sorting_asc,
+.sorting_desc {
+	cursor: pointer;
+}
+.sorting_asc,
+.sorting_desc {
+	background-color: #c9c9c9;
+}
+
+th#tx_devlog_expand_all {
+	cursor: pointer;
+}
+
+a.paginate_button {
+	border-top: 1px solid #cccccc;
+	border-bottom: 1px solid #cccccc;
+	border-left: 1px solid #cccccc;
+	padding: 8px;
+	cursor: pointer;
+}
+a.previous {
+	border-bottom-left-radius: 2px;
+	border-top-left-radius: 2px;
+}
+a.next {
+	border-right: 1px solid #cccccc;
+	border-bottom-right-radius: 2px;
+	border-top-right-radius: 2px;
+}
+
+.form-row {
+	margin-bottom: 15px;
+}
+
+mark {
+	background-color: #e8a33d;
+	color: #ffffff;
+}

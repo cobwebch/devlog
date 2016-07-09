@@ -6,28 +6,28 @@
 # customsubcategory=filtering=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:filtering
 # customsubcategory=display=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:display
 
-# cat=general/filtering/; type=options[LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:status_ok=-1,LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:status_information=0,LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:status_notice=1,LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:status_warning=2,LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:status_error=3]; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:minimum_level
+# cat=general/filtering/a; type=options[LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:status_ok=-1,LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:status_information=0,LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:status_notice=1,LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:status_warning=2,LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:status_error=3]; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:minimum_level
 minimumLogLevel = -1
 
-# cat=general/filtering/; type=string; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:excluded_keys
+# cat=general/filtering/b; type=string; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:excluded_keys
 excludeKeys =
 
-# cat=general/filtering/; type=string; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:ip_filter
+# cat=general/filtering/c; type=string; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:ip_filter
 ipFilter =
 
-# cat=general/display/; type=integer; label=Autorefresh frequency: Set the number of seconds between each refresh, when using the autorefresh feature
-refreshFrequency = 2
+# cat=general/display/a; type=integer; label=Autorefresh frequency: Set the number of seconds between each refresh, when using the autorefresh feature
+refreshFrequency = 4
 
-# cat=general/display/; type=integer; label=Number of entries per page: Set the number of log entries to display per page, when viewing all log entries
+# cat=general/display/b; type=integer; label=Number of entries per page: Set the number of log entries to display per page, when viewing all log entries
 entriesPerPage = 25
 
-# cat=dbwriter/limits/; type=integer; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:maximum_rows
+# cat=dbwriter/limits/c; type=integer; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:maximum_rows
 maximumRows = 1000
 
-# cat=dbwriter/limits/; type=boolean; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:optimize
+# cat=dbwriter/limits/a; type=boolean; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:optimize
 optimizeTable = 1
 
-# cat=dbwriter/limits/; type=integer; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:maximum_extra_data_size
+# cat=dbwriter/limits/b; type=integer; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:maximum_extra_data_size
 maximumExtraDataSize = 1000000
 
 # cat=filewriter//; type=string; label=LLL:EXT:devlog/Resources/Private/Language/locallang_configuration.xlf:log_file_path

@@ -15,6 +15,7 @@ namespace Devlog\Devlog\Domain\Repository;
  */
 
 use Devlog\Devlog\Domain\Model\ExtensionConfiguration;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /**
@@ -60,14 +61,34 @@ class EntryRepository implements SingletonInterface
                     '',
                     'crdate DESC, sorting ASC'
             );
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $entries = array();
         }
-        $numEntries = count($entries);
-        for ($i = 0; $i < $numEntries; $i++) {
-            $entries[$i]['extra_data'] = gzuncompress($entries[$i]['extra_data']);
+        $entries = $this->expandEntryData($entries);
+        return $entries;
+    }
+
+    /**
+     * Finds all entries at or after the given timestamp.
+     *
+     * @param int $timestamp Limit date/time for fetching entries
+     * @return array
+     */
+    public function findAfterDate($timestamp)
+    {
+        try {
+            $entries = $this->getDatabaseConnection()->exec_SELECTgetRows(
+                    '*',
+                    $this->databaseTable,
+                    'crdate >= ' . (int)$timestamp,
+                    '',
+                    'crdate DESC, sorting ASC'
+            );
+        } catch (\Exception $e) {
+            $entries = array();
         }
+        $entries = $this->expandEntryData($entries);
+        return $entries;
     }
 
     /**
@@ -92,13 +113,20 @@ class EntryRepository implements SingletonInterface
                 'pid' => $entry->getPid(),
         );
         // Handle extra data
-        $fields['extra_data'] = gzcompress(serialize($entry->getExtraData()));
-        $extraDataSize = strlen($fields['extra_data']);
-        $maximumExtraDataSize = $this->extensionConfiguration->getMaximumExtraDataSize();
-        // If the entry's extra data is above the limit, replace it with a warning
-        if (!empty($maximumExtraDataSize) && $extraDataSize > $maximumExtraDataSize) {
-            $fields['extra_data'] = gzcompress(serialize('Extra data too large, not saved.'));
+        $extraData = $entry->getExtraData();
+        // NOTE: GeneralUtility::devLog() sends "false" if extra data is undefined
+        if ($extraData) {
+            $fields['extra_data'] = gzcompress(serialize($extraData));
+            $extraDataSize = strlen($fields['extra_data']);
+            $maximumExtraDataSize = $this->extensionConfiguration->getMaximumExtraDataSize();
+            // If the entry's extra data is above the limit, replace it with a warning
+            if (!empty($maximumExtraDataSize) && $extraDataSize > $maximumExtraDataSize) {
+                $fields['extra_data'] = gzcompress(serialize('Extra data too large, not saved.'));
+            }
+        } else {
+            $fields['extra_data'] = '';
         }
+
         return $this->getDatabaseConnection()->exec_INSERTquery(
                 $this->databaseTable,
                 $fields
@@ -151,6 +179,83 @@ class EntryRepository implements SingletonInterface
             }
         }
 
+    }
+
+    /**
+     * Collects additional data or transforms data from entries for simpler handling during display.
+     *
+     * @param array $entries
+     * @return array
+     */
+    protected function expandEntryData(array $entries)
+    {
+        $pageInformationCache = array();
+        $numEntries = count($entries);
+        if ($numEntries > 0) {
+            $users = $this->findAllUsers();
+            for ($i = 0; $i < $numEntries; $i++) {
+                // Grab username instead of id
+                $userId = (int)$entries[$i]['cruser_id'];
+                if ($userId > 0 && isset($users[$userId])) {
+                    $entries[$i]['username'] = $users[$userId]['username'];
+                } else {
+                    $entries[$i]['username'] = '';
+                }
+                // Grab page title
+                $pid = (int)$entries[$i]['pid'];
+                if ($pid > 0 && isset($pageInformationCache[$pid])) {
+                    $entries[$i]['page'] = $pageInformationCache[$pid];
+                } else {
+                    $pageTitle = $pid;
+                    $pageRecord = BackendUtility::getRecord(
+                            'pages',
+                            $pid
+                    );
+                    if (is_array($pageRecord)) {
+                        $title = BackendUtility::getRecordTitle(
+                                'pages',
+                                $pageRecord
+                        );
+                        $pageTitle = $title . ' [' . $pid . ']';
+                    }
+                    $entries[$i]['page'] = $pageTitle;
+                    $pageInformationCache[$pid] = $pageTitle;
+                }
+                // Process extra data (uncompress and dump)
+                if ($entries[$i]['extra_data'] === '') {
+                    $extraData = '';
+                } else {
+                    $extraData = gzuncompress($entries[$i]['extra_data']);
+                    $extraData = var_export(unserialize($extraData), true);
+                }
+                $entries[$i]['extra_data'] = $extraData;
+            }
+            unset($pageInformationCache);
+        }
+        return $entries;
+    }
+
+    /**
+     * Fetches the list of all BE users.
+     *
+     * @return array
+     */
+    protected function findAllUsers()
+    {
+        try {
+            $users = $this->getDatabaseConnection()->exec_SELECTgetRows(
+                    'uid, username',
+                    'be_users',
+                    '',
+                    '',
+                    '',
+                    '',
+                    'uid'
+            );
+        } catch (\Exception $e) {
+            $users = array();
+        }
+        return $users;
     }
 
     /**
