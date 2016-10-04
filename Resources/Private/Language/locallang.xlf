@@ -75,6 +75,9 @@
 			<trans-unit id="extensionKey" xml:space="preserve">
 				<source>Key (extension, class, ...)</source>
 			</trans-unit>
+			<trans-unit id="key" xml:space="preserve">
+				<source>Key</source>
+			</trans-unit>
 			<trans-unit id="message" xml:space="preserve">
 				<source>Message</source>
 			</trans-unit>
@@ -138,18 +141,6 @@
 			<trans-unit id="severity_error" xml:space="preserve">
 				<source>Error</source>
 			</trans-unit>
-			<trans-unit id="latest" xml:space="preserve">
-				<source>latest &gt;&gt;</source>
-			</trans-unit>
-			<trans-unit id="next" xml:space="preserve">
-				<source>next &gt;</source>
-			</trans-unit>
-			<trans-unit id="previous" xml:space="preserve">
-				<source>&lt; previous</source>
-			</trans-unit>
-			<trans-unit id="oldest" xml:space="preserve">
-				<source>&lt;&lt; oldest</source>
-			</trans-unit>
 			<trans-unit id="expand_all_extra_data" xml:space="preserve">
 				<source>Expand all extra data</source>
 			</trans-unit>
@@ -196,22 +187,7 @@
 				<source>1 year</source>
 			</trans-unit>
 			<trans-unit id="no_entries" xml:space="preserve">
-				<source>There are currently no log entries in the Developer Log.</source>
-			</trans-unit>
-			<trans-unit id="xx_entries" xml:space="preserve">
-				<source>There are currently %d log entries in the Developer Log.</source>
-			</trans-unit>
-			<trans-unit id="loading" xml:space="preserve">
-				<source>Loading...</source>
-			</trans-unit>
-			<trans-unit id="selectextentionkey" xml:space="preserve">
-				<source>Select an extension key</source>
-			</trans-unit>
-			<trans-unit id="selectseverity" xml:space="preserve">
-				<source>Select severity</source>
-			</trans-unit>
-			<trans-unit id="selectpage" xml:space="preserve">
-				<source>Select page</source>
+				<source>There are currently no log entries in the Developer's Log.</source>
 			</trans-unit>
 			<trans-unit id="status_ok">
 				<source>OK</source>

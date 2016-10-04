@@ -41,15 +41,28 @@ define(['jquery',
 		severityIcons: {},
 		expandIcon: null,
 		collapseIcon: null,
+		tableView: null,
 		listWrapper: null,
 		loadingMask: null,
+		noEntriesMessage: null,
 		lastUpdateTime: null,
-		intervalID: 0
+		intervalID: 0,
+		// List columns to avoid hard-coding numbers all over the code
+		columns: {
+			severity: 1,
+			key: 2,
+			ip: 5,
+			page: 6,
+			user: 7
+		},
+		filters: []
 	};
 
 	DevlogListModule.init = function() {
+		this.tableView = $('#tx_devlog_list');
 		this.loadingMask = $('#tx_devlog_list_loader');
 		this.listWrapper = $('#tx_devlog_list_wrapper');
+		this.noEntriesMessage = $('#tx_devlog_list_empty');
 	};
 
 	/**
@@ -82,16 +95,30 @@ define(['jquery',
 	};
 
 	/**
-	 * Loads log data dynamically and initializes DataTables.
+	 * Returns the unique elements of any given array.
 	 *
-	 * @param tableView
+	 * @param array
+	 * @returns {Array}
 	 */
-	DevlogListModule.buildDynamicTable = function(tableView) {
+	DevlogListModule.arrayUnique = function (array) {
+		var filteredArray = [];
+		for (var i = 0; i < array.length; i++) {
+			if (filteredArray.indexOf(array[i]) === -1) {
+				filteredArray.push(array[i]);
+			}
+		}
+		return filteredArray;
+	};
+
+	/**
+	 * Loads log data dynamically and initializes DataTables.
+	 */
+	DevlogListModule.buildDynamicTable = function() {
 		this.lastUpdateTime = moment().unix();
 		$.ajax({
 			url: TYPO3.settings.ajaxUrls['tx_devlog_list'],
 			success: function (data, status, xhr) {
-				DevlogListModule.table = tableView.DataTable({
+				DevlogListModule.table = DevlogListModule.tableView.DataTable({
 					data: data,
 					dom: 'tp',
 					// Default ordering is "crdate" column
@@ -119,6 +146,8 @@ define(['jquery',
 							render:  function(data, type, row, meta) {
 								if (type === 'display') {
 									return DevlogListModule.severityIcons[data];
+								} else if (type === 'filter') {
+									return TYPO3.lang['severity' + data];
 								} else {
 									return data;
 								}
@@ -175,8 +204,9 @@ define(['jquery',
 					],
 					initComplete: function() {
 						DevlogListModule.initializeSearchField();
-						DevlogListModule.initializeExtraDataToggle(tableView);
+						DevlogListModule.initializeExtraDataToggle();
 						DevlogListModule.initializeReloadControls();
+						DevlogListModule.initializeFilters();
 						DevlogListModule.toggleLoadingMask();
 					}
 				});
@@ -206,16 +236,14 @@ define(['jquery',
 
 	/**
 	 * Initializes the extra data toggle buttons.
-	 *
-	 * @param tableView
 	 */
-	DevlogListModule.initializeExtraDataToggle = function(tableView) {
+	DevlogListModule.initializeExtraDataToggle = function() {
 		// Single toggle button
-		tableView.on('click', 'button.extra-data-toggle', function() {
+		DevlogListModule.tableView.on('click', 'button.extra-data-toggle', function() {
 			DevlogListModule.toggleExtraData($(this));
 		});
 		// Global toggle button
-		tableView.on('click', '#tx_devlog_expand_all', function() {
+		DevlogListModule.tableView.on('click', '#tx_devlog_expand_all', function() {
 			var toggleIcon = $('#tx_devlog_expand_all_icon');
 			// Switch expand/collapse icon for global toggle
 			if (toggleIcon.find('.t3js-icon').hasClass('icon-actions-view-list-expand')) {
@@ -275,6 +303,116 @@ define(['jquery',
 	};
 
 	/**
+	 * Initializes all filter selectors and set their options list.
+	 */
+	DevlogListModule.initializeFilters = function () {
+		// Reset list of filters
+		DevlogListModule.filters = [];
+
+		// Severity column
+		var currentColumn = DevlogListModule.columns.severity;
+		// Get unique values in column
+		var filteredData = DevlogListModule.arrayUnique(DevlogListModule.tableView.DataTable().column(currentColumn).data());
+		filteredData.sort();
+		// Get associated labels
+		var labels = [];
+		for (var i = 0; i < filteredData.length; i++) {
+			labels.push(TYPO3.lang['severity' + filteredData[i]]);
+		}
+		var selector = $('#tx_devlog_filter_severity');
+		DevlogListModule.initializeSingleFilter(selector, labels, labels, currentColumn);
+
+		// Key/extension key column
+		currentColumn = DevlogListModule.columns.key;
+		// Get unique values in column
+		filteredData = DevlogListModule.arrayUnique(DevlogListModule.tableView.DataTable().column(currentColumn).data());
+		selector = $('#tx_devlog_filter_key');
+		DevlogListModule.initializeSingleFilter(selector, filteredData, filteredData, currentColumn);
+
+		// IP address column
+		currentColumn = DevlogListModule.columns.ip;
+		// Get unique values in column
+		filteredData = DevlogListModule.arrayUnique(DevlogListModule.tableView.DataTable().column(currentColumn).data());
+		selector = $('#tx_devlog_filter_ip');
+		DevlogListModule.initializeSingleFilter(selector, filteredData, filteredData, currentColumn);
+
+		// Page column
+		currentColumn = DevlogListModule.columns.page;
+		// Get unique values in column
+		filteredData = DevlogListModule.arrayUnique(DevlogListModule.tableView.DataTable().column(currentColumn).data());
+		selector = $('#tx_devlog_filter_page');
+		DevlogListModule.initializeSingleFilter(selector, filteredData, filteredData, currentColumn);
+
+		// User column
+		currentColumn = DevlogListModule.columns.user;
+		// Get unique values in column
+		filteredData = DevlogListModule.arrayUnique(DevlogListModule.tableView.DataTable().column(currentColumn).data());
+		selector = $('#tx_devlog_filter_user');
+		DevlogListModule.initializeSingleFilter(selector, filteredData, filteredData, currentColumn);
+
+		// Activate the clear all filters button (note: it also clears the search field)
+		$('#tx_devlog_clearall').on('click', function() {
+			// Reset values for each filter selector
+			for (var i = 0; i < DevlogListModule.filters.length; i++) {
+				DevlogListModule.filters[i].val('');
+			}
+			// Cancel search on all columns
+			for (var column in DevlogListModule.columns) {
+				if (DevlogListModule.columns.hasOwnProperty(column)) {
+					DevlogListModule.table.column(DevlogListModule.columns[column]).search('');
+				}
+			}
+			// Cancel general search
+			var searchField = $('#tx_devlog_search');
+			searchField.val('');
+			// Hide the clear button (from clearable library)
+			searchField.next('.close').hide();
+			DevlogListModule.table.search('');
+			// Redraw the table
+			DevlogListModule.table.draw();
+		});
+	};
+
+	/**
+	 * Updates and activates a single filter selector.
+	 *
+	 * @param selector
+	 * @param texts
+	 * @param values
+	 * @param dataColumn
+	 */
+	DevlogListModule.initializeSingleFilter = function (selector, texts, values, dataColumn) {
+		var selectorParent = selector.parent('.form-group');
+
+		// If there are no options, hide the selector
+		if (texts.length === 0) {
+			selectorParent.hide();
+
+		// If there are options, load them and activate the selector
+		} else {
+			// Make sure the selector is visible
+			selectorParent.show();
+			// Empty current options list
+			selector.empty();
+			// Add empty option on top
+			selector.append($(new Option('')));
+			// Add new options
+			for (var i = 0; i < texts.length; i++) {
+				if (values[i] !== '') {
+					var option = new Option(texts[i], values[i]);
+					selector.append($(option));
+				}
+			}
+			// Add the selector to the list of filters
+			DevlogListModule.filters.push(selector);
+			// Activate change event
+			selector.on('change', function () {
+				DevlogListModule.table.column(dataColumn).search($(this).val()).draw();
+			});
+		}
+	};
+
+	/**
 	 * Loads records created since last update and refreshes table view.
 	 */
 	DevlogListModule.loadNewRecords = function () {
@@ -295,33 +433,45 @@ define(['jquery',
 			complete: function (xhr, status) {
 				// Restore table view
 				DevlogListModule.toggleLoadingMask();
+				// Reload the filters (there may new values to insert into the selectors)
+				DevlogListModule.initializeFilters($('#tx_devlog_list'));
 			}
 		});
 	};
 
 	/**
-	 * Toggles visibility of loading mask and table view
+	 * Toggles visibility of loading mask and table view.
+	 *
+	 * Also toggles visibility of the "no entries" message.
 	 */
 	DevlogListModule.toggleLoadingMask = function() {
+		// Show table view
 		if (this.listWrapper.hasClass('hidden')) {
-			this.listWrapper.removeClass('hidden');
+			// If there's no data in the table, show the "no entries" message instead
+			if (this.tableView.DataTable().data().length === 0) {
+				this.noEntriesMessage.removeClass('hidden');
+			} else {
+				this.listWrapper.removeClass('hidden');
+			}
 			this.loadingMask.addClass('hidden');
+
+		// Hide table view
 		} else {
 			this.listWrapper.addClass('hidden');
+			this.noEntriesMessage.addClass('hidden');
 			this.loadingMask.removeClass('hidden');
 		}
 
 	};
 
 	/**
-	 * Initializes this module
+	 * Initializes this module.
 	 */
 	$(function() {
-		var tableView = $('#tx_devlog_list');
 		DevlogListModule.init();
 		// @todo: how to ensure that all icons have been loaded? Deliver a new promise?
 		DevlogListModule.loadIcons();
-		DevlogListModule.buildDynamicTable(tableView);
+		DevlogListModule.buildDynamicTable();
 	});
 
 	return DevlogListModule;

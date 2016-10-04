@@ -206,7 +206,7 @@ class EntryRepository implements SingletonInterface
                 if ($pid > 0 && isset($pageInformationCache[$pid])) {
                     $entries[$i]['page'] = $pageInformationCache[$pid];
                 } else {
-                    $pageTitle = $pid;
+                    $pageTitle = '';
                     $pageRecord = BackendUtility::getRecord(
                             'pages',
                             $pid

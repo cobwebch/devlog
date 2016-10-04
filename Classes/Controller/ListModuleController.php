@@ -120,6 +120,16 @@ class ListModuleController extends ActionController
                 'DevLog',
                 $this->extensionConfiguration->toArray()
         );
+        $pageRenderer->addInlineLanguageLabelArray(
+                array(
+                        'severity-1' => 'LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:severity_ok',
+                        'severity0' => 'LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:severity_info',
+                        'severity1' => 'LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:severity_notification',
+                        'severity2' => 'LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:severity_warning',
+                        'severity3' => 'LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:severity_error',
+                ),
+                true
+        );
         // Add open in new window button
         $newWindowIcon = $this->view->getModuleTemplate()->getIconFactory()->getIcon('actions-window-open', Icon::SIZE_SMALL);
         $newWindowButton = GeneralUtility::makeInstance(ExtendedLinkButton::class);

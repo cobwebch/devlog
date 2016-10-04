@@ -40,6 +40,11 @@ class EntryRepositoryTest extends \Tx_Phpunit_Database_TestCase
         $this->subject = $objectManager->get(EntryRepository::class);
     }
 
+    protected function tearDown()
+    {
+        $this->dropDatabase();
+    }
+
     /**
      * @test
      */
