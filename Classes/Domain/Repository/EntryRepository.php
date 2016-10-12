@@ -29,6 +29,17 @@ use TYPO3\CMS\Core\SingletonInterface;
 class EntryRepository implements SingletonInterface
 {
     /**
+     * Periods for log clearing intervals
+     */
+    const PERIOD_1YEAR = 31536000;
+    const PERIOD_6MONTHS = 15768000;
+    const PERIOD_3MONTHS = 7884000;
+    const PERIOD_1MONTH = 2592000;
+    const PERIOD_1WEEK = 604800;
+    const PERIOD_1DAY = 86400;
+    const PERIOD_1HOUR = 3600;
+
+    /**
      * @var string Name of the database table used for logging
      */
     protected $databaseTable = 'tx_devlog_domain_model_entry';
@@ -89,6 +100,130 @@ class EntryRepository implements SingletonInterface
         }
         $entries = $this->expandEntryData($entries);
         return $entries;
+    }
+
+    /**
+     * Finds all entries for a given key.
+     *
+     * @param string $key The key to look for
+     * @return array
+     */
+    public function findByKey($key)
+    {
+        try {
+            $entries = $this->getDatabaseConnection()->exec_SELECTgetRows(
+                    '*',
+                    $this->databaseTable,
+                    'extkey = ' . $this->getDatabaseConnection()->fullQuoteStr(
+                            $key,
+                            $this->databaseTable
+                    ),
+                    '',
+                    'crdate DESC, sorting ASC'
+            );
+        } catch (\Exception $e) {
+            $entries = array();
+        }
+        $entries = $this->expandEntryData($entries);
+        return $entries;
+    }
+
+    /**
+     * Returns the number of entries per key.
+     *
+     * @return array
+     */
+    public function countByKey()
+    {
+        $count = array();
+        try {
+            $rows = $this->getDatabaseConnection()->exec_SELECTgetRows(
+                    'extkey, COUNT(uid) AS total',
+                    $this->databaseTable,
+                    '',
+                    'extkey',
+                    'extkey'
+            );
+            if (is_array($rows)) {
+                /** @var array $rows */
+                foreach ($rows as $row) {
+                    $count[$row['extkey']] = (int)$row['total'];
+                }
+            }
+        } catch (\Exception $e) {
+            // Let an empty array return
+        }
+        return $count;
+    }
+
+    /**
+     * Returns the number of entries for predefined periods of time.
+     *
+     * @return array
+     */
+    public function countByPeriod()
+    {
+        $count = array(
+                '1hour' => 0,
+                '1day' => 0,
+                '1week' => 0,
+                '1month' => 0,
+                '3months' => 0,
+                '6months' => 0,
+                '1year' => 0
+        );
+        try {
+            $now = time();
+            $rows = $this->getDatabaseConnection()->exec_SELECTgetRows(
+                    '(' . $now . ' - crdate) AS age',
+                    $this->databaseTable,
+                    ''
+            );
+            if (is_array($rows)) {
+                /** @var array $rows */
+                foreach ($rows as $row) {
+                    if ($row['age'] >= self::PERIOD_1YEAR) {
+                        $count['1hour']++;
+                        $count['1day']++;
+                        $count['1week']++;
+                        $count['1month']++;
+                        $count['3months']++;
+                        $count['6months']++;
+                        $count['1year']++;
+                    } elseif ($row['age'] >= self::PERIOD_6MONTHS) {
+                        $count['1hour']++;
+                        $count['1day']++;
+                        $count['1week']++;
+                        $count['1month']++;
+                        $count['3months']++;
+                        $count['6months']++;
+                    } elseif ($row['age'] >= self::PERIOD_3MONTHS) {
+                        $count['1hour']++;
+                        $count['1day']++;
+                        $count['1week']++;
+                        $count['1month']++;
+                        $count['3months']++;
+                    } elseif ($row['age'] >= self::PERIOD_1MONTH) {
+                        $count['1hour']++;
+                        $count['1day']++;
+                        $count['1week']++;
+                        $count['1month']++;
+                    } elseif ($row['age'] >= self::PERIOD_1WEEK) {
+                        $count['1hour']++;
+                        $count['1day']++;
+                        $count['1week']++;
+                    } elseif ($row['age'] >= self::PERIOD_1DAY) {
+                        $count['1hour']++;
+                        $count['1day']++;
+                    } elseif ($row['age'] >= self::PERIOD_1HOUR) {
+                        $count['1hour']++;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Let an empty array return
+        }
+        return $count;
     }
 
     /**
@@ -179,6 +314,55 @@ class EntryRepository implements SingletonInterface
             }
         }
 
+    }
+
+    /**
+     * Deletes all log entries in the database table.
+     *
+     * @return int
+     */
+    public function deleteAll()
+    {
+        // Since we use TRUNCATE, count the number of records first, to return as number of deleted records
+        $deleted = $this->getDatabaseConnection()->exec_SELECTcountRows(
+                'uid',
+                $this->databaseTable
+        );
+        $this->getDatabaseConnection()->exec_TRUNCATEquery($this->databaseTable);
+        return $deleted;
+    }
+
+    /**
+     * Deletes all log entries related to the given key.
+     *
+     * @param string $key The key to look for
+     * @return int
+     */
+    public function deleteByKey($key)
+    {
+        $this->getDatabaseConnection()->exec_DELETEquery(
+                $this->databaseTable,
+                'extkey = ' . $this->getDatabaseConnection()->fullQuoteStr(
+                        $key,
+                        $this->databaseTable
+                )
+        );
+        return $this->getDatabaseConnection()->sql_affected_rows();
+    }
+
+    /**
+     * Deletes all log entries older than the given period.
+     *
+     * @param int $period Age of log entries which should be deleted
+     * @return int
+     */
+    public function deleteByPeriod($period)
+    {
+        $this->getDatabaseConnection()->exec_DELETEquery(
+                $this->databaseTable,
+                'crdate <= ' . (time() - (int)$period)
+        );
+        return $this->getDatabaseConnection()->sql_affected_rows();
     }
 
     /**

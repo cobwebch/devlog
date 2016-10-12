@@ -42,6 +42,21 @@
 			<trans-unit id="maximum_extra_data_size">
 				<source>Maximum size of extra data: The extra data field accepts an array containing any number of data. However when that array becomes too large, writing it to the database may actually crash you server. It is recommended to set a limit (in number of bytes).</source>
 			</trans-unit>
+			<trans-unit id="status_ok">
+				<source>OK</source>
+			</trans-unit>
+			<trans-unit id="status_information">
+				<source>Information</source>
+			</trans-unit>
+			<trans-unit id="status_notice">
+				<source>Notice</source>
+			</trans-unit>
+			<trans-unit id="status_warning">
+				<source>Warning</source>
+			</trans-unit>
+			<trans-unit id="status_error">
+				<source>Error</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

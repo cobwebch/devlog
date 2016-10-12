@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file original="" product-name="Devlog.Devlog" source-language="en" datatype="plaintext">
+		<body>
+			<trans-unit id="severity-1" xml:space="preserve">
+				<source>OK</source>
+			</trans-unit>
+			<trans-unit id="severity0" xml:space="preserve">
+				<source>Info</source>
+			</trans-unit>
+			<trans-unit id="severity1" xml:space="preserve">
+				<source>Notice</source>
+			</trans-unit>
+			<trans-unit id="severity2" xml:space="preserve">
+				<source>Warning</source>
+			</trans-unit>
+			<trans-unit id="severity3" xml:space="preserve">
+				<source>Error</source>
+			</trans-unit>
+			<trans-unit id="clear_all_entries" xml:space="preserve">
+				<source>Clear all entries</source>
+			</trans-unit>
+			<trans-unit id="cleanup_for_period" xml:space="preserve">
+				<source>Clear all entries older than</source>
+			</trans-unit>
+			<trans-unit id="cleanup_for_key" xml:space="preserve">
+				<source>Clear all entries for key</source>
+			</trans-unit>
+			<trans-unit id="1hour" xml:space="preserve">
+				<source>1 hour</source>
+			</trans-unit>
+			<trans-unit id="1day" xml:space="preserve">
+				<source>1 day</source>
+			</trans-unit>
+			<trans-unit id="1week" xml:space="preserve">
+				<source>1 week</source>
+			</trans-unit>
+			<trans-unit id="1month" xml:space="preserve">
+				<source>1 month</source>
+			</trans-unit>
+			<trans-unit id="3months" xml:space="preserve">
+				<source>3 months</source>
+			</trans-unit>
+			<trans-unit id="6months" xml:space="preserve">
+				<source>6 months</source>
+			</trans-unit>
+			<trans-unit id="1year" xml:space="preserve">
+				<source>1 year</source>
+			</trans-unit>
+			<trans-unit id="clear_confirm_title" xml:space="preserve">
+				<source>Are you sure?</source>
+			</trans-unit>
+			<trans-unit id="clear_all_confirm" xml:space="preserve">
+				<source>Do you really want to delete all log entries?</source>
+			</trans-unit>
+			<trans-unit id="clear_selected_confirm" xml:space="preserve">
+				<source>Do you really want to delete selected log entries?</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

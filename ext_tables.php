@@ -24,7 +24,7 @@ if (TYPO3_MODE === 'BE') {
             'after:BelogLog',
             array(
                 // An array holding the controller-action-combinations that are accessible
-                'ListModule' => 'index, get'
+                'ListModule' => 'index,delete'
             ),
             array(
                     'access' => 'admin',

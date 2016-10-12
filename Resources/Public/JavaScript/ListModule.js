@@ -29,11 +29,12 @@ require.config({
 define(['jquery',
 		'moment',
 		'TYPO3/CMS/Backend/Icons',
+		'TYPO3/CMS/Backend/Modal',
 		'datatables.net',
 		'TYPO3/CMS/Backend/jquery.clearable',
 		'./jquery.mark.min',
 		'./datatables.mark.min'
-	   ], function($, moment, Icons) {
+	   ], function($, moment, Icons, Modal) {
 	'use strict';
 
 	var DevlogListModule = {
@@ -207,6 +208,7 @@ define(['jquery',
 						DevlogListModule.initializeExtraDataToggle();
 						DevlogListModule.initializeReloadControls();
 						DevlogListModule.initializeFilters();
+						DevlogListModule.initializeClearLogMenu();
 						DevlogListModule.toggleLoadingMask();
 					}
 				});
@@ -435,8 +437,117 @@ define(['jquery',
 				DevlogListModule.toggleLoadingMask();
 				// Reload the filters (there may new values to insert into the selectors)
 				DevlogListModule.initializeFilters($('#tx_devlog_list'));
+				// Update the clear log menu (items and numbers may have changed)
+				DevlogListModule.initializeClearLogMenu();
 			}
 		});
+	};
+
+	/**
+	 * Populates the clear log menu with relevant entries and activates
+	 * a delete "reaction".
+	 */
+	DevlogListModule.initializeClearLogMenu = function	() {
+		var clearLogMenu = $('select[name="_devlogClearMenu"]');
+		// Disable the menu until it has finished loading
+		clearLogMenu.attr('disabled', true);
+		// Remove the "onchange" attribute that was automatically added to the JumpMenu
+		// (in this case, we don't want the selector to behave as a JumpMenu)
+		// This is kind of hacky, but it seemed simpler than trying to introduce a new menu type in the docheader.
+		clearLogMenu.removeAttr('onchange', '');
+		// Remove existing dynamic options
+		clearLogMenu.find('.devlog-item').remove();
+		clearLogMenu.find('optgroup').remove();
+		// Get count of items
+		$.ajax({
+			url: TYPO3.settings.ajaxUrls['tx_devlog_count'],
+			data: {
+				timestamp: DevlogListModule.lastUpdateTime
+			},
+			success: function (data, status, xhr) {
+				// Rebuild new options (if there's anything to clear)
+				if (data.all > 0) {
+					// Clear all option
+					var optionAll = DevlogListModule.buildClearLogMenuOption(TYPO3.lang['clear_all_entries'], data.all, 'all');
+					clearLogMenu.append($(optionAll));
+
+					var optionGroup = '';
+					// Clear by age option group
+					var options = '';
+					for (var period in data.periods) {
+						if (data.periods.hasOwnProperty(period) && data.periods[period] > 0) {
+							options += DevlogListModule.buildClearLogMenuOption(TYPO3.lang[period], data.periods[period], 'period', period);
+						}
+					}
+					if (options !== '') {
+						optionGroup = '<optgroup label="' + TYPO3.lang['cleanup_for_period'] + '">';
+						optionGroup += options;
+						optionGroup += '</optgroup>';
+						clearLogMenu.append($(optionGroup));
+					}
+
+					// Clear by key option group
+					optionGroup = '<optgroup label="' + TYPO3.lang['cleanup_for_key'] + '">';
+					for (var key in data.keys) {
+						if (data.keys.hasOwnProperty(key)) {
+							optionGroup += DevlogListModule.buildClearLogMenuOption(key, data.keys[key], 'key', key);
+						}
+					}
+					optionGroup += '</optgroup>';
+					clearLogMenu.append($(optionGroup));
+
+					// Enable the menu again
+					clearLogMenu.attr('disabled', false);
+				}
+			},
+			complete: function (xhr, status) {
+				// Activate menu
+				clearLogMenu.on('change', function() {
+					var selectedItem = $(this).find(':selected');
+					// Act only if the item has a data-action attribute
+					var action = selectedItem.data('action');
+					if (action) {
+						// Display a confirmation modal dialog box
+						var confirmTitle = TYPO3.lang['clear_confirm_title'];
+						var confirmMessage = TYPO3.lang['clear_selected_confirm'];
+						if (action === 'all') {
+							confirmMessage = TYPO3.lang['clear_all_confirm'];
+						}
+						var confirmDialog = Modal.confirm(confirmTitle, confirmMessage);
+						// On cancel, simply dismiss the modal
+						confirmDialog.on('confirm.button.cancel', function() {
+							Modal.currentModal.trigger('modal-dismiss');
+						});
+						// On confirm, set relevant values in hidden form and submit
+						confirmDialog.on('confirm.button.ok', function() {
+							Modal.currentModal.trigger('modal-dismiss');
+							$('#tx_devlog_delete_clear').val(action);
+							$('#tx_devlog_delete_value').val(selectedItem.data('value'));
+							$('#tx_devlog_delete').submit();
+						});
+					}
+				});
+			}
+		});
+	};
+
+	/**
+	 * Renders a single menu item.
+	 *
+	 * @param text
+	 * @param count
+	 * @param action
+	 * @param value
+	 * @returns {string}
+	 */
+	DevlogListModule.buildClearLogMenuOption = function (text, count, action, value) {
+		var option = '<option class="devlog-item" data-action="' + action + '"';
+		if (typeof value !== 'undefined') {
+			option += 'data-value="' + value + '"';
+		}
+		option += '>' + text + ' (' + count + ')';
+		option += '</option>';
+		return option;
 	};
 
 	/**

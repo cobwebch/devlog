@@ -118,7 +118,7 @@ class Logger implements SingletonInterface
                 $this->counter
         );
         $this->counter++;
-        $entry->setCrdate($GLOBALS['EXEC_TIME']);
+        $entry->setCrdate(time());
         $entry->setMessage(
                 GeneralUtility::removeXSS($logData['msg'])
         );

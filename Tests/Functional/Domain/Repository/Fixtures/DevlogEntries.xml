@@ -7,7 +7,7 @@
 		<run_id>14677290780.15759200</run_id>
 		<sorting>1</sorting>
 		<severity>0</severity>
-		<extkey>devlog</extkey>
+		<extkey>foo</extkey>
 		<message>This is a fixture entry</message>
 		<extra_data></extra_data>
 		<location>DevlongEntries.xml</location>
@@ -17,14 +17,31 @@
 		<cruser_id>1</cruser_id>
 	</tx_devlog_domain_model_entry>
 
-	<!-- "new" entry from July 31, 2016 -->
+	<!-- another "old" entry -->
 	<tx_devlog_domain_model_entry>
 		<uid>2</uid>
+		<pid>0</pid>
+		<run_id>14677290780.15759200</run_id>
+		<sorting>2</sorting>
+		<severity>0</severity>
+		<extkey>foo</extkey>
+		<message>This is a fixture entry</message>
+		<extra_data></extra_data>
+		<location>DevlongEntries.xml</location>
+		<line>2</line>
+		<ip>::1</ip>
+		<crdate>1467729080</crdate>
+		<cruser_id>1</cruser_id>
+	</tx_devlog_domain_model_entry>
+
+	<!-- "new" entry from July 31, 2016 -->
+	<tx_devlog_domain_model_entry>
+		<uid>3</uid>
 		<pid>0</pid>
 		<run_id>14699620710.15759200</run_id>
 		<sorting>1</sorting>
 		<severity>1</severity>
-		<extkey>devlog</extkey>
+		<extkey>bar</extkey>
 		<message>This is a new fixture entry</message>
 		<extra_data></extra_data>
 		<location>DevlongEntries.xml</location>

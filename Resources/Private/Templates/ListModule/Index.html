@@ -6,6 +6,11 @@
 	<h1><f:translate id="title" /></h1>
 
 	<div id="tx_devlog_list_wrapper" class="hidden">
+		<!-- Hidden form triggered by clear log menu -->
+		<f:form name="delete" id="tx_devlog_delete" action="delete" method="post">
+			<f:form.hidden name="clear" id="tx_devlog_delete_clear" value="" />
+			<f:form.hidden name="value" id="tx_devlog_delete_value" value="" />
+		</f:form>
 		<form name="reload" class="form-inline">
 			<div class="form-row">
 				<div class="form-group">

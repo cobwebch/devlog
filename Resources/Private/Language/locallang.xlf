@@ -36,21 +36,6 @@
 			<trans-unit id="search_data" xml:space="preserve">
 				<source>Search log data</source>
 			</trans-unit>
-			<trans-unit id="latest_run" xml:space="preserve">
-				<source>latest log run</source>
-			</trans-unit>
-			<trans-unit id="latest_25" xml:space="preserve">
-				<source>latest 25 entries</source>
-			</trans-unit>
-			<trans-unit id="latest_50" xml:space="preserve">
-				<source>latest 50 entries</source>
-			</trans-unit>
-			<trans-unit id="latest_100" xml:space="preserve">
-				<source>latest 100 entries</source>
-			</trans-unit>
-			<trans-unit id="all_entries" xml:space="preserve">
-				<source>all entries</source>
-			</trans-unit>
 			<trans-unit id="reload" xml:space="preserve">
 				<source>Reload</source>
 			</trans-unit>
@@ -126,21 +111,6 @@
 			<trans-unit id="hide_extra_data" xml:space="preserve">
 				<source>Hide extra data</source>
 			</trans-unit>
-			<trans-unit id="severity_ok" xml:space="preserve">
-				<source>OK</source>
-			</trans-unit>
-			<trans-unit id="severity_info" xml:space="preserve">
-				<source>Info</source>
-			</trans-unit>
-			<trans-unit id="severity_notification" xml:space="preserve">
-				<source>Notice</source>
-			</trans-unit>
-			<trans-unit id="severity_warning" xml:space="preserve">
-				<source>Warning</source>
-			</trans-unit>
-			<trans-unit id="severity_error" xml:space="preserve">
-				<source>Error</source>
-			</trans-unit>
 			<trans-unit id="expand_all_extra_data" xml:space="preserve">
 				<source>Expand all extra data</source>
 			</trans-unit>
@@ -150,59 +120,20 @@
 			<trans-unit id="clearlog" xml:space="preserve">
 				<source>Clear Log</source>
 			</trans-unit>
-			<trans-unit id="clearlog_intro" xml:space="preserve">
-				<source>Use any of the clean up options below to clear your developer log.</source>
+			<trans-unit id="clearlog_action_error" xml:space="preserve">
+				<source>Wrong action called. No log entries were deleted.</source>
 			</trans-unit>
-			<trans-unit id="clearalllog" xml:space="preserve">
-				<source>Clear All Entries!</source>
+			<trans-unit id="clearlog_invalid_period_error" xml:space="preserve">
+				<source>Wrong period requested. No log entries were deleted.</source>
+			</trans-unit>
+			<trans-unit id="clearlog_nothing_cleared" xml:space="preserve">
+				<source>No matching log entries were found and nothing was deleted.</source>
 			</trans-unit>
 			<trans-unit id="cleared_log" xml:space="preserve">
 				<source>%d log entries were deleted.</source>
 			</trans-unit>
-			<trans-unit id="cleanup_for_period" xml:space="preserve">
-				<source>Delete all log entries that are older than:</source>
-			</trans-unit>
-			<trans-unit id="cleanup_for_extension" xml:space="preserve">
-				<source>Delete all log entries for extension:</source>
-			</trans-unit>
-			<trans-unit id="cleanup_all" xml:space="preserve">
-				<source>Pressing the button below will actually delete ALL log entries. Make sure that this is really what you want to do!</source>
-			</trans-unit>
-			<trans-unit id="1hour" xml:space="preserve">
-				<source>1 hour</source>
-			</trans-unit>
-			<trans-unit id="1week" xml:space="preserve">
-				<source>1 week</source>
-			</trans-unit>
-			<trans-unit id="1month" xml:space="preserve">
-				<source>1 month</source>
-			</trans-unit>
-			<trans-unit id="3months" xml:space="preserve">
-				<source>3 months</source>
-			</trans-unit>
-			<trans-unit id="6months" xml:space="preserve">
-				<source>6 months</source>
-			</trans-unit>
-			<trans-unit id="1year" xml:space="preserve">
-				<source>1 year</source>
-			</trans-unit>
 			<trans-unit id="no_entries" xml:space="preserve">
 				<source>There are currently no log entries in the Developer's Log.</source>
-			</trans-unit>
-			<trans-unit id="status_ok">
-				<source>OK</source>
-			</trans-unit>
-			<trans-unit id="status_information">
-				<source>Information</source>
-			</trans-unit>
-			<trans-unit id="status_notice">
-				<source>Notice</source>
-			</trans-unit>
-			<trans-unit id="status_warning">
-				<source>Warning</source>
-			</trans-unit>
-			<trans-unit id="status_error">
-				<source>Error</source>
 			</trans-unit>
 		</body>
 	</file>
