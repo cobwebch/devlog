@@ -63,27 +63,54 @@ class LoggerTest extends UnitTestCase
         unset($this->extensionConfiguration, $this->subject);
     }
 
-    /**
-     * @test
-     * @covers \Devlog\Devlog\Utility\Logger::isEntryAccepted
-     */
-    public function entryIsAccepted()
+    public function validEntriesProvider()
     {
-        self::assertTrue(
-                $this->subject->isEntryAccepted(
+        return array(
+                'Valid entry without included keys list' => array(
+                        '',
                         array(
                                 'severity' => 2,
                                 'extKey' => 'whatever',
+                                'ip' => '127.0.0.1'
+                        )
+                ),
+                'Valid entry with included keys list' => array(
+                        'foo',
+                        array(
+                                'severity' => 2,
+                                'extKey' => 'foo',
                                 'ip' => '127.0.0.1'
                         )
                 )
         );
     }
 
-    public function validEntriesProvider()
+    /**
+     * @param string $includeKeys Comma-separated list of keys to include
+     * @param array $entry Entry data
+     * @test
+     * @dataProvider validEntriesProvider
+     * @covers \Devlog\Devlog\Utility\Logger::isEntryAccepted
+     */
+    public function entryIsAccepted($includeKeys, $entry)
+    {
+        $this->extensionConfiguration->setIncludeKeys($includeKeys);
+        $this->subject->setExtensionConfiguration($this->extensionConfiguration);
+        self::assertTrue(
+                $this->subject->isEntryAccepted($entry)
+        );
+    }
+
+    /**
+     * Provides a list of log entries that will be refused given the predefined configuration.
+     *
+     * @return array
+     */
+    public function invalidEntriesProvider()
     {
         return array(
                 'Severity too low' => array(
+                        '',
                         array(
                                 'severity' => 0,
                                 'extKey' => 'whatever',
@@ -91,13 +118,23 @@ class LoggerTest extends UnitTestCase
                         )
                 ),
                 'Excluded extension key' => array(
+                        '',
                         array(
                                 'severity' => 3,
                                 'extKey' => 'foo',
                                 'ip' => '127.0.0.1'
                         )
                 ),
+                'Not in included key list' => array(
+                        'baz',
+                        array(
+                                'severity' => 3,
+                                'extKey' => 'whatever',
+                                'ip' => '127.0.0.1'
+                        )
+                ),
                 'IP does not match' => array(
+                        '',
                         array(
                                 'severity' => 3,
                                 'extKey' => 'whatever',
@@ -108,13 +145,16 @@ class LoggerTest extends UnitTestCase
     }
 
     /**
+     * @param string $includeKeys Comma-separated list of keys to include
      * @param array $entry Log entry data
      * @test
-     * @dataProvider validEntriesProvider
+     * @dataProvider invalidEntriesProvider
      * @covers \Devlog\Devlog\Utility\Logger::isEntryAccepted
      */
-    public function entryIsRefused($entry)
+    public function entryIsRefused($includeKeys, $entry)
     {
+        $this->extensionConfiguration->setIncludeKeys($includeKeys);
+        $this->subject->setExtensionConfiguration($this->extensionConfiguration);
         self::assertFalse(
                 $this->subject->isEntryAccepted(
                         $entry

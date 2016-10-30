@@ -1,6 +1,7 @@
 2016-10-30 Francois Suter <typo3@cobweb.ch>
 
 	* Restored and improved log clearing feature, resolves #76972
+	* Added configuration option to restrict logging to certain keys, resolves #3053
 
 2016-09-04 Francois Suter <typo3@cobweb.ch>
 

@@ -12,6 +12,9 @@ minimumLogLevel = -1
 # cat=general/filtering/b; type=string; label=LLL:EXT:devlog/Resources/Private/Language/Configuration.xlf:excluded_keys
 excludeKeys =
 
+# cat=general/filtering/b; type=string; label=LLL:EXT:devlog/Resources/Private/Language/Configuration.xlf:included_keys
+includeKeys =
+
 # cat=general/filtering/c; type=string; label=LLL:EXT:devlog/Resources/Private/Language/Configuration.xlf:ip_filter
 ipFilter =
 

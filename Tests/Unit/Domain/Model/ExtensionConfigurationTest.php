@@ -100,6 +100,30 @@ class ExtensionConfigurationTest extends UnitTestCase
     /**
      * @test
      */
+    public function getIncludeKeysInitiallyReturnsEmptryString()
+    {
+        self::assertSame(
+                '',
+                $this->subject->getIncludeKeys()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function setIncludeKeysSetsKeys()
+    {
+        $keys = 'core,extbase';
+        $this->subject->setIncludeKeys($keys);
+        self::assertSame(
+                $keys,
+                $this->subject->getIncludeKeys()
+        );
+    }
+
+    /**
+     * @test
+     */
     public function getIpFilterInitiallyReturnsEmptyString()
     {
         self::assertSame(

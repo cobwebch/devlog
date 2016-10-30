@@ -48,6 +48,13 @@ class ExtensionConfiguration implements SingletonInterface
     protected $excludeKeys = '';
 
     /**
+     * Include Keys
+     *
+     * @var string
+     */
+    protected $includeKeys = '';
+
+    /**
      * Ip Filter
      *
      * @var string
@@ -166,6 +173,27 @@ class ExtensionConfiguration implements SingletonInterface
     public function setExcludeKeys($excludeKeys)
     {
         $this->excludeKeys = (string)$excludeKeys;
+    }
+
+    /**
+     * Returns the includeKeys.
+     *
+     * @return string $includeKeys
+     */
+    public function getIncludeKeys()
+    {
+        return $this->includeKeys;
+    }
+
+    /**
+     * Sets the includeKeys.
+     *
+     * @param string $includeKeys
+     * @return void
+     */
+    public function setIncludeKeys($includeKeys)
+    {
+        $this->includeKeys = (string)$includeKeys;
     }
 
     /**

@@ -178,9 +178,17 @@ class Logger implements SingletonInterface
         if ($logData['severity'] < $this->extensionConfiguration->getMinimumLogLevel()) {
             return false;
         }
-        // Skip entry if key is in excluded list
-        if (GeneralUtility::inList($this->extensionConfiguration->getExcludeKeys(), $logData['extKey'])) {
-            return false;
+        // Check excluded list only if included list is empty
+        // (if included list is defined, it supersedes excluded list)
+        $includedList = $this->extensionConfiguration->getIncludeKeys();
+        if ($includedList === '') {
+            if (GeneralUtility::inList($this->extensionConfiguration->getExcludeKeys(), $logData['extKey'])) {
+                return false;
+            }
+        } else {
+            if (!GeneralUtility::inList($includedList, $logData['extKey'])) {
+                return false;
+            }
         }
         // Skip entry if referrer does not match IP mask
         if (!$this->isIpAddressAccepted($logData['ip'])) {
