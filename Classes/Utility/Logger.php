@@ -61,9 +61,8 @@ class Logger implements SingletonInterface
         // Read the extension configuration
         $this->extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class);
 
-        // Use microtime as unique ID (in format "sec.msec")
-        $microtimeParts = explode(' ', microtime());
-        $this->runId = $microtimeParts[1] . $microtimeParts[0];
+        // Generate a unique ID, including the global timestamp
+        $this->runId = $GLOBALS['EXEC_TIME'] . uniqid('.', true);
 
         // Create a list of instances of each available log writer
         foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['devlog']['writers'] as $logWriterClass) {

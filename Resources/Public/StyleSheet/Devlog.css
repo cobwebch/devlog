@@ -35,6 +35,12 @@ a.next {
 	margin-bottom: 15px;
 }
 
+.group td {
+	background-color: #bbbbbb;
+	color: #ffffff;
+	font-style: italic;
+}
+
 mark {
 	background-color: #e8a33d;
 	color: #ffffff;

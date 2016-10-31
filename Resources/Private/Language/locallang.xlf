@@ -42,6 +42,9 @@
 			<trans-unit id="autoReload" xml:space="preserve">
 				<source>Automatic reload</source>
 			</trans-unit>
+			<trans-unit id="groupRuns" xml:space="preserve">
+				<source>Group runs</source>
+			</trans-unit>
 			<trans-unit id="log_time" xml:space="preserve">
 				<source>Log time</source>
 			</trans-unit>

@@ -47,6 +47,9 @@
 			<trans-unit id="1year" xml:space="preserve">
 				<source>1 year</source>
 			</trans-unit>
+			<trans-unit id="run_start" xml:space="preserve">
+				<source>Run started at %s</source>
+			</trans-unit>
 			<trans-unit id="clear_confirm_title" xml:space="preserve">
 				<source>Are you sure?</source>
 			</trans-unit>

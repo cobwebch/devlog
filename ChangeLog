@@ -1,3 +1,7 @@
+2016-10-31 Francois Suter <typo3@cobweb.ch>
+
+	* Added an option to visually group rows by run, resolves #78058
+
 2016-10-30 Francois Suter <typo3@cobweb.ch>
 
 	* Restored and improved log clearing feature, resolves #76972

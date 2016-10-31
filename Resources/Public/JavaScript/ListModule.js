@@ -48,13 +48,16 @@ define(['jquery',
 		noEntriesMessage: null,
 		lastUpdateTime: null,
 		intervalID: 0,
+		groupRuns: false,
 		// List columns to avoid hard-coding numbers all over the code
 		columns: {
+			crdate: 0,
 			severity: 1,
 			key: 2,
 			ip: 5,
 			page: 6,
-			user: 7
+			user: 7,
+			id: 9
 		},
 		filters: []
 	};
@@ -122,9 +125,10 @@ define(['jquery',
 				DevlogListModule.table = DevlogListModule.tableView.DataTable({
 					data: data,
 					dom: 'tp',
-					// Default ordering is "crdate" column
+					// Default ordering is "run_id" and "crdate" columns
 					order: [
-						[0, 'desc']
+						[DevlogListModule.columns.id, 'desc'],
+						[DevlogListModule.columns.crdate, 'desc']
 					],
 					mark: true,
 					columnDefs: [
@@ -201,12 +205,40 @@ define(['jquery',
 									return data;
 								}
 							}
+						},
+						{
+							targets: 'entry-id',
+							data: 'run_id',
+							visible: false
 						}
 					],
+					// Group rows according to runs (reference: https://datatables.net/examples/advanced_init/row_grouping.html)
+					drawCallback: function() {
+						// Act only if runs should be grouped
+						if (!DevlogListModule.groupRuns) {
+							return;
+						}
+						var api = this.api();
+						var rows = api.rows({page: 'current'}).nodes();
+						var last = null;
+						// Grouping is performed on the column which contains the run id (and is hidden)
+						api.column(DevlogListModule.columns.id, {page: 'current'}).data().each(function(runId, i) {
+							if (last !== runId) {
+								var groupParts = runId.split('.');
+								var runDate = moment.unix(groupParts[0]);
+								var label = TYPO3.lang['run_start'].replace('%s', runDate.format('YYYY-MM-DD HH:mm:ss'));
+								$(rows).eq(i).before(
+									'<tr class="group"><td colspan="9">' + label + '</td></tr>'
+								);
+							}
+							last = runId;
+						});
+					},
 					initComplete: function() {
 						DevlogListModule.initializeSearchField();
 						DevlogListModule.initializeExtraDataToggle();
 						DevlogListModule.initializeReloadControls();
+						DevlogListModule.initializeGroupRunsButton();
 						DevlogListModule.initializeFilters();
 						DevlogListModule.initializeClearLogMenu();
 						DevlogListModule.toggleLoadingMask();
@@ -300,6 +332,29 @@ define(['jquery',
 			} else {
 				window.clearInterval(DevlogListModule.intervalID);
 				DevlogListModule.intervalID = 0;
+			}
+		});
+	};
+
+	/**
+	 * Activates the "group runs" button.
+	 * Also activates the group rows for restoring groups after sorting.
+	 */
+	DevlogListModule.initializeGroupRunsButton = function () {
+		// Activate the group runs button
+		$('#tx_devlog_groupruns').on('click', function () {
+			DevlogListModule.groupRuns = $(this).prop('checked');
+			DevlogListModule.table.draw();
+		});
+		// Activate the group rows in order to restore grouping after sorting operations
+		DevlogListModule.tableView.on('click', 'tr.group', function () {
+			var currentOrder = DevlogListModule.table.order()[0];
+			// If already grouped, change ordering
+			if (currentOrder[0] === DevlogListModule.columns.id && currentOrder[1] === 'desc') {
+				DevlogListModule.table.order([DevlogListModule.columns.id, 'asc']).draw();
+			// Default ordering is descending
+			} else {
+				DevlogListModule.table.order([DevlogListModule.columns.id, 'desc']).draw();
 			}
 		});
 	};
