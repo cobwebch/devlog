@@ -1,3 +1,7 @@
+2016-11-01 Francois Suter <typo3@cobweb.ch>
+
+	* Updated and cleaned up the language files, resolves #78528
+
 2016-10-31 Francois Suter <typo3@cobweb.ch>
 
 	* Added an option to visually group rows by run, resolves #78058

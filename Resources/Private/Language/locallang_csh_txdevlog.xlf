@@ -4,7 +4,7 @@
 		<header/>
 		<body>
 			<trans-unit id=".alttitle" xml:space="preserve">
-				<source>Developer Log</source>
+				<source>Developer's Log</source>
 			</trans-unit>
 			<trans-unit id=".description" xml:space="preserve">
 				<source>The Developer's Log extension (devlog) provides logging functionality. It hooks into \TYPO3\CMS\Core\Utility\GeneralUtility::devlog() to catch devlog events. A BE module gives an overview of the logged events. For more information read the extension manual, which can be found on docs.typo3.org.</source>
@@ -32,11 +32,6 @@
 			</trans-unit>
 			<trans-unit id="crdate.description" xml:space="preserve">
 				<source>This is the date and time at which the log entry was created.</source>
-			</trans-unit>
-			<trans-unit id="crdate.details" xml:space="preserve">
-				<source>
-					All entries corresponding to a single log run are marked with the same date and time.
-				</source>
 			</trans-unit>
 			<trans-unit id="message.alttitle" xml:space="preserve">
 				<source>Log message</source>
@@ -103,13 +98,7 @@
 				<source>Extra data</source>
 			</trans-unit>
 			<trans-unit id="extra_data.description" xml:space="preserve">
-				<source>Extra data can provide an array with detailed information about the circumstances of the event.</source>
-			</trans-unit>
-			<trans-unit id="extra_data.details" xml:space="preserve">
-				<source>
-					There are almost no boundaries for this field, except that it is an array. In many cases, this field can contain the processed data, when the event has been triggered. For example, you could get the full stack debug trace when there is an SQL error. Another showcase would be to deliver be the relevant TS setup parts or any other configuration array.
-					The value depends on the logging implementation of the component which has triggered the event.
-				</source>
+				<source>Extra data is any information that was passed along for logging. May be any type of data.</source>
 			</trans-unit>
 		</body>
 	</file>

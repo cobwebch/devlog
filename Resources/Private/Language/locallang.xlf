@@ -6,24 +6,6 @@
 			<trans-unit id="title" xml:space="preserve">
 				<source>Developer's Log</source>
 			</trans-unit>
-			<trans-unit id="showlog" xml:space="preserve">
-				<source>Show Log</source>
-			</trans-unit>
-			<trans-unit id="selectlog" xml:space="preserve">
-				<source>Select Log:</source>
-			</trans-unit>
-			<trans-unit id="log_entries" xml:space="preserve">
-				<source>Log entries</source>
-			</trans-unit>
-			<trans-unit id="entries" xml:space="preserve">
-				<source>Entries</source>
-			</trans-unit>
-			<trans-unit id="cleanup" xml:space="preserve">
-				<source>Clean up</source>
-			</trans-unit>
-			<trans-unit id="setup" xml:space="preserve">
-				<source>Setup</source>
-			</trans-unit>
 			<trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
 			</trans-unit>
@@ -33,9 +15,6 @@
 			<trans-unit id="clear_filters" xml:space="preserve">
 				<source>Clear all filters</source>
 			</trans-unit>
-			<trans-unit id="search_data" xml:space="preserve">
-				<source>Search log data</source>
-			</trans-unit>
 			<trans-unit id="reload" xml:space="preserve">
 				<source>Reload</source>
 			</trans-unit>
@@ -44,15 +23,6 @@
 			</trans-unit>
 			<trans-unit id="groupRuns" xml:space="preserve">
 				<source>Group runs</source>
-			</trans-unit>
-			<trans-unit id="log_time" xml:space="preserve">
-				<source>Log time</source>
-			</trans-unit>
-			<trans-unit id="log_period" xml:space="preserve">
-				<source>Log period</source>
-			</trans-unit>
-			<trans-unit id="refresh" xml:space="preserve">
-				<source>Refresh</source>
 			</trans-unit>
 			<trans-unit id="date" xml:space="preserve">
 				<source>Date</source>
@@ -84,27 +54,6 @@
 			<trans-unit id="extraData" xml:space="preserve">
 				<source>Extra data</source>
 			</trans-unit>
-			<trans-unit id="no_entries_found" xml:space="preserve">
-				<source>No entries found. Try to relax your filter and search criteria.</source>
-			</trans-unit>
-			<trans-unit id="open_view" xml:space="preserve">
-				<source>Open new window</source>
-			</trans-unit>
-			<trans-unit id="line_call" xml:space="preserve">
-				<source>%s, line %d</source>
-			</trans-unit>
-			<trans-unit id="line" xml:space="preserve">
-				<source>line</source>
-			</trans-unit>
-			<trans-unit id="extra_data_error" xml:space="preserve">
-				<source>Error reading extra data</source>
-			</trans-unit>
-			<trans-unit id="tx_devlog_error.toolong" xml:space="preserve">
-				<source>The extra data exceeded the maximum size. It was not stored.</source>
-			</trans-unit>
-			<trans-unit id="tx_devlog_error.invalid" xml:space="preserve">
-				<source>The extra data was not an array. It was not stored.</source>
-			</trans-unit>
 			<trans-unit id="no_extra_data" xml:space="preserve">
 				<source>No extra data</source>
 			</trans-unit>
@@ -116,9 +65,6 @@
 			</trans-unit>
 			<trans-unit id="expand_all_extra_data" xml:space="preserve">
 				<source>Expand all extra data</source>
-			</trans-unit>
-			<trans-unit id="info_excluded_key" xml:space="preserve">
-				<source>The following keys are currently not logged</source>
 			</trans-unit>
 			<trans-unit id="clearlog" xml:space="preserve">
 				<source>Clear Log</source>

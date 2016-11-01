@@ -16,7 +16,7 @@
 				<source>Severity</source>
 			</trans-unit>
 			<trans-unit id="tx_devlog_domain_model_entry.extkey">
-				<source>Extkey</source>
+				<source>Key (extension, class, ...)</source>
 			</trans-unit>
 			<trans-unit id="tx_devlog_domain_model_entry.message">
 				<source>Message</source>
