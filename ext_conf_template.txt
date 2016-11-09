@@ -24,13 +24,13 @@ refreshFrequency = 4
 # cat=general/display/b; type=integer; label=Number of entries per page: Set the number of log entries to display per page, when viewing all log entries
 entriesPerPage = 25
 
-# cat=dbwriter/limits/c; type=integer; label=LLL:EXT:devlog/Resources/Private/Language/Configuration.xlf:maximum_rows
+# cat=dbwriter/limits/a; type=integer; label=LLL:EXT:devlog/Resources/Private/Language/Configuration.xlf:maximum_rows
 maximumRows = 1000
 
-# cat=dbwriter/limits/a; type=boolean; label=LLL:EXT:devlog/Resources/Private/Language/Configuration.xlf:optimize
+# cat=dbwriter/limits/b; type=boolean; label=LLL:EXT:devlog/Resources/Private/Language/Configuration.xlf:optimize
 optimizeTable = 1
 
-# cat=dbwriter/limits/b; type=integer; label=LLL:EXT:devlog/Resources/Private/Language/Configuration.xlf:maximum_extra_data_size
+# cat=dbwriter/limits/c; type=integer; label=LLL:EXT:devlog/Resources/Private/Language/Configuration.xlf:maximum_extra_data_size
 maximumExtraDataSize = 1000000
 
 # cat=filewriter//; type=string; label=LLL:EXT:devlog/Resources/Private/Language/Configuration.xlf:log_file_path

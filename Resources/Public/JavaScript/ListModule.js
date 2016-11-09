@@ -125,6 +125,7 @@ define(['jquery',
 				DevlogListModule.table = DevlogListModule.tableView.DataTable({
 					data: data,
 					dom: 'tp',
+					pageLength: TYPO3.settings.DevLog.entriesPerPage,
 					// Default ordering is "run_id" and "crdate" columns
 					order: [
 						[DevlogListModule.columns.id, 'desc'],

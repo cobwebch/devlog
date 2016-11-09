@@ -1,6 +1,7 @@
 2016-11-09 Francois Suter <typo3@cobweb.ch>
 
 	* Rewrote documentation and moved it to reST, resolves #78504
+	* Fixed various bits and pieces, added Composer manifest, resolves #78624
 
 2016-11-01 Francois Suter <typo3@cobweb.ch>
 

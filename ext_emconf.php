@@ -12,7 +12,7 @@
 
 $EM_CONF[$_EXTKEY] = array(
     'title' => 'Developer\'s Log',
-    'description' => 'The Developer log extension provides development logging/debugging functionality for usage of t3lib_div::devlog() and a BE module to browse the logs.',
+    'description' => 'The Developer\'s Log extension provides development logging/debugging functionality for usage of GeneralUtility::devlog() and a BE module to browse the logs.',
     'category' => 'misc',
     'priority' => '',
     'loadOrder' => '',
@@ -26,7 +26,7 @@ $EM_CONF[$_EXTKEY] = array(
     'author' => 'Francois Suter',
     'author_email' => 'typo3@cobweb.ch',
     'author_company' => '',
-    'version' => '3.0.0-dev',
+    'version' => '3.0.0',
     'constraints' => array(
         'depends' => array(
             'typo3' => '7.6.0-7.99.99',

@@ -18,6 +18,7 @@ use TYPO3\CMS\Backend\Form\Element\UserElement;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Custom fields for tx_devlog_domain_model_entry table.
@@ -82,14 +83,24 @@ class UserFields
             $html = $this->getLanguageObject()->sL('LLL:EXT:devlog/Resources/Private/Language/locallang.xlf:no_extra_data');
         } else {
             $data = unserialize(gzuncompress($PA['row']['extra_data']));
-            $html = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(
-                    $data,
-                    null,
-                    10,
-                    false,
-                    true,
-                    true
-            );
+            // For objects, we use var_export() as DebuggerUtility does not handle unserialized objects well
+            // (maybe this can be improved by someone who knows better)
+            if (is_object($data)) {
+                $html = var_export(
+                        $data,
+                        true
+                );
+                $html = '<pre>' . $html . '</pre>';
+            } else {
+                $html = DebuggerUtility::var_dump(
+                        $data,
+                        null,
+                        10,
+                        false,
+                        true,
+                        true
+                );
+            }
         }
         return $html;
     }

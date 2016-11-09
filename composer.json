@@ -1,0 +1,27 @@
+{
+	"name": "devlog/devlog",
+	"type": "typo3-cms-extension",
+	"description": "The Developer's Log extension provides development logging/debugging functionality for usage of GeneralUtility::devlog() and a BE module to browse the logs.",
+	"license": [
+		"GPL-2.0+"
+	],
+	"authors": [
+		{
+			"name": "Francois Suter",
+			"role": "Developer"
+		}
+	],
+	"autoload": {
+		"psr-4": {
+			"Devlog\\Devlog\\": "Classes/"
+		}
+	},
+	"version": "3.0.0",
+	"require": {
+		"typo3/cms-core": ">=7.6.0,<8.0"
+	},
+	"replace": {
+		"devlog": "self.version",
+		"typo3-ter/devlog": "self.version"
+	}
+}
