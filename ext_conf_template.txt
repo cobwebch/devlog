@@ -16,7 +16,7 @@ excludeKeys =
 includeKeys =
 
 # cat=general/filtering/c; type=string; label=LLL:EXT:devlog/Resources/Private/Language/Configuration.xlf:ip_filter
-ipFilter =
+ipFilter = *
 
 # cat=general/display/a; type=integer; label=Autorefresh frequency: Set the number of seconds between each refresh, when using the autorefresh feature
 refreshFrequency = 4

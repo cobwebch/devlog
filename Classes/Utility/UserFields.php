@@ -35,7 +35,7 @@ class UserFields
      * Returns the severity of the entry using TYPO3's icon and labels.
      *
      * @param array $parameters Information related to the field
-     * @param UserElement $userElement Reference to calling object
+     * @param UserElement $formObject Reference to calling object
      *
      * @return string The HTML for the form field
      */
@@ -73,7 +73,7 @@ class UserFields
      * Returns the extra data as a nice HTML dump.
      *
      * @param array $PA Information related to the field
-     * @param UserElement $userElement Reference to calling object
+     * @param UserElement $formObject Reference to calling object
      *
      * @return string The HTML for the form field
      */

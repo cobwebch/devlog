@@ -46,7 +46,7 @@ class FileWriter extends AbstractWriter
         // If the file path is valid, try opening the file
         $this->fileHandle = @fopen(
                 $absoluteFilePath,
-                'a'
+                'ab'
         );
         // Throw an exception if log file could not be opened properly
         if (!$this->fileHandle) {
