@@ -1,3 +1,7 @@
+2016-11-13 Francois Suter <typo3@cobweb.ch>
+
+	* Verified compatibility with TYPO3 v8 (8.5.-dev), resolves #78626
+
 2016-11-09 Francois Suter <typo3@cobweb.ch>
 
 	* Rewrote documentation and moved it to reST, resolves #78504
