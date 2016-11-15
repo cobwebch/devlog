@@ -90,7 +90,7 @@ class UserFields
                         $data,
                         true
                 );
-                $html = '<pre>' . $html . '</pre>';
+                $html = '<pre>' . htmlspecialchars($html) . '</pre>';
             } else {
                 $html = DebuggerUtility::var_dump(
                         $data,

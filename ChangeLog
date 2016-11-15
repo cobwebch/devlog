@@ -1,3 +1,7 @@
+2016-11-15 Francois Suter <typo3@cobweb.ch>
+
+	* Improved escaping of HTML content in log entries, resolves #2
+
 2016-11-13 Francois Suter <typo3@cobweb.ch>
 
 	* Verified compatibility with TYPO3 v8 (8.5.-dev), resolves #78626

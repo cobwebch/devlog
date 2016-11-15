@@ -378,6 +378,9 @@ class EntryRepository implements SingletonInterface
         if ($numEntries > 0) {
             $users = $this->findAllUsers();
             for ($i = 0; $i < $numEntries; $i++) {
+                // Escape potentially malign data
+                $entries[$i]['key'] = htmlspecialchars($entries[$i]['key']);
+                $entries[$i]['message'] = htmlspecialchars($entries[$i]['message']);
                 // Grab username instead of id
                 $userId = (int)$entries[$i]['cruser_id'];
                 if ($userId > 0 && isset($users[$userId])) {
@@ -405,12 +408,12 @@ class EntryRepository implements SingletonInterface
                     $entries[$i]['page'] = $pageTitle;
                     $pageInformationCache[$pid] = $pageTitle;
                 }
-                // Process extra data (uncompress and dump)
+                // Process extra data (uncompress, dump and escape)
                 if ($entries[$i]['extra_data'] === '') {
                     $extraData = '';
                 } else {
                     $extraData = gzuncompress($entries[$i]['extra_data']);
-                    $extraData = var_export(unserialize($extraData), true);
+                    $extraData = htmlspecialchars(var_export(unserialize($extraData), true));
                 }
                 $entries[$i]['extra_data'] = $extraData;
             }

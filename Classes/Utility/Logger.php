@@ -119,7 +119,7 @@ class Logger implements SingletonInterface
         $this->counter++;
         $entry->setCrdate(time());
         $entry->setMessage(
-                GeneralUtility::removeXSS($logData['msg'])
+                strip_tags($logData['msg'])
         );
         $entry->setExtkey(
                 strip_tags($logData['extKey'])
