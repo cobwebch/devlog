@@ -99,7 +99,11 @@ class Logger implements SingletonInterface
             return;
         }
         // Add IP address for validation
-        $logData['ip'] = GeneralUtility::getIndpEnv('REMOTE_ADDR');
+        $ipAddress = GeneralUtility::getIndpEnv('REMOTE_ADDR');
+        if ($ipAddress === null) {
+            $ipAddress = '';
+        }
+        $logData['ip'] = $ipAddress;
         // If the log entry doesn't pass the basic filters, exit early doing nothing
         if (!$this->isEntryAccepted($logData)) {
             return;

@@ -1,6 +1,7 @@
 2016-11-15 Francois Suter <typo3@cobweb.ch>
 
 	* Improved escaping of HTML content in log entries, resolves #2
+	* Fixed error due to possibly null IP address (CLI context)
 
 2016-11-13 Francois Suter <typo3@cobweb.ch>
 
