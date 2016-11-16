@@ -21,7 +21,8 @@
 require.config({
 	map: {
 		'*': {
-			'datatables.net': 'datatables'
+			'datatables.net': 'datatables',
+			'markjs': 'TYPO3/CMS/Devlog/jquery.mark.min'
 		}
 	}
 });

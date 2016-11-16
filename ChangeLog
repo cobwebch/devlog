@@ -1,3 +1,7 @@
+2016-11-16 Francois Suter <typo3@cobweb.ch>
+
+	* Added mapping for MarkJS, resolves #1
+
 2016-11-15 Francois Suter <typo3@cobweb.ch>
 
 	* Improved escaping of HTML content in log entries, resolves #2
