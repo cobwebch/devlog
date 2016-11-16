@@ -143,6 +143,10 @@ class Logger implements SingletonInterface
         } elseif (isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['debugData']['pid'])) {
             $pid = $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['debugData']['pid'];
         }
+        // Make sure that pid is not null
+        if ($pid === null) {
+            $pid = 0;
+        }
         $entry->setPid($pid);
 
         $entry->setCruserId(
