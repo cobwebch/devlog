@@ -123,7 +123,7 @@ class Logger implements SingletonInterface
         $this->counter++;
         $entry->setCrdate(time());
         $entry->setMessage(
-                strip_tags($logData['msg'])
+                $logData['msg']
         );
         $entry->setExtkey(
                 strip_tags($logData['extKey'])
