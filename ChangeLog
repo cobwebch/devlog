@@ -1,3 +1,7 @@
+2017-01-07 Francois Suter <typo3@cobweb.ch>
+
+	* Added test plugin for generating log entries
+
 2016-11-16 Francois Suter <typo3@cobweb.ch>
 
 	* Added mapping for MarkJS, resolves #1
