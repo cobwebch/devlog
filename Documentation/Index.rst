@@ -24,10 +24,10 @@ Developer's Log
 		  The Developer's Log extension provides development logging/debugging functionality for usage of GeneralUtility::devlog() and a BE module to browse the logs.
 
 	:Keywords:
-		  data import, fetch data, services
+		  log, devlog, logging
 
 	:Copyright:
-		2007-2016
+		2007-2017
 
 	:Author:
 		  François Suter (Cobweb)
