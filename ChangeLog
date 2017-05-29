@@ -1,3 +1,7 @@
+2017-05-29 Francois Suter <typo3@cobweb.ch>
+
+	* Verified compatibility with TYPO3 8 LTS
+
 2017-01-07 Francois Suter <typo3@cobweb.ch>
 
 	* Added test plugin for generating log entries
