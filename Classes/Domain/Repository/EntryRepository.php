@@ -55,6 +55,21 @@ class EntryRepository implements SingletonInterface
     protected $numberOfRows = null;
 
     /**
+     * EntryRepository constructor.
+     *
+     * @throws \UnexpectedValueException
+     */
+    public function __construct()
+    {
+        if ($this->getDatabaseConnection() === null) {
+            throw new \UnexpectedValueException(
+                    'Database connection could not be established',
+                    1518984773
+            );
+        }
+    }
+
+    /**
      * Returns all available records in the log table.
      *
      * By default records are sorted by descending creation date and

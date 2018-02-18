@@ -33,14 +33,27 @@ class DatabaseWriter extends AbstractWriter
      * DatabaseWriter constructor.
      *
      * @param Logger $logger
+     * @throws \UnexpectedValueException
      */
     public function __construct($logger)
     {
         parent::__construct($logger);
-        $this->entryRepository = GeneralUtility::makeInstance(EntryRepository::class);
-        $this->entryRepository->setExtensionConfiguration(
-                $this->logger->getExtensionConfiguration()
-        );
+        try {
+            $this->entryRepository = GeneralUtility::makeInstance(EntryRepository::class);
+            $this->entryRepository->setExtensionConfiguration(
+                    $this->logger->getExtensionConfiguration()
+            );
+        }
+        catch (\Exception $e) {
+            throw new \UnexpectedValueException(
+                    sprintf(
+                            'Database writer is not available (Error: %s, Code: %s)',
+                            $e->getMessage(),
+                            $e->getCode()
+                    ),
+                    1518984907
+            );
+        }
     }
 
     /**

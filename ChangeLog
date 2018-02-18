@@ -1,3 +1,7 @@
+2018-02-18 Francois Suter <typo3@cobweb.ch>
+
+	* Added check for database availability, resolves #6
+
 2017-05-29 Francois Suter <typo3@cobweb.ch>
 
 	* Verified compatibility with TYPO3 8 LTS
