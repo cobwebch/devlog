@@ -1,3 +1,7 @@
+2018-02-22 Francois Suter <typo3@cobweb.ch>
+
+	* Updated documentation configuration file
+
 2018-02-18 Francois Suter <typo3@cobweb.ch>
 
 	* Added check for database availability, resolves #6
