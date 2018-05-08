@@ -427,8 +427,12 @@ class EntryRepository implements SingletonInterface
                 if ($entries[$i]['extra_data'] === '') {
                     $extraData = '';
                 } else {
-                    $extraData = gzuncompress($entries[$i]['extra_data']);
-                    $extraData = htmlspecialchars(var_export(unserialize($extraData), true));
+                    try {
+                        $extraData = gzuncompress($entries[$i]['extra_data']);
+                        $extraData = htmlspecialchars(var_export(unserialize($extraData), true));
+                    } catch (\Exception $e) {
+                        $extraData = $e->getMessage();
+                    }
                 }
                 $entries[$i]['extra_data'] = $extraData;
             }
