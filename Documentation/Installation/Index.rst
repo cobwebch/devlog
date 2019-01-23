@@ -16,6 +16,11 @@ and you're done. There's nothing more to do, except tuning the
 configuration to your taste. The configuration is divided in three
 sections, detailed below.
 
+.. important::
+
+   With TYPO3 v8, you need to set :php:`$GLOBALS['TYPO3_CONF_VARS']['SYS']['enable_DLOG'] = true;`
+   to activate the Developer's Log. Otherwise no entries will be written at all.
+
 
 .. _installation-configuration-general:
 
