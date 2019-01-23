@@ -10,30 +10,30 @@
 # "version" and "dependencies" must not be touched!
 ########################################################################
 
-$EM_CONF[$_EXTKEY] = array(
-    'title' => 'Developer\'s Log',
-    'description' => 'The Developer\'s Log extension provides development logging/debugging functionality for usage of GeneralUtility::devlog() and a BE module to browse the logs.',
-    'category' => 'misc',
-    'priority' => '',
-    'loadOrder' => '',
-    'module' => 'mod1',
-    'state' => 'stable',
-    'uploadfolder' => 0,
-    'createDirs' => '',
-    'modify_tables' => '',
-    'clearCacheOnLoad' => 1,
-    'lockType' => '',
-    'author' => 'Francois Suter',
-    'author_email' => 'typo3@cobweb.ch',
-    'author_company' => '',
-    'version' => '3.0.3',
-    'constraints' => array(
-        'depends' => array(
-            'typo3' => '7.6.0-8.9.99',
-        ),
-        'conflicts' => array(
-        ),
-        'suggests' => array(
-        ),
-    ),
-);
+$EM_CONF[$_EXTKEY] = [
+        'title' => 'Developer\'s Log',
+        'description' => 'The Developer\'s Log extension provides development logging/debugging functionality for usage of GeneralUtility::devlog() and a BE module to browse the logs.',
+        'category' => 'misc',
+        'priority' => '',
+        'loadOrder' => '',
+        'module' => 'mod1',
+        'state' => 'stable',
+        'uploadfolder' => 0,
+        'createDirs' => '',
+        'modify_tables' => '',
+        'clearCacheOnLoad' => 1,
+        'lockType' => '',
+        'author' => 'Francois Suter',
+        'author_email' => 'typo3@cobweb.ch',
+        'author_company' => '',
+        'version' => '3.0.4',
+        'constraints' => [
+                'depends' => [
+                        'typo3' => '7.6.0-8.9.99',
+                ],
+                'conflicts' => [
+                ],
+                'suggests' => [
+                ],
+        ],
+];

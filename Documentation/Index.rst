@@ -27,7 +27,7 @@ Developer's Log
 		  log, devlog, logging
 
 	:Copyright:
-		2007-2018
+		2007-2019
 
 	:Author:
 		  François Suter (Cobweb)
