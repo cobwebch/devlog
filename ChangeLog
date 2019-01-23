@@ -1,3 +1,8 @@
+2019-01-23 Francois Suter <typo3@cobweb.ch>
+
+	* Catch uncompress errors when displaying extra data (thanks to E. Lang)
+	* Ensure spinner icon is available
+
 2018-02-22 Francois Suter <typo3@cobweb.ch>
 
 	* Updated documentation configuration file
