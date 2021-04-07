@@ -20,8 +20,12 @@
 	"require": {
 		"typo3/cms-core": ">=7.6.0,<9.0"
 	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "devlog"
+		}
+	},
 	"replace": {
-		"devlog": "self.version",
 		"typo3-ter/devlog": "self.version"
 	}
 }
